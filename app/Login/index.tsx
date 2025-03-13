@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, StyleSheet } from 'react-native';
 import { styles } from './_layout';
+import { Link } from 'expo-router';
 
 // Sin componentes separados! No olvidar separar los componentes!
 const App = () => {
@@ -19,7 +20,7 @@ const App = () => {
       <View style={styles.formContainer}>
         <Text style={styles.title}>Login</Text>
 
-        <Text style={styles.subtitle}>Não tem uma conta? <Text style={styles.signupText}>Cadastre-se.</Text></Text>
+        <Text style={styles.subtitle}>Não tem uma conta? <Link style={styles.signupText} href="/Cadastro">Cadastre-se.</Link></Text>
 
         <TextInput
           style={styles.input}

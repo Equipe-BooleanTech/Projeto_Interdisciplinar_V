@@ -10,10 +10,9 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-
       <Text>Página Inicial</Text>
       <Button title="Login" onPress={() => router.push('/Login')} />
+      <Button title="Cadastrar" onPress={() => router.push("/Cadastro")} />
     </View>
-  );
+  )
 }
