@@ -12,8 +12,11 @@
     "lint": "expo lint",
     "prepare": "husky"
   },
-  "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+ "lint-staged": {
+    "**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "husky": {
     "hooks": {
