@@ -159,12 +159,11 @@ export const stylesHome = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#000'
+    borderColor: '#000',
   },
   biometricButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-
 });

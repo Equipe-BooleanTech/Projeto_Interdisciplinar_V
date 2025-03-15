@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { styles } from './_layout';
 import { Link } from 'expo-router';
+import images from '../../assets';
 
 // Sin componentes separados! No olvidar separar los componentes!
 const App = () => {
@@ -11,32 +12,42 @@ const App = () => {
     setIsChecked(!isChecked);
   };
 
+  const logo = images.car;
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.iconContainer}>
-        <Image source={require('../../assets/images/car-icon.png')} style={styles.icon} />
+        <Image source={logo} style={styles.icon} />
       </View>
 
       <View style={styles.formContainer}>
         <Text style={styles.title}>Login</Text>
 
-        <Text style={styles.subtitle}>Não tem uma conta? <Link style={styles.signupText} href="/Cadastro">Cadastre-se.</Link></Text>
+        <Text style={styles.subtitle}>
+          Não tem uma conta?{' '}
+          <Link style={styles.signupText} href="/Cadastro">
+            Cadastre-se.
+          </Link>
+        </Text>
 
         <TextInput
           style={styles.input}
           placeholder="Digite um e-mail válido..."
           placeholderTextColor="#a1a1a1"
         />
-        
+
         <TextInput
           style={styles.input}
           placeholder="Digite sua senha..."
           placeholderTextColor="#a1a1a1"
           secureTextEntry
         />
-        
+
         <View style={styles.checkboxContainer}>
-          <TouchableOpacity style={[styles.checkbox, isChecked && styles.checkboxChecked]} onPress={toggleCheckbox}>
+          <TouchableOpacity
+            style={[styles.checkbox, isChecked && styles.checkboxChecked]}
+            onPress={toggleCheckbox}
+          >
             {isChecked && <Text style={styles.checkmark}>✔</Text>}
           </TouchableOpacity>
           <Text style={styles.checkboxLabel}>Lembrar credenciais?</Text>

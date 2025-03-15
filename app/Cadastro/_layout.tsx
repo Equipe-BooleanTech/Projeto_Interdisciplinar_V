@@ -61,7 +61,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: 20,
-    
   },
   checkbox: {
     width: 20,
@@ -135,10 +134,9 @@ export const styles = StyleSheet.create({
   },
 
   field: {
-    display: "flex",
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "flex-start",
-    
-  }
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
 });
