@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      time: "09:00"
+      timezone: "America/Sao_Paulo"
+    target-branch: "feat/upgrade-deps" 
+    reviewers:
+      - "HenriqueCosta05"

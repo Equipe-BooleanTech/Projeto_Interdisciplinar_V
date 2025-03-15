@@ -5,7 +5,7 @@ export default function Layout() {
   return <Stack screenOptions={{ headerShown: false }} />;
 }
 
-export const stylesHome = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#6A4CFF',
@@ -57,8 +57,9 @@ export const stylesHome = StyleSheet.create({
     marginBottom: 15,
   },
   checkboxContainer: {
+    display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 20,
   },
   checkbox: {
@@ -125,45 +126,17 @@ export const stylesHome = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#34B7F1',
-    marginBottom: 15,
   },
   phoneButtonText: {
     fontSize: 16,
     color: '#34B7F1',
     fontWeight: 'bold',
   },
-  emailButton: {
-    backgroundColor: '#fff',
+
+  field: {
+    display: 'flex',
     width: '100%',
-    height: 50,
-    borderRadius: 10,
     justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#000',
-  },
-  emailButtonText: {
-    fontSize: 16,
-    color: '#000',
-    fontWeight: 'bold',
-  },
-  biometricButton: {
-    backgroundColor: '#4CAF50',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 20,
-    width: '100%',
-    height: 50,
-    justifyContent: 'center',
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#000',
-  },
-  biometricButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    alignItems: 'flex-start',
   },
 });
