@@ -1,50 +1,30 @@
-# Welcome to your Expo app 👋
+# Lembraí App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Introdução
+Gerenciar as manutenções e obrigações de um veículo pode ser uma tarefa desafiadora. Entre prazos de IPVA, licenciamento, seguro, 
+trocas de óleo e revisões periódicas, muitas informações podem ser esquecidas, resultando em custos inesperados e problemas mecânicos evitáveis.
+Pensando nisso, o `Lembraí` surge como uma solução completa para organização e controle de veículos. Com ele, os usuários poderão cadastrar seus
+veículos e manter um acompanhamento detalhado de todas as manutenções e obrigações, recebendo alertas e lembretes para evitar atrasos e 
+garantir a longevidade e segurança dos seus automóveis.
+Com uma interface intuitiva e prática, o aplicativo permite cadastrar veículos, configurar lembretes para serviços essenciais e acompanhar o histórico de manutenções, garantindo maior segurança e economia no dia a dia. 
 
-## Get started
+## Principais Funcionalidades
+* `Gestão de Veículos`: Cadastro de um ou mais veículos, organizando todas as informações relevantes em um só lugar. 
+* `Lembretes Inteligentes`: Notificações personalizadas para vencimento de IPVA, licenciamento, seguro, revisões, troca de óleo e demais
+manutenções recomendadas pelos fabricantes.
+* `Histórico de Manutenção`: Registro detalhado de todas as intervenções realizadas no veículo, facilitando o acompanhamento e evitando
+serviços desnecessários. 
+* `Controle de Custos`: Possibilidade de adicionar os gastos com cada manutenção, ajudando na organização financeira.
+* `Customização`: Opções para configurar lembretes de acordo com a quilometragem ou tempo decorrido, conforme a necessidade 
+do usuário. 
 
-1. Install dependencies
 
-   ```bash
-   npm install
-   ```
+## Motivação
+O `LEMBRAÍ` surge da necessidade de automatizar processos simples do dia a dia de pessoas que possuem veículos; este aplicativo será sobre gerenciamento de tarefas e sinalização de deveres com o veiculo cadastrado, visando evitar atrasos em impostos obrigatórios e observação de condições de manutenção.
 
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Contexto
+Vivemos na correria do dia a dia e informações importantes podem passar desapercebidas; visando evitar maiores problemas o LEMBRAÍ surge como um auxilio para relembrar as obrigações e evitar dor de cabeça futura. Com o desenvolvimento deste aplicativo visamos atender as seguintes demandas:
+1. Cadastro de veículos;
+2. Controle de despesas;
+3. Informativo de pendências;
+4. Lembrete sobre impostos obrigatórios e trocas periódicas
