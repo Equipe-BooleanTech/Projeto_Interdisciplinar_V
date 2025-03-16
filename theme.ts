@@ -1,23 +1,15 @@
 export const theme = {
   colors: {
-    dark: {
-      blue: '#375DFB',
-      purple: '#6E3FF3',
-      red: '#DF1C41',
-      yellow: '#FFDA44',
-      black: '#FFFFFF',
-      stroke: '#1A1C1E',
-      gray: '#6C7278',
-    },
-    light: {
-      blue: '#375DFB',
-      purple: '#6E3FF3',
-      red: '#DF1C41',
-      yellow: '#FFDA44',
-      black: '#1A1C1E',
-      stroke: '#EDF1F3',
-      gray: '#EDF1F3',
-    },
+    darkGreen: '#262A18',
+    green: '#454F2C',
+    brown: '#713519',
+    warning: '#D49A56',
+    danger: '#A72218',
+    success: '#4C8055',
+    stroke: '#1A1C1E',
+    normalBackground: '#DFDDD1',
+    text: '#FFFFFF',
+    card: '#FAFAFA',
   },
   border: {
     button: {
