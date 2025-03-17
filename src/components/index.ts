@@ -3,5 +3,5 @@
 // --------------------------------------------------
 
 export { default as Button } from './Button/Button';
-export { default as ScrollView } from './ScrollView/ScrollView';
+export { default as SafeAreaView } from './SafeAreaView/SafeAreaView';
 export { default as Image } from './Image/Image';

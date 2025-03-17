@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ScrollView, Image } from '@/src/components';
+import { Button, Image, SafeAreaView } from '@/src/components';
 import { IntroductionViewProps } from './Introduction.interface';
 import { Description, TextContainer, Title, ImageContainer } from './Introduction.styles';
 
@@ -7,7 +7,7 @@ import { Description, TextContainer, Title, ImageContainer } from './Introductio
 const Introduction = (Props: IntroductionViewProps) => {
   const { image, description, onPress, title, step } = Props;
   return (
-    <ScrollView>
+    <SafeAreaView>
       <ImageContainer>
         <Image imgHeight="100%" imgWidth="100%" svg={image} />
       </ImageContainer>
@@ -20,7 +20,7 @@ const Introduction = (Props: IntroductionViewProps) => {
       <Button onPress={onPress} variant="primary">
         {step === 4 ? 'Criar conta' : 'Continuar'}
       </Button>
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
