@@ -2,7 +2,7 @@
 
 import styled from 'styled-components/native';
 
-export const Image = styled.Image`
+export const ImageContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;

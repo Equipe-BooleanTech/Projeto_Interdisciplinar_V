@@ -1,7 +1,5 @@
-import Svg from 'react-native-svg';
-
 export interface IntroductionViewProps {
-  image: Svg;
+  image: any;
   title: string;
   description: string;
   onPress: () => void;
