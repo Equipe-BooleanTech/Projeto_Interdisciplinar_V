@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Introduction } from '@/src/screens';
-import { SafeAreaView } from 'react-native';
 import images from '@/assets';
 
 interface IntroData {
@@ -44,14 +43,12 @@ const introData: IntroData = {
 export default function Index() {
   const [step, setStep] = useState(1);
   return (
-    <SafeAreaView>
-      <Introduction
-        step={step}
-        title={introData[step].title}
-        description={introData[step].description}
-        image={introData[step].image}
-        onPress={() => setStep(step + 1)}
-      />
-    </SafeAreaView>
+    <Introduction
+      step={step}
+      title={introData[step].title}
+      description={introData[step].description}
+      image={introData[step].image}
+      onPress={() => setStep(step + 1)}
+    />
   );
 }

@@ -1,6 +1,6 @@
-import { Button, ScrollView } from '@/src/components';
+import { Button, ScrollView, Image } from '@/src/components';
 import { IntroductionViewProps } from './Introduction.interface';
-import { Description, Image, TextContainer, Title } from './Introduction.styles';
+import { Description, TextContainer, Title } from './Introduction.styles';
 
 // TODO: Completar a implementação da tela de introdução
 const Introduction = (Props: IntroductionViewProps) => {
@@ -15,7 +15,7 @@ const Introduction = (Props: IntroductionViewProps) => {
         </TextContainer>
       )}
       <Button onPress={onPress} variant="primary">
-        {step === 4 ? 'Criar conta' : 'Próximo'}
+        {step === 4 ? 'Criar conta' : 'Continuar'}
       </Button>
     </ScrollView>
   );

@@ -1,13 +1,12 @@
 import styled from 'styled-components/native';
 import { theme } from '@/theme';
 
-//Exemplo de uso do Styled Components
 export const StyledButton = styled.TouchableOpacity<{
   variant: 'primary' | 'secondary' | 'social' | 'danger';
   disabled?: boolean;
   color?: string;
 }>`
-  background-color: ${({ variant }: { variant: 'primary' | 'secondary' | 'social' | 'danger' }) => {
+  background-color: ${( variant: string, color: string) => {
     switch (variant) {
       case 'primary':
         return theme.colors.green;
@@ -18,14 +17,20 @@ export const StyledButton = styled.TouchableOpacity<{
       case 'danger':
         return theme.colors.danger;
       default:
-        return ({ color }: { color?: string }) => color || theme.colors.green;
+        return color || theme.colors.green;
     }
   }};
-  border: 1px solid transparent;
-  color: white;
-  padding: 10px 20px;
   border-radius: 5px;
-  border: none;
-  cursor: pointer;
+  padding: 10px 20px;
   margin: 10px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const ButtonText = styled.Text<{
+  variant?: 'primary' | 'secondary' | 'social' | 'danger';
+}>`
+  color: ${(variant: string) => (variant === 'primary' ? theme.colors.text : theme.colors.text)};
+  font-size: ${theme.font.size.pb};
+  font-weight: ${theme.font.weight.pb};
 `;
