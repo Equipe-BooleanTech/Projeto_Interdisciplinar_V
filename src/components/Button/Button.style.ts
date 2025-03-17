@@ -6,7 +6,7 @@ export const StyledButton = styled.TouchableOpacity<{
   disabled?: boolean;
   color?: string;
 }>`
-  background-color: ${( variant: string, color: string) => {
+  background-color: ${(variant: string, color: string) => {
     switch (variant) {
       case 'primary':
         return theme.colors.green;
@@ -20,8 +20,8 @@ export const StyledButton = styled.TouchableOpacity<{
         return color || theme.colors.green;
     }
   }};
-  border-radius: 5px;
-  padding: 10px 20px;
+  border-radius: 10px;
+  padding: 20px 40px;
   margin: 10px;
   align-items: center;
   justify-content: center;
@@ -31,6 +31,6 @@ export const ButtonText = styled.Text<{
   variant?: 'primary' | 'secondary' | 'social' | 'danger';
 }>`
   color: ${(variant: string) => (variant === 'primary' ? theme.colors.text : theme.colors.text)};
-  font-size: ${theme.font.size.pb};
-  font-weight: ${theme.font.weight.pb};
+  font-size: ${theme.font.size.h3};
+  font-weight: ${theme.font.weight.h3};
 `;

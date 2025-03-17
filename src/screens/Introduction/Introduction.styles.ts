@@ -20,14 +20,17 @@ export const TextContainer = styled.View`
 `;
 
 export const Title = styled.Text`
-  font-size: 18px;
+  font-size: 22px;
   line-height: 22px;
   font-weight: bold;
   letter-spacing: -0.15px;
+  text-align: center;
+  margin-bottom: 10px;
 `;
 
 export const Description = styled.Text`
-  font-size: 13px;
+  font-size: 14px;
+  margin-top: 10px;
   line-height: 20px;
   letter-spacing: 0.2px;
   font-weight: 400;
