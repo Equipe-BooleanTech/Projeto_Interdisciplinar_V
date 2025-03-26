@@ -8,6 +8,12 @@ import prettier from 'eslint-config-prettier';
 export default [
   js.configs.recommended,
   {
+    files: ['**/metro.config.js', '**/*.cjs'],
+    rules: {
+      'no-undef': 'off'
+    }
+  },
+  {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       parser: tsParser,
