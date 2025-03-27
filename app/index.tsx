@@ -45,12 +45,12 @@ export default function Index() {
   const [step, setStep] = useState(1);
 
   const handleStepChange = useCallback(() => {
-    if(step + 1 === 5) {
-      router.navigate("/Cadastro")
-      setStep(1)
+    if (step + 1 === 5) {
+      router.navigate('/Cadastro');
+      setStep(1);
       return;
     }
-    setStep(step + 1)
+    setStep(step + 1);
   }, [step]);
 
   return (

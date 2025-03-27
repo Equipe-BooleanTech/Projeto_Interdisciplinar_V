@@ -9,7 +9,7 @@ const Introduction = (Props: IntroductionViewProps) => {
   return (
     <SafeAreaView>
       <ImageContainer>
-        <Image imgHeight="100%" imgWidth="90%" svg={image}/>
+        <Image imgHeight="100%" imgWidth="90%" svg={image} />
       </ImageContainer>
       {title && description && (
         <TextContainer>
