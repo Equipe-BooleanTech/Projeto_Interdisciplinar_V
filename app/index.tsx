@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Introduction } from '@/src/screens';
 import images from '@/assets';
+import { router } from 'expo-router';
 
 interface IntroData {
   [key: number]: {
@@ -42,13 +43,23 @@ const introData: IntroData = {
 };
 export default function Index() {
   const [step, setStep] = useState(1);
+
+  const handleStepChange = useCallback(() => {
+    if(step + 1 === 5) {
+      router.navigate("/Cadastro")
+      setStep(1)
+      return;
+    }
+    setStep(step + 1)
+  }, [step]);
+
   return (
     <Introduction
       step={step}
       title={introData[step].title}
       description={introData[step].description}
       image={introData[step].image}
-      onPress={() => setStep(step + 1)}
+      onPress={() => handleStepChange()}
     />
   );
 }
