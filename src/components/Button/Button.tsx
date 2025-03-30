@@ -6,13 +6,9 @@ const Button = ({ children, variant, color, disabled, onPress, hasIcon, icon }: 
   return (
     <StyledButton variant={variant} color={color} disabled={disabled} onPress={onPress}>
       {hasIcon && icon && (
-        <Image
-          imgHeight={icon?.size || 24}
-          imgWidth={icon?.size || 24}
-          svg={icon.component ?? (() => null)}
-        />
+        <Image imgHeight={icon?.size || 24} imgWidth={icon?.size || 24} svg={icon.component!} />
       )}
-      <ButtonText>{children}</ButtonText>
+      <ButtonText variant={variant}>{children}</ButtonText>
     </StyledButton>
   );
 };
