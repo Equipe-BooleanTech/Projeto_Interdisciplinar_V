@@ -50,7 +50,7 @@ export const Social = {
     hasIcon: true,
     icon: {
       component: images.googleIcon,
-      size: '24px',
+      size: 25,
     },
     disabled: false,
   },
