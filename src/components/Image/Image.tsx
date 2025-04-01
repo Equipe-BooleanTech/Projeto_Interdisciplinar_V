@@ -8,7 +8,7 @@ const Image = ({ svg: SvgComponent, imgWidth, imgHeight, viewBox }: ImageProps) 
   }
 
   return (
-    <Svg width={imgWidth} height={imgHeight} viewBox={viewBox}>
+    <Svg width={imgWidth} height={imgHeight} viewBox={viewBox} style={{ zIndex: 5 }}>
       {SvgComponent}
     </Svg>
   );

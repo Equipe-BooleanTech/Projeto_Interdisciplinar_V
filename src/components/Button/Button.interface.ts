@@ -1,4 +1,4 @@
-import { ComponentType, ReactElement, ReactNode } from 'react';
+import { ComponentClass, FunctionComponent, ReactNode } from 'react';
 import { TouchableOpacityProps } from 'react-native';
 import { SvgProps } from 'react-native-svg';
 
@@ -10,7 +10,7 @@ export interface ButtonProps extends TouchableOpacityProps {
   hasIcon?: boolean;
   icon?: {
     size?: number;
-    component?: ComponentType<SvgProps> | ReactElement;
+    component?: string | FunctionComponent<SvgProps> | ComponentClass<SvgProps, any>;
   };
   children: ReactNode;
 }
