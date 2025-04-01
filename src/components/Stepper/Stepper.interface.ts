@@ -1,1 +1,5 @@
-// TODO: Implementar as props necessárias ao stepper.
+export interface StepperProps {
+  steps: number;
+  currentStep: number;
+  isActive: boolean;
+}

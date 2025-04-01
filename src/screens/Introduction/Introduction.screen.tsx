@@ -1,11 +1,11 @@
 import React from 'react';
-import { Button, Image, SafeAreaView } from '@/src/components';
+import { Button, Image, SafeAreaView, Stepper } from '@/src/components';
 import { IntroductionViewProps } from './Introduction.interface';
 import { Description, TextContainer, Title, ImageContainer } from './Introduction.styles';
 
 // TODO: Completar a implementação da tela de introdução
 const Introduction = (Props: IntroductionViewProps) => {
-  const { image, description, onPress, title, step } = Props;
+  const { image, description, onPress, title, step, totalSteps } = Props;
   return (
     <SafeAreaView>
       <ImageContainer>
@@ -18,8 +18,9 @@ const Introduction = (Props: IntroductionViewProps) => {
         </TextContainer>
       )}
       <Button onPress={onPress} variant="primary">
-        {step === 4 ? 'Criar conta' : 'Continuar'}
+        {step === 3 ? 'Criar conta' : 'Continuar'}
       </Button>
+      <Stepper steps={totalSteps} currentStep={step} isActive={true} />
     </SafeAreaView>
   );
 };

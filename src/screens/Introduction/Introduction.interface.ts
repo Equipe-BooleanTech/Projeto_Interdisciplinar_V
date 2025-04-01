@@ -4,4 +4,5 @@ export interface IntroductionViewProps {
   description: string;
   onPress: () => void;
   step: number;
+  totalSteps: number;
 }
