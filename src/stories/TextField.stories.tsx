@@ -1,23 +1,70 @@
-import TextField from '../components/TextField/TextField';
+import { TextField } from '../components';
 
 export default {
   title: 'TextField',
   component: TextField,
-  tags: ['autodocs'],
   argTypes: {
-    disabled: {
-      control: 'boolean',
-      description: 'Disabled state',
-    },
-    color: {
-      control: 'color',
-      description: 'Custom button color',
-    },
-    hasIcon: {
-      control: 'boolean',
-      description: 'Whether to display an icon',
-    },
+    error: { control: 'text' },
+    disabled: { control: 'boolean' },
+    placeholder: { control: 'text' },
+    value: { control: 'text' },
+  },
+};
+export const Default = {
+  args: {
+    variant: 'default',
+    label: 'Nome',
+    placeholder: 'Digite seu nome',
+    type: 'text',
+    disabled: false,
   },
 };
 
-export const Default = {};
+export const Disabled = {
+  args: {
+    variant: 'default',
+    disabled: true,
+    label: 'Nome',
+    placeholder: 'Digite seu nome',
+    type: 'text',
+  },
+};
+
+export const Error = {
+  args: {
+    error: {
+      show: true,
+      type: 'error',
+      message: 'Campo obrigatório',
+    },
+    label: 'Nome',
+    placeholder: 'Digite seu nome',
+    type: 'text',
+  },
+};
+
+export const HelperText = {
+  args: {
+    helperText: 'Campo obrigatório',
+    label: 'Nome',
+    placeholder: 'Digite seu nome',
+    type: 'text',
+  },
+};
+export const Multiline = {
+  args: {
+    multiline: true,
+    numberOfLines: 4,
+    label: 'Nome',
+    placeholder: 'Digite seu nome',
+    type: 'text',
+  },
+};
+
+export const Password = {
+  args: {
+    label: 'Senha',
+    placeholder: 'Digite sua senha',
+    type: 'password',
+  },
+};

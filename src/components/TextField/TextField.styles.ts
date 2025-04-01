@@ -2,23 +2,23 @@ import { theme } from '@/theme';
 import styled from 'styled-components/native';
 import { TextFieldProps, TextProps } from './TextField.interface';
 
-export const StyledTextFieldContainer = styled.View`
+export const StyledTextFieldContainer = styled.View<Partial<TextFieldProps>>`
   display: flex;
   flex-direction: column;
   gap: 4px;
   width: 100%;
-  border-color: ${(props: Partial<TextFieldProps>) =>
-    props.error?.show ? theme.colors.danger : theme.colors.green};
   border-radius: 8px;
-  border-width: 1px;
+  border: 1px solid #999;
   background-color: ${(props: Partial<TextFieldProps>) =>
     props.disabled ? theme.colors.card : '#ffffff'};
   opacity: ${(props: Partial<TextFieldProps>) => (props.disabled ? 0.5 : 1)};
 `;
 
-export const StyledLabel = styled.Text`
+export const StyledLabel = styled.Text<Partial<TextFieldProps>>`
   font-size: 14px;
-  color: ${theme.colors.text};
+  color: ${(props: Partial<TextFieldProps>) =>
+    props.error?.type === 'error' ? theme.colors.danger : theme.colors.green};
+  margin-bottom: 4px;
   font-weight: 600;
 `;
 
@@ -26,7 +26,16 @@ export const StyledTextInput = styled.TextInput<Partial<TextFieldProps>>`
   font-size: 16px;
   color: ${theme.colors.stroke};
   padding: 12px;
-  outline: none !important;
+  outline-color: ${(props: Partial<TextFieldProps>) =>
+    props.error?.type === 'error' ? theme.colors.danger : theme.colors.green};
+  border-radius: 8px;
+  background-color: ${(props: Partial<TextFieldProps>) =>
+    props.disabled ? theme.colors.card : '#ffffff'};
+  opacity: ${(props: Partial<TextFieldProps>) => (props.disabled ? 0.5 : 1)};
+
+  &::placeholder {
+    color: #fff;
+  }
 `;
 
 export const StyledErrorText = styled.Text`

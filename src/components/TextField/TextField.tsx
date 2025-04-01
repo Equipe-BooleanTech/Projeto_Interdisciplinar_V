@@ -22,26 +22,28 @@ const TextField = (Props: TextFieldProps) => {
   } = Props;
 
   return (
-    <StyledTextFieldContainer
-      error={error}
-      disabled={disabled}
-      required={required}
-      multiline={multiline}
-      type={type}
-      value={value}
-      {...rest}
-    >
-      {label && <StyledLabel>{label}</StyledLabel>}
-      <StyledTextInput
-        placeholder={placeholder}
+    <>
+      {label && <StyledLabel error={error}>{label}</StyledLabel>}
+      <StyledTextFieldContainer
         error={error}
         disabled={disabled}
+        required={required}
         multiline={multiline}
+        type={type}
+        value={value}
         {...rest}
-      />
+      >
+        <StyledTextInput
+          placeholder={placeholder}
+          error={error}
+          disabled={disabled}
+          multiline={multiline}
+          {...rest}
+        />
+      </StyledTextFieldContainer>
       {error?.show && <StyledErrorText>{error.message}</StyledErrorText>}
       {helperText && <StyledHelperText>{helperText}</StyledHelperText>}
-    </StyledTextFieldContainer>
+    </>
   );
 };
 
