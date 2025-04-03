@@ -50,7 +50,7 @@ const RegisterScreen = () => {
         </View>
 
         <View style={styles.formContainer}>
-          <TouchableOpacity onPress={() => router.replace('/')}>
+          <TouchableOpacity onPress={() => router.replace('/Home')}>
             <Text style={{color: '#4D86FF', marginBottom: 10}}>Voltar</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Cadastre-se</Text>
