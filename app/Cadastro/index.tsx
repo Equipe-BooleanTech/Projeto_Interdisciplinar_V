@@ -1,15 +1,45 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
-import { Link } from 'expo-router';
+import { View, Text, ScrollView, Alert } from 'react-native';
+import { Link, router } from 'expo-router';
 import { styles } from './_layout';
 import images from '../../assets';
 import { Button, Image, TextField } from '@/src/components';
+import { register } from '@/src/services/auth'; // Importa a função de registro
 
 const RegisterScreen = () => {
+  const [loading, setLoading] = useState(false);
 
-  const [data, setData] = useState('');
-  const [telefone, setTelefone] = useState('');
-  const toRegister = () => {};
+  const [form, setForm] = useState({
+    name: '',
+    lastName: '',
+    email: '',
+    username: '',
+    birthdate: '',
+    phone: '',
+    password: '',
+  });
+
+  const handleChange = (field: string, value: string) => {
+    setForm({ ...form, [field]: value });
+  };
+
+  const handleRegister = async () => {
+    if (!form.name || !form.email || !form.birthdate || !form.phone || !form.password || !form.lastName || !form.username) {
+      Alert.alert('Erro', 'Todos os campos são obrigatórios.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await register(form); // Chama a API de registro
+      Alert.alert('Sucesso', 'Conta criada com sucesso!');
+      router.push('/Login'); // Redireciona para login
+    } catch (error) {
+      Alert.alert('Erro', 'Falha ao criar conta. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -27,21 +57,31 @@ const RegisterScreen = () => {
           </Link>
         </Text>
 
-        <Text style={styles.titleInput}> Nome Completo </Text>
-        <TextField label="" labelAlign="left" placeholder="Digite seu nome..." />
+        <Text style={styles.titleInput}> Nome </Text>
+        <TextField placeholder="Digite seu primeiro nome..." value={form.name} onChangeText={(value) => handleChange('name', value)} />
+
+        <Text style={styles.titleInput}> Sobrenome </Text>
+        <TextField placeholder="Digite seu sobrenome..." value={form.lastName} onChangeText={(value) => handleChange('lastName', value)} />
+
+        <Text style={styles.titleInput}> Usuario </Text>
+        <TextField placeholder="Digite seu nome de usuario..." value={form.username} onChangeText={(value) => handleChange('username', value)} />
+          
         <Text style={styles.titleInput}> Email </Text>
-        <TextField label="" labelAlign="left" placeholder="Digite um e-mail válido..." />
+        <TextField placeholder="Digite um e-mail válido..." value={form.email} onChangeText={(value) => handleChange('email', value)} />
+
         <Text style={styles.titleInput}> Data de Nascimento </Text>
-        <TextField label="" labelAlign="left" placeholder="DD/MM/AAAA" type='date' value={data} onChangeText={setData}/>
+        <TextField placeholder="DD/MM/AAAA" type='date' value={form.birthdate} onChangeText={(value) => handleChange('birthdate', value)} />
+
         <Text style={styles.titleInput}> Número de Celular </Text>
-        <TextField label="" labelAlign="left" placeholder="Digite seu telefone..." type='phone' value={telefone} onChangeText={setTelefone} />
+        <TextField placeholder="Digite seu telefone..." type='phone' value={form.phone} onChangeText={(value) => handleChange('phone', value)} />
+
         <Text style={styles.titleInput}> Crie uma senha </Text>
-        <TextField label="" labelAlign="left" placeholder="Digite sua senha..." type='password' />
+        <TextField placeholder="Digite sua senha..." type='password' value={form.password} onChangeText={(value) => handleChange('password', value)} />
 
         <Text style={styles.titleInput}> </Text>
 
-        <Button variant="primary" onPress={toRegister} full>
-          Cadastrar
+        <Button variant="primary" onPress={handleRegister} full disabled={loading}>
+          {loading ? 'Cadastrando...' : 'Cadastrar'}
         </Button>
       </View>
     </ScrollView>

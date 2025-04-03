@@ -32,6 +32,13 @@ const LoginScreen = () => {
           </Link>
         </Text>
 
+        <Text style={styles.subtitle}>
+          Registro:{' '}
+          <Link style={styles.signupText} href="/CadastroVeiculo">
+            Registrar veículo.
+          </Link>
+        </Text>
+
         <Text style={styles.titleInput}> Email </Text>
         <TextField label="" labelAlign="left" placeholder="Digite um e-mail válido..." />
         <Text style={styles.titleInput}> Senha </Text>
