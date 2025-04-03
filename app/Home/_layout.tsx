@@ -8,9 +8,9 @@ export default function Layout() {
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#6A4CFF',
+        backgroundColor: '#454F2C',
         alignItems: 'center',
-        padding: 20,
+        justifyContent: 'center',
     },
     iconContainer: {
         marginTop: 0,
@@ -45,7 +45,7 @@ export const styles = StyleSheet.create({
         marginBottom: 10,
     },
     signupText: {
-        color: '#4D86FF',
+        color: '#454F2C',
         fontWeight: 'bold',
     },
     input: {
@@ -83,7 +83,7 @@ export const styles = StyleSheet.create({
         fontSize: 16,
     },
     loginButton: {
-        backgroundColor: '#4D86FF',
+        backgroundColor: '#454F2C',
         width: '100%',
         height: 50,
         borderRadius: 10,
@@ -125,11 +125,11 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: '#34B7F1',
+        borderColor: '#454F2C',
     },
     phoneButtonText: {
         fontSize: 16,
-        color: '#34B7F1',
+        color: '#454F2C',
         fontWeight: 'bold',
     },
 
