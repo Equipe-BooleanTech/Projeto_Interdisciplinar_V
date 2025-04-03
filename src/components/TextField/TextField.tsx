@@ -10,6 +10,7 @@ import {
 const TextField = (Props: TextFieldProps) => {
   const {
     label,
+    labelAlign = 'left',
     placeholder,
     error,
     helperText,
@@ -27,6 +28,7 @@ const TextField = (Props: TextFieldProps) => {
       <StyledTextFieldContainer
         error={error}
         disabled={disabled}
+        labelAlign={labelAlign}
         required={required}
         multiline={multiline}
         type={type}

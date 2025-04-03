@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { styles } from './_layout';
 import { Link } from 'expo-router';
 import images from '../../assets';
-// Sin componentes separados! No olvidar separar los componentes!
+import { Image } from '@/src/components';
+
 const App = () => {
   const [isChecked, setIsChecked] = useState(false); // checkbox (necesita mejores ajustes)
 
@@ -11,11 +12,10 @@ const App = () => {
     setIsChecked(!isChecked);
   };
 
-  const logo = images.car;
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.iconContainer}>
-        <Image source={logo} style={styles.icon} />
+              <Image svg={images.car} imgWidth={100} imgHeight={100} viewBox="0 0 100 100" />
       </View>
 
       <View style={styles.formContainer}>

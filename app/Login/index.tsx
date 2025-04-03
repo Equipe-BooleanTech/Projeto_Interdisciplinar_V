@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { styles } from './_layout';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Link } from 'expo-router';
+import { styles } from './_layout';
 import images from '../../assets';
 
-// Sin componentes separados! No olvidar separar los componentes!
-const App = () => {
+import { Button, Image, TextField } from '@/src/components';
+
+const LoginScreen = () => {
   const [isChecked, setIsChecked] = useState(false); // checkbox (necesita mejores ajustes)
 
   const toggleCheckbox = () => {
     setIsChecked(!isChecked);
   };
 
-  const logo = images.car;
+  const toLogin = () => {};
+  const toGoogleLogin = () => {};
+  const toPhoneLogin = () => {};
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.iconContainer}>
-        <Image source={logo} style={styles.icon} />
+        <Image svg={images.car} imgWidth={100} imgHeight={100} viewBox="0 0 100 100" />
       </View>
 
       <View style={styles.formContainer}>
@@ -30,17 +33,14 @@ const App = () => {
           </Link>
         </Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Digite um e-mail válido..."
-          placeholderTextColor="#a1a1a1"
-        />
-
-        <TextInput
-          style={styles.input}
+        {/* <Text style={styles.titleInput}> Email </Text> */}
+        <TextField label="Email" labelAlign="center" placeholder="Digite um e-mail válido..." />
+        {/* <Text style={styles.titleInput}> Senha </Text> */}
+        <TextField
+          label="Senha"
+          labelAlign="left"
           placeholder="Digite sua senha..."
-          placeholderTextColor="#a1a1a1"
-          secureTextEntry
+          type="password"
         />
 
         <View style={styles.checkboxContainer}>
@@ -53,24 +53,22 @@ const App = () => {
           <Text style={styles.checkboxLabel}>Lembrar credenciais?</Text>
         </View>
 
-        <TouchableOpacity style={styles.loginButton}>
-          <Text style={styles.loginButtonText}>Entrar</Text>
-        </TouchableOpacity>
+        <Button variant="primary" onPress={toLogin}>
+          Entrar
+        </Button>
 
         <Text style={styles.orText}>OU</Text>
 
-        <TouchableOpacity style={styles.googleButton}>
-          {/* necesita imagen de google icon */}
-          <Text style={styles.googleButtonText}>Continuar com o Google</Text>
-        </TouchableOpacity>
+        <Button variant="primary" onPress={toGoogleLogin}>
+          Continuar com o Google
+        </Button>
 
-        <TouchableOpacity style={styles.phoneButton}>
-          {/* necesita imagen de smartphone */}
-          <Text style={styles.phoneButtonText}>Continuar com telefone</Text>
-        </TouchableOpacity>
+        <Button variant="primary" onPress={toPhoneLogin}>
+          Continuar com telefone
+        </Button>
       </View>
     </ScrollView>
   );
 };
 
-export default App;
+export default LoginScreen;

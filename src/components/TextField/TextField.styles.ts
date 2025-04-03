@@ -18,8 +18,10 @@ export const StyledLabel = styled.Text<Partial<TextFieldProps>>`
   font-size: 14px;
   color: ${(props: Partial<TextFieldProps>) =>
     props.error?.type === 'error' ? theme.colors.danger : theme.colors.green};
+  margin-top: 4px;
   margin-bottom: 4px;
   font-weight: 600;
+  display: flex;
 `;
 
 export const StyledTextInput = styled.TextInput<Partial<TextFieldProps>>`

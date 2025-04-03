@@ -2,7 +2,7 @@
 // Imagens
 // --------------------------
 
-import carIcon from './images/car-icon.png';
+import carIcon from './images/car-icon.svg';
 import Unsplash1 from './images/Unsplash_01.svg';
 import Unsplash2 from './images/Unsplash_02.svg';
 import Unsplash3 from './images/Unsplash_03.svg';

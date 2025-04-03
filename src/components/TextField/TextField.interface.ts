@@ -2,6 +2,7 @@ import { TextInputProps } from 'react-native';
 
 export interface TextFieldProps extends TextInputProps {
   label?: string;
+  labelAlign?: 'left' | 'center' | 'right';
   placeholder?: string;
   error?: {
     message: string;

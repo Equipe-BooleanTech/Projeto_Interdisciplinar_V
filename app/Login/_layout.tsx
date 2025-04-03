@@ -8,7 +8,7 @@ export default function Layout() {
 export const styles = StyleSheet.create({
   container: {
     // flex: 1,
-    backgroundColor: '#6A4CFF',
+    backgroundColor: '#DFDDD1',
     alignItems: 'center',
     padding: 20,
   },
@@ -44,6 +44,12 @@ export const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 10,
   },
+  titleInput: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 10,
+    marginEnd: 'auto',
+  },
   signupText: {
     color: '#4D86FF',
     fontWeight: 'bold',
@@ -68,6 +74,7 @@ export const styles = StyleSheet.create({
     borderColor: '#666',
     borderRadius: 5,
     marginRight: 10,
+    marginTop: 20,
   },
   checkboxChecked: {
     backgroundColor: '#fff',
@@ -80,6 +87,7 @@ export const styles = StyleSheet.create({
   checkboxLabel: {
     color: '#666',
     fontSize: 16,
+    marginTop: 20,
   },
   loginButton: {
     backgroundColor: '#4D86FF',
