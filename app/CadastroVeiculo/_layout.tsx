@@ -8,7 +8,8 @@ export default function Layout() {
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#454F2C',
+    flex: 1,
+    backgroundColor: '#6A4CFF',
     alignItems: 'center',
     padding: 20,
   },
@@ -45,10 +46,8 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   signupText: {
-    color: '#454F2C',
+    color: '#4D86FF',
     fontWeight: 'bold',
-    display: 'flex',
-    textAlign: 'center'
   },
   input: {
     width: '100%',
@@ -85,7 +84,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
   },
   loginButton: {
-    backgroundColor: '#454F2C',
+    backgroundColor: '#4D86FF',
     width: '100%',
     height: 50,
     borderRadius: 10,
@@ -116,7 +115,7 @@ export const styles = StyleSheet.create({
   },
   googleButtonText: {
     fontSize: 16,
-    color: '#454F2C',
+    color: '#DB4437',
     fontWeight: 'bold',
   },
   phoneButton: {
@@ -127,11 +126,11 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#454F2C',
+    borderColor: '#34B7F1',
   },
   phoneButtonText: {
     fontSize: 16,
-    color: '#454F2C',
+    color: '#34B7F1',
     fontWeight: 'bold',
   },
 
