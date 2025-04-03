@@ -50,14 +50,16 @@ const RegisterScreen = () => {
         </View>
 
         <View style={styles.formContainer}>
-          <Link href="/">Voltar</Link>
-          <Text style={styles.title}>Cadastre-se</Text>
+          <TouchableOpacity onPress={() => router.replace('/')}>
+            <Text style={{color: '#4D86FF', marginBottom: 10}}>Voltar</Text>
+        </TouchableOpacity>
+        <Text style={styles.title}>Cadastre-se</Text>
 
           <Text style={styles.subtitle}>
             Já possui uma conta?{' '}
-            <Link style={styles.signupText} href="/Login">
-              Faça o login.
-            </Link>
+            <TouchableOpacity onPress={() => router.replace('/Login')}>
+                  <Text style={styles.signupText}>Faça o Login</Text>
+            </TouchableOpacity>
           </Text>
 
           <View style={styles.field}>
