@@ -5,12 +5,22 @@ interface ButtonProps {
   variant: 'primary' | 'secondary' | 'social' | 'danger';
   disabled?: boolean;
   color?: string;
+  border?: {
+    width: number;
+    color: string;
+  };
+  full?: boolean;
 }
 
 export const StyledButton = styled.TouchableOpacity<{
   variant: 'primary' | 'secondary' | 'social' | 'danger';
   disabled?: boolean;
   color?: string;
+  border?: {
+    width: number;
+    color: string;
+  };
+  full?: boolean;
 }>`
   background-color: ${(props: ButtonProps) => {
     if (props.color) return props.color;
@@ -35,10 +45,15 @@ export const StyledButton = styled.TouchableOpacity<{
   justify-content: center;
   opacity: ${(props: ButtonProps) => (props.disabled ? 0.5 : 1)};
   flex-direction: row;
+  width: ${(props: ButtonProps) => (props.full ? '100%' : 'auto')};
+
+  border-width: ${(props: ButtonProps) => (props.border ? props.border.width : 0)}px;
+  border-color: ${(props: ButtonProps) => (props.border ? props.border.color : 'transparent')};
 `;
 
 interface ButtonTextProps {
   variant?: 'primary' | 'secondary' | 'social' | 'danger';
+  spaceImage?: boolean;
 }
 
 export const ButtonText = styled.Text<ButtonTextProps>`
@@ -50,7 +65,8 @@ export const ButtonText = styled.Text<ButtonTextProps>`
         return theme.colors.text;
     }
   }};
-  font-size: ${theme.font.size.h3};
-  font-weight: ${theme.font.weight.h3};
-  margin-left: 8px;
+  font-size: ${theme.font.size.p};
+  font-weight: ${theme.font.weight.p};
+
+  margin-left: ${(props: ButtonTextProps) => (props.spaceImage ? 10 : 0)}px;
 `;

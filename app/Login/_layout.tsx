@@ -48,6 +48,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     marginTop: 10,
+    marginBottom: 5,
     marginEnd: 'auto',
   },
   signupText: {
@@ -66,6 +67,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    marginEnd: 'auto',
   },
   checkbox: {
     width: 20,
@@ -75,6 +77,7 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 10,
     marginTop: 20,
+    marginEnd: 'auto'
   },
   checkboxChecked: {
     backgroundColor: '#fff',
@@ -106,7 +109,8 @@ export const styles = StyleSheet.create({
   orText: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 15,
+    marginTop: 10,
+    marginBottom: 10,
   },
   googleButton: {
     backgroundColor: '#fff',

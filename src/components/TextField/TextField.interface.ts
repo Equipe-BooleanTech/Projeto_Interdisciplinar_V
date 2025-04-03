@@ -13,7 +13,7 @@ export interface TextFieldProps extends TextInputProps {
   disabled?: boolean;
   required?: boolean;
   multiline?: boolean;
-  type?: 'text' | 'password' | 'email' | 'number' | 'select';
+  type?: 'text' | 'password' | 'email' | 'number' | 'select' | 'date' | 'phone';
   value?: string;
   onChangeText?: (text: string) => void;
   icon?: {
