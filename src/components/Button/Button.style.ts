@@ -1,17 +1,8 @@
 import styled from 'styled-components/native';
 import { theme } from '@/theme';
+import { ButtonProps } from './Button.interface';
 
-interface ButtonProps {
-  variant: 'primary' | 'secondary' | 'social' | 'danger';
-  disabled?: boolean;
-  color?: string;
-}
-
-export const StyledButton = styled.TouchableOpacity<{
-  variant: 'primary' | 'secondary' | 'social' | 'danger';
-  disabled?: boolean;
-  color?: string;
-}>`
+export const StyledButton = styled.TouchableOpacity<ButtonProps>`
   background-color: ${(props: ButtonProps) => {
     if (props.color) return props.color;
 
@@ -35,13 +26,13 @@ export const StyledButton = styled.TouchableOpacity<{
   justify-content: center;
   opacity: ${(props: ButtonProps) => (props.disabled ? 0.5 : 1)};
   flex-direction: row;
+  width: ${(props: ButtonProps) => (props.full ? '100%' : 'auto')};
+
+  border-width: ${(props: ButtonProps) => (props.border ? props.border.width : 0)}px;
+  border-color: ${(props: ButtonProps) => (props.border ? props.border.color : 'transparent')};
 `;
 
-interface ButtonTextProps {
-  variant?: 'primary' | 'secondary' | 'social' | 'danger';
-}
-
-export const ButtonText = styled.Text<ButtonTextProps>`
+export const ButtonText = styled.Text<Partial<ButtonProps>>`
   color: ${(props: ButtonProps) => {
     switch (props.variant) {
       case 'social':
@@ -50,7 +41,8 @@ export const ButtonText = styled.Text<ButtonTextProps>`
         return theme.colors.text;
     }
   }};
-  font-size: ${theme.font.size.h3};
-  font-weight: ${theme.font.weight.h3};
-  margin-left: 8px;
+  font-size: ${theme.font.size.p};
+  font-weight: ${theme.font.weight.pb};
+
+  margin-left: ${(props: Partial<ButtonProps>) => (props.spaceImage ? 10 : 0)}px;
 `;

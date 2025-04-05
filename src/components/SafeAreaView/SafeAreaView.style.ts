@@ -8,7 +8,6 @@ export const StyledSafeAreaView = styled.SafeAreaView`
 `;
 
 export const SafeAreaViewContent = styled.View`
-  padding: 20px;
   flex: 1;
   align-items: center;
   gap: 30px;

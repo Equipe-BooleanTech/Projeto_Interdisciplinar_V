@@ -1,6 +1,7 @@
 import { theme } from '@/theme';
 import styled from 'styled-components/native';
 import { TextFieldProps, TextProps } from './TextField.interface';
+import { Picker } from '@react-native-picker/picker';
 
 export const StyledTextFieldContainer = styled.View<Partial<TextFieldProps>>`
   display: flex;
@@ -12,14 +13,22 @@ export const StyledTextFieldContainer = styled.View<Partial<TextFieldProps>>`
   background-color: ${(props: Partial<TextFieldProps>) =>
     props.disabled ? theme.colors.card : '#ffffff'};
   opacity: ${(props: Partial<TextFieldProps>) => (props.disabled ? 0.5 : 1)};
+
+  ${(props: Partial<TextFieldProps>) => props.type === 'phone' && `
+    flex-direction: row;
+    align-items: center;
+    padding: 0;
+  `}
 `;
 
 export const StyledLabel = styled.Text<Partial<TextFieldProps>>`
   font-size: 14px;
   color: ${(props: Partial<TextFieldProps>) =>
     props.error?.type === 'error' ? theme.colors.danger : theme.colors.green};
+  margin-top: 4px;
   margin-bottom: 4px;
   font-weight: 600;
+  marginEnd: 'auto';
 `;
 
 export const StyledTextInput = styled.TextInput<Partial<TextFieldProps>>`
@@ -32,7 +41,23 @@ export const StyledTextInput = styled.TextInput<Partial<TextFieldProps>>`
   background-color: ${(props: Partial<TextFieldProps>) =>
     props.disabled ? theme.colors.card : '#ffffff'};
   opacity: ${(props: Partial<TextFieldProps>) => (props.disabled ? 0.5 : 1)};
+  &::placeholder {
+    color: #fff;
+  }
+`;
 
+export const StyledPhoneInput = styled.TextInput<Partial<TextFieldProps>>`
+  font-size: 16px;
+  color: ${theme.colors.stroke};
+  padding: 12px;
+  outline-color: ${(props: Partial<TextFieldProps>) =>
+    props.error?.type === 'error' ? theme.colors.danger : theme.colors.green};
+  border-radius: 8px;
+  background-color: ${(props: Partial<TextFieldProps>) =>
+    props.disabled ? theme.colors.card : '#ffffff'};
+  opacity: ${(props: Partial<TextFieldProps>) => (props.disabled ? 0.5 : 1)};
+  border: 1px solid #999;
+  width: 100%;
   &::placeholder {
     color: #fff;
   }
@@ -58,4 +83,20 @@ export const StyledHelperText = styled.Text<{ variant: 'error' | 'warning' | 'in
   }};
   font-weight: 600;
   margin: 4px 0;
+`;
+
+export const StyledPhoneContainer = styled.View`
+  border-left-width: 1px;
+  border-left-color: #999;
+  flex-direction: row;
+  border-radius: 8px;
+  background-color: #fff;
+  padding: 0;
+  width: 100%;
+`;
+
+export const StyledPicker = styled(Picker)`
+  width: 80px;
+  border-radius: 8px;
+  margin-right: 8px;
 `;

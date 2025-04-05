@@ -13,4 +13,10 @@ export interface ButtonProps extends TouchableOpacityProps {
     component?: string | FunctionComponent<SvgProps> | ComponentClass<SvgProps, any>;
   };
   children: ReactNode;
+  border?: {
+    width: number;
+    color: string;
+  };
+  full?: boolean;
+  spaceImage?: boolean;
 }
