@@ -1,108 +1,197 @@
+import React, { useState } from 'react';
 import { TextField } from '../components';
-import { formatDate } from '../utils';
+import { View } from 'react-native';
 
 export default {
   title: 'TextField',
   component: TextField,
+  tags: ['autodocs'],
+  decorators: [(Story) => (
+    <View style={{ padding: 16, maxWidth: 400 }}>
+      <Story />
+    </View>
+  )],
   argTypes: {
-    error: { control: 'text' },
-    disabled: { control: 'boolean' },
-    placeholder: { control: 'text' },
-    value: { control: 'text' },
-    focused: { control: 'boolean' },
-    label: { control: 'text' },
-    helperText: { control: 'text' },
-    multiline: { control: 'boolean' },
-    onChangeText: { action: 'changed' },
+    onChangeText: { action: 'text changed' },
     onBlur: { action: 'blurred' },
     onFocus: { action: 'focused' },
-    onSelect: { action: 'selected' },
-    selectedOption: { control: 'text' },
-    icon: { control: 'object' },
+    onSelectionChange: { action: 'selection changed' },
     labelAlign: {
-      control: {
-        type: 'select',
-        options: ['left', 'center', 'right'],
-      },
+      control: 'select',
+      options: ['left', 'center', 'right'],
+      description: 'Label alignment',
     },
     type: {
-      control: {
-        type: 'select',
-        options: ['text', 'password', 'email', 'number', 'select', 'date', 'phone'],
-      },
+      control: 'select',
+      options: ['text', 'password', 'email', 'number', 'date', 'phone'],
+      description: 'Input type',
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Disabled state',
+    },
+    required: {
+      control: 'boolean',
+      description: 'Required field',
+    },
+    multiline: {
+      control: 'boolean',
+      description: 'Multiline input',
     },
   },
 };
 
-export const Default = {
-  args: {
-    variant: 'default',
-    label: 'Nome',
-    placeholder: 'Digite seu nome',
-    type: 'text',
-    disabled: false,
-    focused: false,
-  },
+// Basic input field
+export const Basic = () => {
+  const [value, setValue] = useState('');
+  return (
+    <TextField
+      placeholder="Type something here..."
+      value={value}
+      onChangeText={setValue}
+    />
+  );
 };
 
-export const Disabled = {
-  args: {
-    variant: 'default',
-    disabled: true,
-    label: 'Nome',
-    placeholder: 'Digite seu nome',
-    type: 'text',
-  },
+// Input with label
+export const WithLabel = () => {
+  const [value, setValue] = useState('');
+  return (
+    <TextField
+      label="Username"
+      placeholder="Enter your username"
+      value={value}
+      onChangeText={setValue}
+    />
+  );
 };
 
-export const Error = {
-  args: {
-    error: {
-      show: true,
-      type: 'error',
-      message: 'Campo obrigatório',
-    },
-    label: 'Nome',
-    placeholder: 'Digite seu nome',
-    type: 'text',
-    focused: true,
-  },
+// Input with error
+export const WithError = () => {
+  const [value, setValue] = useState('');
+  return (
+    <TextField
+      label="Email"
+      placeholder="Enter your email"
+      value={value}
+      onChangeText={setValue}
+      error={{
+        message: 'Please enter a valid email address',
+        type: 'error',
+        show: true,
+      }}
+    />
+  );
 };
 
-export const HelperText = {
-  args: {
-    helperText: 'Campo obrigatório',
-    label: 'Nome',
-    placeholder: 'Digite seu nome',
-    type: 'text',
-  },
+// Disabled input
+export const Disabled = () => {
+  return (
+    <TextField
+      label="Disabled Field"
+      placeholder="This field is disabled"
+      disabled={true}
+      value="Cannot edit this field"
+      onChangeText={() => {}}
+    />
+  );
 };
 
-export const Multiline = {
-  args: {
-    multiline: true,
-    numberOfLines: 4,
-    label: 'Nome',
-    placeholder: 'Digite seu nome',
-    type: 'text',
-  },
+// Password input
+export const Password = () => {
+  const [value, setValue] = useState('');
+  return (
+    <TextField
+      label="Password"
+      placeholder="Enter your password"
+      type="password"
+      secureTextEntry={true}
+      value={value}
+      onChangeText={setValue}
+    />
+  );
 };
 
-export const Password = {
-  args: {
-    label: 'Senha',
-    placeholder: 'Digite sua senha',
-    type: 'password',
-  },
+// Date input with formatting
+export const DateInput = () => {
+  const [value, setValue] = useState('');
+  return (
+    <TextField
+      label="Birth Date"
+      placeholder="DD/MM/YYYY"
+      type="date"
+      value={value}
+      onChangeText={setValue}
+    />
+  );
 };
 
-export const Formatted = {
-  args: {
-    label: 'Data',
-    placeholder: 'Digite sua data',
-    type: 'date',
-    onChangeText: (text: string) => {
-      console.log(formatDate(text));
-    }
-  },
+// Phone input with country code selector
+export const PhoneInput = () => {
+  const [value, setValue] = useState('');
+  return (
+    <TextField
+      label="Phone Number"
+      type="phone"
+      selectedOption="+55"
+      value={value}
+      onChangeText={setValue}
+    />
+  );
+};
+
+// Multiline text area
+export const Multiline = () => {
+  const [value, setValue] = useState('');
+  return (
+    <TextField
+      label="Description"
+      placeholder="Write a detailed description..."
+      multiline={true}
+      numberOfLines={4}
+      style={{ height: 100 }}
+      value={value}
+      onChangeText={setValue}
+    />
+  );
+};
+
+// Input with helper text
+export const WithHelperText = () => {
+  const [value, setValue] = useState('');
+  return (
+    <TextField
+      label="Username"
+      placeholder="Enter your username"
+      helperText="Your username must be at least 4 characters"
+      value={value}
+      onChangeText={setValue}
+    />
+  );
+};
+
+// Interactive example with validation
+export const Interactive = () => {
+  const [value, setValue] = useState('');
+  const [hasError, setHasError] = useState(false);
+  
+  const validateEmail = (text) => {
+    setValue(text);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setHasError(!emailRegex.test(text) && text.length > 0);
+  };
+  
+  return (
+    <TextField
+      label="Email"
+      placeholder="Enter your email"
+      value={value}
+      onChangeText={validateEmail}
+      error={hasError ? {
+        message: 'Please enter a valid email address',
+        type: 'error',
+        show: true,
+      } : undefined}
+    />
+  );
 };

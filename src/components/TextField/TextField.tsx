@@ -1,5 +1,5 @@
 import React from 'react';
-import { DDD_OPTIONS, formatDate, formatPhone } from '@/src/utils';
+import { DDD_OPTIONS, masks } from '@/src/utils';
 import { TextFieldProps } from './TextField.interface';
 import {
   StyledErrorText,
@@ -24,13 +24,27 @@ const TextField = (Props: TextFieldProps) => {
     disabled,
     required,
     multiline,
-    type,
+    type = 'text', 
     value,
     selectedOption, 
     onSelectionChange,
+    onChangeText,
     ...rest
   } = Props;
-
+  
+  const formatter = type && type in masks ? masks[type as keyof typeof masks] : undefined;
+  const formattedValue = formatter ? formatter(value || '') : value;
+  
+  const handleTextChange = (text: string) => {
+    if (!onChangeText) return;
+    
+    if (formatter) {
+      const formatted = formatter(text);
+      onChangeText(formatted);
+    } 
+      onChangeText(text);
+  };
+    
   return (
     <>
       {label && <StyledLabel error={error}>{label}</StyledLabel>}
@@ -48,8 +62,8 @@ const TextField = (Props: TextFieldProps) => {
           <StyledPhoneInput
             placeholder="Digite o número"
             keyboardType="numeric"
-            value={formatPhone(value || '')}
-            onChangeText={(text: string) => rest.onChangeText?.(formatPhone(text))}
+            value={formattedValue}
+            onChangeText={handleTextChange}
             {...rest}
           />
         </StyledPhoneContainer>
@@ -69,15 +83,9 @@ const TextField = (Props: TextFieldProps) => {
             error={error}
             disabled={disabled}
             multiline={multiline}
-            value={type === 'date' ? formatDate(value || '') : value}
+            value={formattedValue}
             keyboardType={type === 'date' ? 'numeric' : 'default'}
-            onChangeText={(text: string) => {
-              if (type === 'date') {
-                rest.onChangeText?.(formatDate(text));
-              } else {
-                rest.onChangeText?.(text);
-              }
-            }}
+            onChangeText={handleTextChange}
             {...rest}
           />
         </StyledTextFieldContainer>
