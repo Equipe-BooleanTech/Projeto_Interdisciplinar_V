@@ -31,7 +31,7 @@ export const theme = {
       h1: '32px',
       h2: '20px',
       h3: '18px',
-      p: '15px',
+      p: '14px',
       pb: '12px',
     },
     weight: {

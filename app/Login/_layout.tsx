@@ -83,9 +83,11 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   checkmark: {
-    color: '#fff',
-    fontSize: 14,
+    color: '#000',
+    fontSize: 18,
     fontWeight: 'bold',
+    marginLeft: 2.5,
+    marginTop: -3,
   },
   checkboxLabel: {
     color: '#666',
