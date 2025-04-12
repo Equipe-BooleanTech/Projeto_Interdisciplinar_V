@@ -13,7 +13,6 @@ import {
 } from './TextField.styles';
 import { Picker } from '@react-native-picker/picker';
 
-
 const TextField = (Props: TextFieldProps) => {
   const {
     label,
@@ -24,27 +23,27 @@ const TextField = (Props: TextFieldProps) => {
     disabled,
     required,
     multiline,
-    type = 'text', 
+    type = 'text',
     value,
-    selectedOption, 
+    selectedOption,
     onSelectionChange,
     onChangeText,
     ...rest
   } = Props;
-  
+
   const formatter = type && type in masks ? masks[type as keyof typeof masks] : undefined;
   const formattedValue = formatter ? formatter(value || '') : value;
-  
+
   const handleTextChange = (text: string) => {
     if (!onChangeText) return;
-    
+
     if (formatter) {
       const formatted = formatter(text);
       onChangeText(formatted);
-    } 
-      onChangeText(text);
+    }
+    onChangeText(text);
   };
-    
+
   return (
     <>
       {label && <StyledLabel error={error}>{label}</StyledLabel>}

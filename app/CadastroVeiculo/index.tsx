@@ -27,7 +27,14 @@ const VehicleRegisterScreen = ({ userId }: { userId: string }) => {
   };
 
   const handleRegister = async () => {
-    if (!form.plate || !form.model || !form.manufacturer || !form.year || !form.km || !form.fuelType) {
+    if (
+      !form.plate ||
+      !form.model ||
+      !form.manufacturer ||
+      !form.year ||
+      !form.km ||
+      !form.fuelType
+    ) {
       Alert.alert('Erro', 'Todos os campos obrigatórios devem ser preenchidos.');
       return;
     }
@@ -47,101 +54,102 @@ const VehicleRegisterScreen = ({ userId }: { userId: string }) => {
       await createVehicle(userId, vehicleData); // Chama a API para registrar veículo
       Alert.alert('Sucesso', 'Veículo cadastrado com sucesso!');
       router.push('/Home'); // Redireciona para a tela principal
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Erro', 'Falha ao cadastrar veículo. Tente novamente.');
+    } catch (error: any) {
+      Alert.alert('Erro', error.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.iconContainer}>
-          <Image source={images.car} style={styles.icon} />
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.iconContainer}>
+        <Image source={images.car} style={styles.icon} />
+      </View>
+
+      <View style={styles.formContainer}>
+        <Link href="/">Voltar</Link>
+        <Text style={styles.title}>Cadastro de Veículo</Text>
+
+        <View style={styles.field}>
+          <Text>Placa</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite a placa..."
+            value={form.plate}
+            onChangeText={(value) => handleChange('plate', value)}
+          />
         </View>
 
-        <View style={styles.formContainer}>
-          <Link href="/">Voltar</Link>
-          <Text style={styles.title}>Cadastro de Veículo</Text>
-
-          <View style={styles.field}>
-            <Text>Placa</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Digite a placa..."
-                value={form.plate}
-                onChangeText={(value) => handleChange('plate', value)}
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text>Modelo</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Digite o modelo..."
-                value={form.model}
-                onChangeText={(value) => handleChange('model', value)}
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text>Cor</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Digite a cor..."
-                value={form.color}
-                onChangeText={(value) => handleChange('color', value)}
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text>Fabricante</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Digite o fabricante..."
-                value={form.manufacturer}
-                onChangeText={(value) => handleChange('manufacturer', value)}
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text>Ano</Text>
-            <TextInput
-                style={styles.input}
-                keyboardType="numeric"
-                placeholder="Digite o ano..."
-                value={form.year}
-                onChangeText={(value) => handleChange('year', value)}
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text>KM Atual</Text>
-            <TextInput
-                style={styles.input}
-                keyboardType="numeric"
-                placeholder="Digite a quilometragem..."
-                value={form.km}
-                onChangeText={(value) => handleChange('km', value)}
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text>Tipo de Combustível</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Digite o tipo de combustível..."
-                value={form.fuelType}
-                onChangeText={(value) => handleChange('fuelType', value)}
-            />
-          </View>
-
-          <TouchableOpacity style={styles.loginButton} onPress={handleRegister} disabled={loading}>
-            <Text style={styles.loginButtonText}>{loading ? 'Cadastrando...' : 'Cadastrar Veículo'}</Text>
-          </TouchableOpacity>
+        <View style={styles.field}>
+          <Text>Modelo</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite o modelo..."
+            value={form.model}
+            onChangeText={(value) => handleChange('model', value)}
+          />
         </View>
-      </ScrollView>
+
+        <View style={styles.field}>
+          <Text>Cor</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite a cor..."
+            value={form.color}
+            onChangeText={(value) => handleChange('color', value)}
+          />
+        </View>
+
+        <View style={styles.field}>
+          <Text>Fabricante</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite o fabricante..."
+            value={form.manufacturer}
+            onChangeText={(value) => handleChange('manufacturer', value)}
+          />
+        </View>
+
+        <View style={styles.field}>
+          <Text>Ano</Text>
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            placeholder="Digite o ano..."
+            value={form.year}
+            onChangeText={(value) => handleChange('year', value)}
+          />
+        </View>
+
+        <View style={styles.field}>
+          <Text>KM Atual</Text>
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            placeholder="Digite a quilometragem..."
+            value={form.km}
+            onChangeText={(value) => handleChange('km', value)}
+          />
+        </View>
+
+        <View style={styles.field}>
+          <Text>Tipo de Combustível</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite o tipo de combustível..."
+            value={form.fuelType}
+            onChangeText={(value) => handleChange('fuelType', value)}
+          />
+        </View>
+
+        <TouchableOpacity style={styles.loginButton} onPress={handleRegister} disabled={loading}>
+          <Text style={styles.loginButtonText}>
+            {loading ? 'Cadastrando...' : 'Cadastrar Veículo'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
