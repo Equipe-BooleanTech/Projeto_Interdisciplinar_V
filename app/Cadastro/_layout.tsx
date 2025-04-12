@@ -3,7 +3,6 @@ import { Stack } from 'expo-router';
 
 export default function Layout() {
   return <Stack screenOptions={{ headerShown: false }} />;
-
 }
 
 export const styles = StyleSheet.create({
@@ -48,7 +47,7 @@ export const styles = StyleSheet.create({
     color: '#454F2C',
     fontWeight: 'bold',
     display: 'flex',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   input: {
     width: '100%',

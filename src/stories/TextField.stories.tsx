@@ -6,11 +6,13 @@ export default {
   title: 'TextField',
   component: TextField,
   tags: ['autodocs'],
-  decorators: [(Story) => (
-    <View style={{ padding: 16, maxWidth: 400 }}>
-      <Story />
-    </View>
-  )],
+  decorators: [
+    (Story: any) => (
+      <View style={{ padding: 16, maxWidth: 400 }}>
+        <Story />
+      </View>
+    ),
+  ],
   argTypes: {
     onChangeText: { action: 'text changed' },
     onBlur: { action: 'blurred' },
@@ -44,13 +46,7 @@ export default {
 // Basic input field
 export const Basic = () => {
   const [value, setValue] = useState('');
-  return (
-    <TextField
-      placeholder="Type something here..."
-      value={value}
-      onChangeText={setValue}
-    />
-  );
+  return <TextField placeholder="Type something here..." value={value} onChangeText={setValue} />;
 };
 
 // Input with label
@@ -174,24 +170,28 @@ export const WithHelperText = () => {
 export const Interactive = () => {
   const [value, setValue] = useState('');
   const [hasError, setHasError] = useState(false);
-  
-  const validateEmail = (text) => {
+
+  const validateEmail = (text: string) => {
     setValue(text);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setHasError(!emailRegex.test(text) && text.length > 0);
   };
-  
+
   return (
     <TextField
       label="Email"
       placeholder="Enter your email"
       value={value}
       onChangeText={validateEmail}
-      error={hasError ? {
-        message: 'Please enter a valid email address',
-        type: 'error',
-        show: true,
-      } : undefined}
+      error={
+        hasError
+          ? {
+              message: 'Please enter a valid email address',
+              type: 'error',
+              show: true,
+            }
+          : undefined
+      }
     />
   );
 };

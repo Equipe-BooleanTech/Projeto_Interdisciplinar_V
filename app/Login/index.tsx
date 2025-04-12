@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { styles } from './_layout';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 import images from '../../assets';
 
 // Sin componentes separados! No olvidar separar los componentes!
@@ -26,7 +26,7 @@ const App = () => {
         <Text style={styles.subtitle}>
           Não tem uma conta?{' '}
           <TouchableOpacity onPress={() => router.replace('/Cadastro')}>
-                <Text style={styles.signupText}>Cadastre-se</Text>
+            <Text style={styles.signupText}>Cadastre-se</Text>
           </TouchableOpacity>
         </Text>
 

@@ -7,3 +7,4 @@ export { default as SafeAreaView } from './SafeAreaView/SafeAreaView';
 export { default as Image } from './Image/Image';
 export { default as TextField } from './TextField/TextField';
 export { default as Stepper } from './Stepper/Stepper';
+export { default as Chart } from './Chart/Chart';
