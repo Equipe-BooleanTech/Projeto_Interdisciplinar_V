@@ -145,4 +145,32 @@ export const styles = StyleSheet.create({
     color: '#34B7F1',
     fontWeight: 'bold',
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  modalBackground: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  modalBox: {
+    backgroundColor: 'white',
+    paddingVertical: 30,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    elevation: 5,
+    alignItems: 'center',
+    width: '70%',
+    zIndex: 2,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingBottom: 10,
+  },
+  modalMessage: {
+    fontSize: 15,
+  },
 });
