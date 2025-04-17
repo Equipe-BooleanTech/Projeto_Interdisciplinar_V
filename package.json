@@ -47,7 +47,7 @@
     "axios-hooks": "^5.1.1",
     "axios-jwt": "^4.0.3",
     "expo": "~52.0.37",
-    "expo-app-loading": "^2.1.1",
+    "expo-app-loading": "^1.1.2",
     "expo-blur": "~14.0.3",
     "expo-constants": "~17.0.7",
     "expo-font": "~13.0.4",

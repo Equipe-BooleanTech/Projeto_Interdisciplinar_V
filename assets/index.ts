@@ -11,7 +11,7 @@ import GoogleIcon from './images/Google_logo.svg';
 import MoneyIcon from './images/money.svg';
 import MapIcon from './images/map.svg';
 import ScrewdriverIcon from './images/screwdriver.svg';
-import GroupIcon from './images/Group.svg';
+import GroupIcon from './images/group.svg';
 const images = {
   car: carIcon,
   unsplash_1: Unsplash1,

@@ -15,7 +15,7 @@ export interface TextFieldProps extends TextInputProps {
   multiline?: boolean;
   type?: 'text' | 'password' | 'email' | 'number' | 'select' | 'date' | 'phone';
   value?: string;
-  onChangeText?: (text: string) => void;
+  onChangeTextString?: (text: string) => void;
   onBlur?: () => void;
   focused?: boolean;
   onFocus?: () => void;

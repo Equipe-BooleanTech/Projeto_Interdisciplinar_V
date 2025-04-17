@@ -9,9 +9,6 @@ import {
   StyledPicker,
   StyledTextFieldContainer,
   StyledTextInput,
-  StyledPhoneContainer,
-  StyledPicker,
-  StyledPhoneInput
 } from './TextField.styles';
 import { Picker } from '@react-native-picker/picker';
 
@@ -57,19 +54,19 @@ const TextField = (Props: TextFieldProps) => {
 
       {type === 'phone' ? (
         <StyledPhoneContainer>
-          <StyledPicker
+          {/* <StyledPicker
             selectedValue={selectedDDD}
             onValueChange={(itemValue: any) => setSelectedDDD(itemValue)}
           >
             {DDD_OPTIONS.map((ddd) => (
               <Picker.Item key={ddd} label={ddd} value={ddd} />
             ))}
-          </StyledPicker>
+          </StyledPicker> */}
           <StyledPhoneInput
             placeholder="Digite o número"
             keyboardType="numeric"
             value={formatPhone(value || '')}
-            onChangeText={(text: string) => rest.onChangeText?.(formatPhone(text))}
+            onChangeText={(text: string) => rest.onChangeTextString?.(formatPhone(text))}
             {...rest}
           />
         </StyledPhoneContainer>
@@ -93,9 +90,9 @@ const TextField = (Props: TextFieldProps) => {
             keyboardType={type === 'date' ? 'numeric' : 'default'}
             onChangeText={(text: string) => {
               if (type === 'date') {
-                rest.onChangeText?.(formatDate(text));
+                rest.onChangeTextString?.(formatDate(text));
               } else {
-                rest.onChangeText?.(text);
+                rest.onChangeTextString?.(text);
               }
             }}
             {...rest}

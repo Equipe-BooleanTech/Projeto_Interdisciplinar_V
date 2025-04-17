@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Alert } from 'react-native';
 import { styles } from './_layout';
 import { Link, router } from 'expo-router';
 import { Image } from '@/src/components';
@@ -57,94 +57,96 @@ const VehicleRegisterScreen = ({ userId }: { userId: string }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.iconContainer}>
-        <Image svg={images.car} imgWidth={100} imgHeight={100} viewBox="0 0 100 100" />
-      </View>
-
-      <View style={styles.formContainer}>
-        <View style={styles.backContainer}>
-          <Link href="/" style={styles.back}>Voltar</Link>
-        </View>
-        <Text style={styles.title}>Cadastro de Veículo</Text>
-
-        <View style={styles.field}>
-          <Text>Placa</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite a placa..."
-            value={form.plate}
-            onChangeText={(value) => handleChange('plate', value)}
-          />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.iconContainer}>
+          <Image svg={images.car} imgWidth={100} imgHeight={100} viewBox="0 0 100 100" />
         </View>
 
-        <View style={styles.field}>
-          <Text>Modelo</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite o modelo..."
-            value={form.model}
-            onChangeText={(value) => handleChange('model', value)}
-          />
-        </View>
+        <View style={styles.formContainer}>
+          <View style={styles.backContainer}>
+            <Link href="/" style={styles.back}>Voltar</Link>
+          </View>
+          <Text style={styles.title}>Cadastro de Veículo</Text>
 
-        <View style={styles.field}>
-          <Text>Cor</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite a cor..."
-            value={form.color}
-            onChangeText={(value) => handleChange('color', value)}
-          />
-        </View>
+          <View style={styles.field}>
+            <Text>Placa</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Digite a placa..."
+              value={form.plate}
+              onChangeText={(value) => handleChange('plate', value)}
+            />
+          </View>
 
-        <View style={styles.field}>
-          <Text>Fabricante</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite o fabricante..."
-            value={form.manufacturer}
-            onChangeText={(value) => handleChange('manufacturer', value)}
-          />
-        </View>
+          <View style={styles.field}>
+            <Text>Modelo</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Digite o modelo..."
+              value={form.model}
+              onChangeText={(value) => handleChange('model', value)}
+            />
+          </View>
 
-        <View style={styles.field}>
-          <Text>Ano</Text>
-          <TextInput
-            style={styles.input}
-            keyboardType="numeric"
-            placeholder="Digite o ano..."
-            value={form.year}
-            onChangeText={(value) => handleChange('year', value)}
-          />
-        </View>
+          <View style={styles.field}>
+            <Text>Cor</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Digite a cor..."
+              value={form.color}
+              onChangeText={(value) => handleChange('color', value)}
+            />
+          </View>
 
-        <View style={styles.field}>
-          <Text>KM Atual</Text>
-          <TextInput
-            style={styles.input}
-            keyboardType="numeric"
-            placeholder="Digite a quilometragem..."
-            value={form.km}
-            onChangeText={(value) => handleChange('km', value)}
-          />
-        </View>
+          <View style={styles.field}>
+            <Text>Fabricante</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Digite o fabricante..."
+              value={form.manufacturer}
+              onChangeText={(value) => handleChange('manufacturer', value)}
+            />
+          </View>
 
-        <View style={styles.field}>
-          <Text>Tipo de Combustível</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite o tipo de combustível..."
-            value={form.fuelType}
-            onChangeText={(value) => handleChange('fuelType', value)}
-          />
-        </View>
+          <View style={styles.field}>
+            <Text>Ano</Text>
+            <TextInput
+              style={styles.input}
+              keyboardType="numeric"
+              placeholder="Digite o ano..."
+              value={form.year}
+              onChangeText={(value) => handleChange('year', value)}
+            />
+          </View>
 
-        <TouchableOpacity style={styles.loginButton} onPress={handleRegister} disabled={loading}>
-          <Text style={styles.loginButtonText}>{loading ? 'Cadastrando...' : 'Cadastrar Veículo'}</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          <View style={styles.field}>
+            <Text>KM Atual</Text>
+            <TextInput
+              style={styles.input}
+              keyboardType="numeric"
+              placeholder="Digite a quilometragem..."
+              value={form.km}
+              onChangeText={(value) => handleChange('km', value)}
+            />
+          </View>
+
+          <View style={styles.field}>
+            <Text>Tipo de Combustível</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Digite o tipo de combustível..."
+              value={form.fuelType}
+              onChangeText={(value) => handleChange('fuelType', value)}
+            />
+          </View>
+
+          <TouchableOpacity style={styles.loginButton} onPress={handleRegister} disabled={loading}>
+            <Text style={styles.loginButtonText}>{loading ? 'Cadastrando...' : 'Cadastrar Veículo'}</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
