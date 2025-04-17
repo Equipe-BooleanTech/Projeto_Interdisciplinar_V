@@ -52,7 +52,7 @@ export const styles = StyleSheet.create({
     marginEnd: 'auto',
   },
   signupText: {
-    color: '#4D86FF',
+    color: '#454F2C',
     fontWeight: 'bold',
   },
   input: {
@@ -95,7 +95,7 @@ export const styles = StyleSheet.create({
     marginTop: 20,
   },
   loginButton: {
-    backgroundColor: '#4D86FF',
+    backgroundColor: '#454F2C',
     width: '100%',
     height: 50,
     borderRadius: 10,
@@ -123,11 +123,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#DB4437',
+    borderColor: '#454F2C',
   },
   googleButtonText: {
     fontSize: 16,
-    color: '#DB4437',
+    color: '#454F2C',
     fontWeight: 'bold',
   },
   phoneButton: {
@@ -138,11 +138,11 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#34B7F1',
+    borderColor: '#454F2C',
   },
   phoneButtonText: {
     fontSize: 16,
-    color: '#34B7F1',
+    color: '#454F2C',
     fontWeight: 'bold',
   },
   modalOverlay: {

@@ -12,7 +12,6 @@ const RegisterScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [modalMessage, setModalMessage] = useState('');
-
   const [form, setForm] = useState({
     name: '',
     lastName: '',
@@ -22,7 +21,6 @@ const RegisterScreen = () => {
     phone: '',
     password: '',
   });
-
   const handleChange = (field: string, value: string) => {
     setForm({ ...form, [field]: value });
   };

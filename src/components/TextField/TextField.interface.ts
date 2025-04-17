@@ -16,6 +16,11 @@ export interface TextFieldProps extends TextInputProps {
   type?: 'text' | 'password' | 'email' | 'number' | 'select' | 'date' | 'phone';
   value?: string;
   onChangeText?: (text: string) => void;
+  onBlur?: () => void;
+  focused?: boolean;
+  onFocus?: () => void;
+  onSelect?: () => void;
+  selectedOption?: string;
   icon?: {
     component: any;
     size: number;

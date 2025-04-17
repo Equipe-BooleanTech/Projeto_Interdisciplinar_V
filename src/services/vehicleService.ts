@@ -17,6 +17,7 @@ export const createVehicle = async (vehicleData: any, userId: {
 }) => {
     const response = await api.post(`/api/vehicle/create-vehicle/${userId}`, vehicleData);
     return response.data;
+
 };
 
 // 🛠 Atualizar veículo

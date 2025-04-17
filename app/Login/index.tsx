@@ -69,9 +69,9 @@ const LoginScreen = () => {
 
         <Text style={styles.subtitle}>
           Não tem uma conta?{' '}
-          <Link style={styles.signupText} href="/Cadastro">
-            Cadastre-se.
-          </Link>
+          <TouchableOpacity onPress={() => router.replace('/Cadastro')}>
+            <Text style={styles.signupText}>Cadastre-se</Text>
+          </TouchableOpacity>
         </Text>
 
         {/* <Text style={styles.subtitle}>

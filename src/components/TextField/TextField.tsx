@@ -4,6 +4,9 @@ import {
   StyledErrorText,
   StyledHelperText,
   StyledLabel,
+  StyledPhoneContainer,
+  StyledPhoneInput,
+  StyledPicker,
   StyledTextFieldContainer,
   StyledTextInput,
   StyledPhoneContainer,
@@ -38,8 +41,11 @@ const TextField = (Props: TextFieldProps) => {
     disabled,
     required,
     multiline,
-    type,
+    type = 'text',
     value,
+    selectedOption,
+    onSelectionChange,
+    onChangeText,
     ...rest
   } = Props;
 

@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import { theme } from '@/theme';
+import { ButtonProps } from './Button.interface';
 
 interface ButtonProps {
   variant: 'primary' | 'secondary' | 'social' | 'danger';
@@ -46,7 +47,6 @@ export const StyledButton = styled.TouchableOpacity<{
   opacity: ${(props: ButtonProps) => (props.disabled ? 0.5 : 1)};
   flex-direction: row;
   width: ${(props: ButtonProps) => (props.full ? '100%' : 'auto')};
-
   border-width: ${(props: ButtonProps) => (props.border ? props.border.width : 0)}px;
   border-color: ${(props: ButtonProps) => (props.border ? props.border.color : 'transparent')};
 `;
@@ -56,7 +56,7 @@ interface ButtonTextProps {
   spaceImage?: boolean;
 }
 
-export const ButtonText = styled.Text<ButtonTextProps>`
+export const ButtonText = styled.Text<Partial<ButtonProps>>`
   color: ${(props: ButtonProps) => {
     switch (props.variant) {
       case 'social':

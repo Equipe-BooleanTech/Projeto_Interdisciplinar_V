@@ -66,7 +66,6 @@ const VehicleRegisterScreen = ({ userId }: { userId: string }) => {
         <View style={styles.backContainer}>
           <Link href="/" style={styles.back}>Voltar</Link>
         </View>
-
         <Text style={styles.title}>Cadastro de Veículo</Text>
 
         <View style={styles.field}>
