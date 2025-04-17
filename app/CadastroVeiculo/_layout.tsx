@@ -7,7 +7,8 @@ export default function Layout() {
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#454F2C',
+    // flex: 1,
+    backgroundColor: '#DFDDD1',
     alignItems: 'center',
     padding: 20,
   },
@@ -32,22 +33,40 @@ export const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
   },
+  backContainer: {
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
+  back: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 10,
+    alignItems: 'flex-start',
+  },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 20,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
     color: '#666',
     marginBottom: 10,
   },
+  titleInput: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 10,
+    marginBottom: 5,
+    marginEnd: 'auto',
+  },
   signupText: {
-    color: '#454F2C',
+    color: '#4D86FF',
     fontWeight: 'bold',
-    display: 'flex',
-    textAlign: 'center',
   },
   input: {
     width: '100%',
@@ -58,10 +77,10 @@ export const styles = StyleSheet.create({
     marginBottom: 15,
   },
   checkboxContainer: {
-    display: 'flex',
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     marginBottom: 20,
+    marginEnd: 'auto',
   },
   checkbox: {
     width: 20,
@@ -70,6 +89,8 @@ export const styles = StyleSheet.create({
     borderColor: '#666',
     borderRadius: 5,
     marginRight: 10,
+    marginTop: 20,
+    marginEnd: 'auto'
   },
   checkboxChecked: {
     backgroundColor: '#fff',
@@ -82,9 +103,10 @@ export const styles = StyleSheet.create({
   checkboxLabel: {
     color: '#666',
     fontSize: 16,
+    marginTop: 20,
   },
   loginButton: {
-    backgroundColor: '#454F2C',
+    backgroundColor: '#4D86FF',
     width: '100%',
     height: 50,
     borderRadius: 10,
@@ -100,7 +122,8 @@ export const styles = StyleSheet.create({
   orText: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 15,
+    marginTop: 10,
+    marginBottom: 10,
   },
   googleButton: {
     backgroundColor: '#fff',
@@ -115,7 +138,7 @@ export const styles = StyleSheet.create({
   },
   googleButtonText: {
     fontSize: 16,
-    color: '#454F2C',
+    color: '#DB4437',
     fontWeight: 'bold',
   },
   phoneButton: {
@@ -126,18 +149,18 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#454F2C',
+    borderColor: '#34B7F1',
   },
   phoneButtonText: {
     fontSize: 16,
-    color: '#454F2C',
+    color: '#34B7F1',
     fontWeight: 'bold',
   },
-
   field: {
-    display: 'flex',
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-  },
+      display: 'flex',
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      marginBottom: 5,
+    },
 });

@@ -7,8 +7,8 @@ export default function Layout() {
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#454F2C',
+    // flex: 1,
+    backgroundColor: '#DFDDD1',
     alignItems: 'center',
     padding: 20,
   },
@@ -44,6 +44,13 @@ export const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 10,
   },
+  titleInput: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 10,
+    marginBottom: 5,
+    marginEnd: 'auto',
+  },
   signupText: {
     color: '#454F2C',
     fontWeight: 'bold',
@@ -60,6 +67,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    marginEnd: 'auto',
   },
   checkbox: {
     width: 20,
@@ -68,18 +76,23 @@ export const styles = StyleSheet.create({
     borderColor: '#666',
     borderRadius: 5,
     marginRight: 10,
+    marginTop: 20,
+    marginEnd: 'auto'
   },
   checkboxChecked: {
     backgroundColor: '#fff',
   },
   checkmark: {
-    color: '#fff',
-    fontSize: 14,
+    color: '#000',
+    fontSize: 18,
     fontWeight: 'bold',
+    marginLeft: 2.5,
+    marginTop: -3,
   },
   checkboxLabel: {
     color: '#666',
     fontSize: 16,
+    marginTop: 20,
   },
   loginButton: {
     backgroundColor: '#454F2C',
@@ -98,7 +111,8 @@ export const styles = StyleSheet.create({
   orText: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 15,
+    marginTop: 10,
+    marginBottom: 10,
   },
   googleButton: {
     backgroundColor: '#fff',
@@ -130,5 +144,33 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: '#454F2C',
     fontWeight: 'bold',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  modalBackground: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  modalBox: {
+    backgroundColor: 'white',
+    paddingVertical: 30,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    elevation: 5,
+    alignItems: 'center',
+    width: '70%',
+    zIndex: 2,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingBottom: 10,
+  },
+  modalMessage: {
+    fontSize: 15,
   },
 });

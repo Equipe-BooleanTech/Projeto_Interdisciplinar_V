@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { styles } from './_layout';
 import { Link, router } from 'expo-router';
+import { Image } from '@/src/components';
 import images from '../../assets';
 import { createVehicle } from '@/src/services/vehicleService'; // Importa a função para registrar veículo
 
@@ -27,14 +28,7 @@ const VehicleRegisterScreen = ({ userId }: { userId: string }) => {
   };
 
   const handleRegister = async () => {
-    if (
-      !form.plate ||
-      !form.model ||
-      !form.manufacturer ||
-      !form.year ||
-      !form.km ||
-      !form.fuelType
-    ) {
+    if (!form.plate || !form.model || !form.manufacturer || !form.year || !form.km || !form.fuelType) {
       Alert.alert('Erro', 'Todos os campos obrigatórios devem ser preenchidos.');
       return;
     }
@@ -54,8 +48,9 @@ const VehicleRegisterScreen = ({ userId }: { userId: string }) => {
       await createVehicle(userId, vehicleData); // Chama a API para registrar veículo
       Alert.alert('Sucesso', 'Veículo cadastrado com sucesso!');
       router.push('/Home'); // Redireciona para a tela principal
-    } catch (error: any) {
-      Alert.alert('Erro', error.message);
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erro', 'Falha ao cadastrar veículo. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -64,11 +59,13 @@ const VehicleRegisterScreen = ({ userId }: { userId: string }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.iconContainer}>
-        <Image source={images.car} style={styles.icon} />
+        <Image svg={images.car} imgWidth={100} imgHeight={100} viewBox="0 0 100 100" />
       </View>
 
       <View style={styles.formContainer}>
-        <Link href="/">Voltar</Link>
+        <View style={styles.backContainer}>
+          <Link href="/" style={styles.back}>Voltar</Link>
+        </View>
         <Text style={styles.title}>Cadastro de Veículo</Text>
 
         <View style={styles.field}>
@@ -144,9 +141,7 @@ const VehicleRegisterScreen = ({ userId }: { userId: string }) => {
         </View>
 
         <TouchableOpacity style={styles.loginButton} onPress={handleRegister} disabled={loading}>
-          <Text style={styles.loginButtonText}>
-            {loading ? 'Cadastrando...' : 'Cadastrar Veículo'}
-          </Text>
+          <Text style={styles.loginButtonText}>{loading ? 'Cadastrando...' : 'Cadastrar Veículo'}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

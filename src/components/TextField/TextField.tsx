@@ -1,5 +1,4 @@
-import React from 'react';
-import { DDD_OPTIONS, masks } from '@/src/utils';
+import React, { useState } from 'react';
 import { TextFieldProps } from './TextField.interface';
 import {
   StyledErrorText,
@@ -10,8 +9,27 @@ import {
   StyledPicker,
   StyledTextFieldContainer,
   StyledTextInput,
+  StyledPhoneContainer,
+  StyledPicker,
+  StyledPhoneInput
 } from './TextField.styles';
 import { Picker } from '@react-native-picker/picker';
+
+const formatDate = (text: string) => {
+  let cleaned = text.replace(/\D/g, '');
+  if (cleaned.length > 2) cleaned = cleaned.slice(0, 2) + '/' + cleaned.slice(2);
+  if (cleaned.length > 5) cleaned = cleaned.slice(0, 5) + '/' + cleaned.slice(5, 9);
+  return cleaned;
+};
+
+const DDD_OPTIONS = ['+55', '+1', '+44', '+33', '+49'];
+
+const formatPhone = (text: string) => {
+  let cleaned = text.replace(/\D/g, '');
+  if (cleaned.length > 2) cleaned = '(' + cleaned.slice(0, 2) + ') ' + cleaned.slice(2);
+  if (cleaned.length > 10) cleaned = cleaned.slice(0, 10) + '-' + cleaned.slice(10, 14);
+  return cleaned;
+};
 
 const TextField = (Props: TextFieldProps) => {
   const {
@@ -31,18 +49,7 @@ const TextField = (Props: TextFieldProps) => {
     ...rest
   } = Props;
 
-  const formatter = type && type in masks ? masks[type as keyof typeof masks] : undefined;
-  const formattedValue = formatter ? formatter(value || '') : value;
-
-  const handleTextChange = (text: string) => {
-    if (!onChangeText) return;
-
-    if (formatter) {
-      const formatted = formatter(text);
-      onChangeText(formatted);
-    }
-    onChangeText(text);
-  };
+  const [selectedDDD, setSelectedDDD] = useState(DDD_OPTIONS[0]);
 
   return (
     <>
@@ -51,8 +58,8 @@ const TextField = (Props: TextFieldProps) => {
       {type === 'phone' ? (
         <StyledPhoneContainer>
           <StyledPicker
-            selectedValue={selectedOption}
-            onValueChange={(itemValue: any) => onSelectionChange?.(itemValue)}
+            selectedValue={selectedDDD}
+            onValueChange={(itemValue: any) => setSelectedDDD(itemValue)}
           >
             {DDD_OPTIONS.map((ddd) => (
               <Picker.Item key={ddd} label={ddd} value={ddd} />
@@ -61,8 +68,8 @@ const TextField = (Props: TextFieldProps) => {
           <StyledPhoneInput
             placeholder="Digite o número"
             keyboardType="numeric"
-            value={formattedValue}
-            onChangeText={handleTextChange}
+            value={formatPhone(value || '')}
+            onChangeText={(text: string) => rest.onChangeText?.(formatPhone(text))}
             {...rest}
           />
         </StyledPhoneContainer>
@@ -82,9 +89,15 @@ const TextField = (Props: TextFieldProps) => {
             error={error}
             disabled={disabled}
             multiline={multiline}
-            value={formattedValue}
+            value={type === 'date' ? formatDate(value || '') : value}
             keyboardType={type === 'date' ? 'numeric' : 'default'}
-            onChangeText={handleTextChange}
+            onChangeText={(text: string) => {
+              if (type === 'date') {
+                rest.onChangeText?.(formatDate(text));
+              } else {
+                rest.onChangeText?.(text);
+              }
+            }}
             {...rest}
           />
         </StyledTextFieldContainer>

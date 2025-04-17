@@ -14,9 +14,7 @@ export const StyledTextFieldContainer = styled.View<Partial<TextFieldProps>>`
     props.disabled ? theme.colors.card : '#ffffff'};
   opacity: ${(props: Partial<TextFieldProps>) => (props.disabled ? 0.5 : 1)};
 
-  ${(props: Partial<TextFieldProps>) =>
-    props.type === 'phone' &&
-    `
+  ${(props: Partial<TextFieldProps>) => props.type === 'phone' && `
     flex-direction: row;
     align-items: center;
     padding: 0;
@@ -30,7 +28,7 @@ export const StyledLabel = styled.Text<Partial<TextFieldProps>>`
   margin-top: 4px;
   margin-bottom: 4px;
   font-weight: 600;
-  marginend: 'auto';
+  marginEnd: 'auto';
 `;
 
 export const StyledTextInput = styled.TextInput<Partial<TextFieldProps>>`
