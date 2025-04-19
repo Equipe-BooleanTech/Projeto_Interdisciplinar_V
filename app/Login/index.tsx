@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Modal, Pressable, SafeAreaView } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Modal,
+  Pressable,
+  SafeAreaView,
+} from 'react-native';
 import { styles } from './_layout';
 import images from '../../assets';
 import { Button, Image, TextField } from '@/src/components';
@@ -70,10 +78,17 @@ const LoginScreen = () => {
           </Text>
 
           <Text style={styles.titleInput}> Email </Text>
-          <TextField placeholder="Digite um e-mail válido..." onChangeText={(value) => handleChange('email', value)} />
+          <TextField
+            placeholder="Digite um e-mail válido..."
+            onChangeText={(value) => handleChange('email', value)}
+          />
 
           <Text style={styles.titleInput}> Senha </Text>
-          <TextField placeholder="Digite sua senha..." type="password" onChangeText={(value) => handleChange('password', value)} />
+          <TextField
+            placeholder="Digite sua senha..."
+            type="password"
+            onChangeText={(value) => handleChange('password', value)}
+          />
 
           <View style={styles.checkboxContainer}>
             <TouchableOpacity
@@ -91,17 +106,31 @@ const LoginScreen = () => {
 
           <Text style={styles.orText}>OU</Text>
 
-          <Button variant="social" onPress={toGoogleLogin} border={{ width: 1, color: '#000' }} full hasIcon icon={{
-            size: 24,
-            component: "https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg",
-          }}>
+          <Button
+            variant="social"
+            onPress={toGoogleLogin}
+            border={{ width: 1, color: '#000' }}
+            full
+            hasIcon
+            icon={{
+              size: 24,
+              component: 'https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg',
+            }}
+          >
             Continuar com o Google
           </Button>
 
-          <Button variant="social" onPress={toPhoneLogin} border={{ width: 1, color: '#000' }} full hasIcon icon={{
-            size: 24,
-            component: "https://cdn-icons-png.flaticon.com/512/565/565512.png",
-          }}>
+          <Button
+            variant="social"
+            onPress={toPhoneLogin}
+            border={{ width: 1, color: '#000' }}
+            full
+            hasIcon
+            icon={{
+              size: 24,
+              component: 'https://cdn-icons-png.flaticon.com/512/565/565512.png',
+            }}
+          >
             Continuar com Biometria
           </Button>
 

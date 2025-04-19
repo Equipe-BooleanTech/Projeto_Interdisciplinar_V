@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { View, Text, ScrollView, Alert, Modal, Pressable, TouchableOpacity, SafeAreaView } from 'react-native';
+ 
+import {
+  View,
+  Text,
+  ScrollView,
+  Alert,
+  Modal,
+  Pressable,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
 import { router } from 'expo-router';
 import { styles } from './_layout';
 import images from '../../assets';
@@ -25,7 +34,15 @@ const RegisterScreen = () => {
     setForm({ ...form, [field]: value });
   };
   const handleRegister = async () => {
-    if (!form.name || !form.email || !form.birthdate || !form.phone || !form.password || !form.lastName || !form.username) {
+    if (
+      !form.name ||
+      !form.email ||
+      !form.birthdate ||
+      !form.phone ||
+      !form.password ||
+      !form.lastName ||
+      !form.username
+    ) {
       // Alert.alert('Erro', 'Todos os campos são obrigatórios.');
       setModalVisible(true);
       setModalTitle('Erro');
@@ -71,25 +88,49 @@ const RegisterScreen = () => {
           </Text>
 
           <Text style={styles.titleInput}> Nome </Text>
-          <TextField placeholder="Digite seu primeiro nome..." onChangeText={(value) => handleChange('name', value)} />
+          <TextField
+            placeholder="Digite seu primeiro nome..."
+            onChangeText={(value) => handleChange('name', value)}
+          />
 
           <Text style={styles.titleInput}> Sobrenome </Text>
-          <TextField placeholder="Digite seu sobrenome..." onChangeText={(value) => handleChange('lastName', value)} />
+          <TextField
+            placeholder="Digite seu sobrenome..."
+            onChangeText={(value) => handleChange('lastName', value)}
+          />
 
           <Text style={styles.titleInput}> Usuario </Text>
-          <TextField placeholder="Digite seu nome de usuario..." onChangeText={(value) => handleChange('username', value)} />
+          <TextField
+            placeholder="Digite seu nome de usuario..."
+            onChangeText={(value) => handleChange('username', value)}
+          />
 
           <Text style={styles.titleInput}> Email </Text>
-          <TextField placeholder="Digite um e-mail válido..." onChangeText={(value) => handleChange('email', value)} />
+          <TextField
+            placeholder="Digite um e-mail válido..."
+            onChangeText={(value) => handleChange('email', value)}
+          />
 
           <Text style={styles.titleInput}> Data de Nascimento </Text>
-          <TextField placeholder="DD/MM/AAAA" type='date' onChangeText={(value) => handleChange('birthdate', value)} />
+          <TextField
+            placeholder="DD/MM/AAAA"
+            type="date"
+            onChangeText={(value) => handleChange('birthdate', value)}
+          />
 
           <Text style={styles.titleInput}> Número de Celular </Text>
-          <TextField placeholder="Digite seu telefone..." type='phone' onChangeText={(value) => handleChange('phone', value)} />
+          <TextField
+            placeholder="Digite seu telefone..."
+            type="phone"
+            onChangeText={(value) => handleChange('phone', value)}
+          />
 
           <Text style={styles.titleInput}> Crie uma senha </Text>
-          <TextField placeholder="Digite sua senha..." type='password' onChangeText={(value) => handleChange('password', value)} />
+          <TextField
+            placeholder="Digite sua senha..."
+            type="password"
+            onChangeText={(value) => handleChange('password', value)}
+          />
 
           <Text style={styles.titleInput}> </Text>
 

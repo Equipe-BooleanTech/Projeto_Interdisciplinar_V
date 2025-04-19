@@ -79,7 +79,7 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 10,
     marginTop: 20,
-    marginEnd: 'auto'
+    marginEnd: 'auto',
   },
   checkboxChecked: {
     backgroundColor: '#fff',

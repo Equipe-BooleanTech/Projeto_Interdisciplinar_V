@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  SafeAreaView,
+  Alert,
+} from 'react-native';
 import { styles } from './_layout';
 import { Link, router } from 'expo-router';
 import { Image } from '@/src/components';
@@ -28,7 +36,14 @@ const VehicleRegisterScreen = ({ userId }: { userId: string }) => {
   };
 
   const handleRegister = async () => {
-    if (!form.plate || !form.model || !form.manufacturer || !form.year || !form.km || !form.fuelType) {
+    if (
+      !form.plate ||
+      !form.model ||
+      !form.manufacturer ||
+      !form.year ||
+      !form.km ||
+      !form.fuelType
+    ) {
       Alert.alert('Erro', 'Todos os campos obrigatórios devem ser preenchidos.');
       return;
     }
@@ -65,7 +80,9 @@ const VehicleRegisterScreen = ({ userId }: { userId: string }) => {
 
         <View style={styles.formContainer}>
           <View style={styles.backContainer}>
-            <Link href="/" style={styles.back}>Voltar</Link>
+            <Link href="/" style={styles.back}>
+              Voltar
+            </Link>
           </View>
           <Text style={styles.title}>Cadastro de Veículo</Text>
 
@@ -142,7 +159,9 @@ const VehicleRegisterScreen = ({ userId }: { userId: string }) => {
           </View>
 
           <TouchableOpacity style={styles.loginButton} onPress={handleRegister} disabled={loading}>
-            <Text style={styles.loginButtonText}>{loading ? 'Cadastrando...' : 'Cadastrar Veículo'}</Text>
+            <Text style={styles.loginButtonText}>
+              {loading ? 'Cadastrando...' : 'Cadastrar Veículo'}
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

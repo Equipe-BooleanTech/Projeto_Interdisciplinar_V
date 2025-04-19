@@ -90,7 +90,7 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 10,
     marginTop: 20,
-    marginEnd: 'auto'
+    marginEnd: 'auto',
   },
   checkboxChecked: {
     backgroundColor: '#fff',
@@ -157,10 +157,10 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   field: {
-      display: 'flex',
-      width: '100%',
-      justifyContent: 'center',
-      alignItems: 'flex-start',
-      marginBottom: 5,
-    },
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    marginBottom: 5,
+  },
 });
