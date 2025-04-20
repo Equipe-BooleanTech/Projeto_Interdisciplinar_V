@@ -1,7 +1,6 @@
 import styled from 'styled-components/native';
 
 export const RootStyles = styled.View`
-  flex: 1;
   padding: 16px;
   background-color: #fff;
   border-radius: 8px;
@@ -13,4 +12,7 @@ export const RootStyles = styled.View`
   elevation: 2;
   display: flex;
   flex-direction: column;
+  width: 90%;
+  height: 90%;
+  margin: auto;
 `;

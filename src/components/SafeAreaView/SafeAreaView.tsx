@@ -1,3 +1,4 @@
+import React from 'react';
 import { SafeAreaViewProps } from './SafeAreaView.interface';
 import { SafeAreaViewContent, StyledSafeAreaView } from './SafeAreaView.style';
 

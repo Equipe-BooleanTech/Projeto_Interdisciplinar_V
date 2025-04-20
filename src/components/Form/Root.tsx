@@ -1,24 +1,24 @@
-import { Form } from 'react-hook-form';
+import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { RootProps } from './interfaces/Root.interface';
 import React from 'react';
+import { RootStyles } from './styles/Root.styles';
 
-const Root = (Props: RootProps) => {
-  const { children, method, action, target } = Props;
+const Root: React.FC<RootProps> = (Props) => {
+    const { children } = Props;
 
-  // TODO: Implementar as funções abaixo
-  return (
-    <Form
-      onSubmit={() => {}}
-      onChange={() => {}}
-      onReset={() => {}}
-      onInvalid={() => {}}
-      method={method}
-      action={action}
-      target={target}
-    >
-      {children}
-    </Form>
-  );
+    const formMethods = useForm<FieldValues>({
+        defaultValues: {},
+        mode: 'onBlur',
+        reValidateMode: 'onChange',
+    });
+
+    return (
+        <FormProvider {...formMethods}>
+                <RootStyles>
+                    {children}
+                </RootStyles>
+        </FormProvider>
+    );
 };
 
 export default Root;

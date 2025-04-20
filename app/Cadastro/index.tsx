@@ -4,7 +4,6 @@ import {
   View,
   Text,
   ScrollView,
-  Alert,
   Modal,
   Pressable,
   TouchableOpacity,
