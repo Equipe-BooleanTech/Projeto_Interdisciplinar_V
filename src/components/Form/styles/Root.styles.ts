@@ -13,6 +13,5 @@ export const RootStyles = styled.View`
   display: flex;
   flex-direction: column;
   width: 90%;
-  height: 90%;
   margin: auto;
 `;

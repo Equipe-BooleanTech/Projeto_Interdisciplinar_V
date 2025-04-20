@@ -4,21 +4,19 @@ import React from 'react';
 import { RootStyles } from './styles/Root.styles';
 
 const Root: React.FC<RootProps> = (Props) => {
-    const { children } = Props;
+  const { children } = Props;
 
-    const formMethods = useForm<FieldValues>({
-        defaultValues: {},
-        mode: 'onBlur',
-        reValidateMode: 'onChange',
-    });
+  const formMethods = useForm<FieldValues>({
+    defaultValues: {},
+    mode: 'onBlur',
+    reValidateMode: 'onChange',
+  });
 
-    return (
-        <FormProvider {...formMethods}>
-                <RootStyles>
-                    {children}
-                </RootStyles>
-        </FormProvider>
-    );
+  return (
+    <FormProvider {...formMethods}>
+      <RootStyles>{children}</RootStyles>
+    </FormProvider>
+  );
 };
 
 export default Root;

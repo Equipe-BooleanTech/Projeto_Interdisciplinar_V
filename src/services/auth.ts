@@ -18,14 +18,14 @@ export const login = async (params: LoginBody) => {
 // 📝 Registrar usuário ➝ (Caso o backend já retorne um token no cadastro, salve como no login)
 export const register = async (params: {
   name: string;
-  lastName: string;
+  lastname: string;
   email: string;
   username: string;
   birthdate: string;
   phone: string;
   password: string;
 }) => {
-  const response = await api.post('/api/users/create-user', params);
+  const response = await api.post('/users/create-user', params);
   return response.data;
 };
 

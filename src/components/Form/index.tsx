@@ -3,9 +3,12 @@ import TextField from '../TextField/TextField';
 import Root from './Root';
 import { Switch } from 'react-native';
 import { Controller, Control, RegisterOptions } from 'react-hook-form';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import React from 'react';
 import MaskInput, { MaskArray } from 'react-native-mask-input';
+import { StyledLabel } from '../TextField/TextField.styles';
+import { StyledMaskedInput } from './styles/Field.styles';
+import { StyledErrorText } from '../TextField/TextField.styles';
 
 export const Form = {
   Field: {
@@ -21,30 +24,33 @@ type BaseFieldProps = {
   name: string;
   rules?: RegisterOptions;
   errorMessage?: string;
-}
+};
 
 type TextFieldProps = BaseFieldProps & {
   type: 'textfield';
   componentProps?: React.ComponentProps<typeof TextField>;
-}
+};
 
 type SelectFieldProps = BaseFieldProps & {
   type: 'select';
   componentProps?: React.ComponentProps<typeof Picker>;
   options: Array<{ label: string; value: any }>;
-}
+};
 
 type SwitchFieldProps = BaseFieldProps & {
   type: 'switch';
   componentProps?: React.ComponentProps<typeof Switch>;
-}
+};
 
 type MaskedTextFieldProps = BaseFieldProps & {
   type: 'maskedtextfield';
   componentProps?: React.ComponentProps<typeof MaskInput>;
-  // Change this line to accept the correct mask type
   mask: (value?: string | undefined) => MaskArray | (string | RegExp)[];
-}
+  label: string;
+  errorMessage?: string;
+  rules?: RegisterOptions;
+  placeholder?: string;
+};
 
 type FieldConfig = TextFieldProps | SelectFieldProps | SwitchFieldProps | MaskedTextFieldProps;
 
@@ -85,10 +91,10 @@ export const FormHelpers = {
                         {...field.componentProps}
                       >
                         {field.options.map((option) => (
-                          <Picker.Item 
-                            key={option.value} 
-                            label={option.label} 
-                            value={option.value} 
+                          <Picker.Item
+                            key={option.value}
+                            label={option.label}
+                            value={option.value}
                           />
                         ))}
                       </Form.Field.Select>
@@ -103,14 +109,19 @@ export const FormHelpers = {
                     );
                   case 'maskedtextfield':
                     return (
-                      <MaskInput
-                        onChangeText={(masked, unmasked) => {
-                          onChange(unmasked);
-                        }}
-                        value={value}
-                        mask={field?.mask}
-                        {...field.componentProps}
-                      />
+                      <>
+                        <StyledLabel>{field.label}</StyledLabel>
+                        <StyledMaskedInput
+                          onChangeText={(masked: any, unmasked: any) => {
+                            onChange(unmasked);
+                          }}
+                          value={value}
+                          mask={field?.mask}
+                          placeholder={field.placeholder}
+                          keyboardType={field.componentProps?.keyboardType}
+                          {...field.componentProps}
+                        />
+                      </>
                     );
                   default:
                     return <></>;
@@ -119,13 +130,13 @@ export const FormHelpers = {
               name={field.name}
             />
             {control._formState.errors[field.name] && (
-              <Text>{field.errorMessage || 'This field is required.'}</Text>
+              <StyledErrorText>{field.errorMessage || 'This field is required.'}</StyledErrorText>
             )}
           </View>
         ))}
       </View>
     );
-  }
+  },
 };
 
 export default Form;

@@ -1,17 +1,27 @@
-export const formatDate = (text: string) => {
-  let cleaned = text.replace(/\D/g, '');
-  if (cleaned.length > 2) cleaned = cleaned.slice(0, 2) + '/' + cleaned.slice(2);
-  if (cleaned.length > 5) cleaned = cleaned.slice(0, 5) + '/' + cleaned.slice(5, 9);
-  return cleaned;
+export const formatDate = () => {
+  const regex = [/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/];
+  return regex;
 };
 
-export const DDD_OPTIONS = ['+55', '+1', '+44', '+33', '+49'];
-
-export const formatPhone = (text: string) => {
-  let cleaned = text.replace(/\D/g, '');
-  if (cleaned.length > 2) cleaned = '(' + cleaned.slice(0, 2) + ') ' + cleaned.slice(2);
-  if (cleaned.length > 10) cleaned = cleaned.slice(0, 10) + '-' + cleaned.slice(10, 14);
-  return cleaned;
+export const formatPhone = () => {
+  const regex = [
+    '(',
+    /\d/,
+    /\d/,
+    ')',
+    ' ',
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+    '-',
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+  ];
+  return regex;
 };
 
 // Validations
@@ -28,7 +38,7 @@ export const validateDate = (text: string) => {
   return dateRegex.test(text);
 };
 export const validatePassword = (text: string) => {
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&_\-#])[A-Za-z\d@$!%*?&_\-#]{8,}$/;
   return passwordRegex.test(text);
 };
 export const validateUsername = (text: string) => {
