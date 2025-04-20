@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Form, Typography } from '@/src/components';
+import { Alert, Button, Form, Typography } from '@/src/components';
 import { useForm } from 'react-hook-form';
 import { FormHelpers } from '@/src/components/Form';
 import { masks, validatePassword, validations } from '@/src/utils';
@@ -9,10 +9,12 @@ import { TouchableOpacity } from 'react-native';
 import { LoginTextContainer } from './Register.styles';
 
 const RegisterScreen = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [modal, setModal] = useState<{
     visible: boolean;
     message: string;
     title: string;
+    actions?: any;
   }>({
     visible: false,
     message: '',
@@ -23,6 +25,7 @@ const RegisterScreen = () => {
     control,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -38,35 +41,29 @@ const RegisterScreen = () => {
   });
 
   const onSubmit = async (data: any) => {
+    setIsSubmitting(true);
     try {
       const res = await register(data);
-      console.log(res);
-      if (res.status === 201) {
-        setModal({
-          visible: true,
-          message: 'Cadastro realizado com sucesso!',
-          title: 'Sucesso',
-        });
-        router.push('/Login');
-      } else {
-        setModal({
-          visible: true,
-          message: res.data.message || 'Erro desconhecido',
-          title: 'Erro',
-        });
-      }
-
-      return res; // This properly returns the response object
+      setModal({
+        visible: true,
+        message: 'Cadastro realizado com sucesso!',
+        title: 'Sucesso',
+      });
+      setIsSubmitting(false);
+      return res;
     } catch (error: any) {
-      const errorMessage = error.message || 'Ocorreu um erro durante o cadastro';
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        'Ocorreu um erro durante o cadastro';
 
       setModal({
         visible: true,
-        message: errorMessage,
+        message: 'Ocorreu um erro ao cadastrar sua conta. Tente novamente mais tarde.',
         title: 'Erro',
       });
 
-      // Return a structured error object instead of the setModal result
       return {
         status: 'error',
         error: errorMessage,
@@ -165,6 +162,11 @@ const RegisterScreen = () => {
               onChangeText: (text) => {
                 setValue('birthdate', text);
               },
+              onBlur: (text) => {
+                const isValid = validations.date(text.nativeEvent.text);
+                return isValid || 'Data de nascimento inválida';
+              },
+              keyboardType: 'number-pad',
             },
             errorMessage: errors.birthdate?.message,
           },
@@ -182,6 +184,10 @@ const RegisterScreen = () => {
               keyboardType: 'phone-pad',
               onChangeText: (text) => {
                 setValue('phone', text);
+              },
+              onBlur: (text) => {
+                const isValid = validations.phone(text.nativeEvent.text);
+                return isValid || 'Número de telefone inválido';
               },
             },
             errorMessage: errors.phone?.message,
@@ -216,11 +222,32 @@ const RegisterScreen = () => {
       })}
       <Button
         variant="primary"
-        onPress={() => handleSubmit(onSubmit)()}
+        onPress={handleSubmit(onSubmit)}
         full
-        children="Cadastrar"
+        disabled={isSubmitting}
+        children={isSubmitting ? 'Cadastrando...' : 'Cadastrar'}
       />
+
+      {modal.visible && (
+        <Alert
+          isVisible={modal.visible}
+          title={modal.title}
+          message={modal.message}
+          onConfirm={() => {
+            setModal({ ...modal, visible: false });
+            if (modal.title === 'Sucesso') {
+              router.push('/Login');
+            }
+            setModal({ ...modal, visible: false });
+            setIsSubmitting(false);
+            reset();
+          }}
+          confirmText="OK"
+          cancelText="Cancelar"
+        />
+      )}
     </Form.Root>
   );
 };
+
 export default RegisterScreen;

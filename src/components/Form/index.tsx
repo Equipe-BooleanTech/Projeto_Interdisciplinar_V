@@ -130,7 +130,9 @@ export const FormHelpers = {
               name={field.name}
             />
             {control._formState.errors[field.name] && (
-              <StyledErrorText>{field.errorMessage || 'This field is required.'}</StyledErrorText>
+              <StyledErrorText>
+                {field.errorMessage || 'Campo inválido. Verifique e tente novamente!'}
+              </StyledErrorText>
             )}
           </View>
         ))}
