@@ -3,3 +3,6 @@ export { default as Introduction } from './Introduction/Introduction.screen';
 
 export * from './Register/Register.screen';
 export { default as Register } from './Register/Register.screen';
+
+export * from './Login/Login.screen';
+export { default as Login } from './Login/Login.screen';

@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LoginBody } from './interfaces';
+import { LoginBody, RegisterBody } from './interfaces';
 import { api } from './API';
 
 export const login = async (params: LoginBody) => {
-  const response = await api.post('/api/users/login', params);
+  const response = await api.post('/users/login', params);
   const token = response.data.token;
 
   if (token) {
@@ -14,23 +14,14 @@ export const login = async (params: LoginBody) => {
   return response.data;
 };
 
-// 📝 Registrar usuário ➝ (Caso o backend já retorne um token no cadastro, salve como no login)
-export const register = async (params: {
-  name: string;
-  lastname: string;
-  email: string;
-  username: string;
-  birthdate: string;
-  phone: string;
-  password: string;
-}) => {
+export const register = async (params: RegisterBody) => {
   const response = await api.post('/users/create-user', params);
   return response.data;
 };
 
 export const logout = async () => {
-  await AsyncStorage.removeItem('jwt_token'); // Remove o token salvo
-  delete api.defaults.headers.common['Authorization']; // Remove do Axios
+  await AsyncStorage.removeItem('jwt_token');
+  delete api.defaults.headers.common['Authorization'];
   return true;
 };
 
