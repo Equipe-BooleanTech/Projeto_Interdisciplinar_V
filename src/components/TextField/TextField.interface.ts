@@ -9,6 +9,8 @@ export interface TextFieldProps extends TextInputProps {
     type: 'error' | 'warning' | 'info';
     show: boolean;
   };
+  formatter?: (text: string) => string;
+  validator?: (text: string) => boolean | string;
   helperText?: string;
   disabled?: boolean;
   required?: boolean;

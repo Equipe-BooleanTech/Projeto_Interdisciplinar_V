@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { Introduction } from '@/src/screens';
 import images from '@/assets';
 import { router } from 'expo-router';
+import React from 'react';
 
 interface IntroData {
   [key: number]: {

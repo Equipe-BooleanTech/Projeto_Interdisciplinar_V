@@ -1,11 +1,12 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "jsx": "react",
     "module": "ESNext",
     "strict": true,
     "paths": {
       "@/*": ["./*"]
-    },
+    }
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "assets/index.ts"]
 }

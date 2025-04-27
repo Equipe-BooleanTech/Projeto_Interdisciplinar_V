@@ -1,6 +1,7 @@
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const BASE_URL = 'http://localhost:8080';
+export const BASE_URL = 'http://localhost:8080/api'; // URL do backend (obtida do ngrok)
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -22,8 +23,6 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const getToken = async () => {
   return await AsyncStorage.getItem('jwt_token'); // Token salvo no login
