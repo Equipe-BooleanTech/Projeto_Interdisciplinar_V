@@ -105,25 +105,6 @@ const LoginScreen = () => {
                         errorMessage: errors.email?.message,
                     },
                     {
-                        name: 'username',
-                        type: 'textfield',
-                        rules: {
-                            required: 'Nome de usuário é obrigatório',
-                            minLength: {
-                                value: 3,
-                                message: 'Nome de usuário deve ter pelo menos 3 caracteres',
-                            },
-                        },
-                        componentProps: {
-                            placeholder: 'Digite seu nome de usuário...',
-                            label: 'Nome de Usuário',
-                            onChangeText: (text) => {
-                                setValue('username', text);
-                            },
-                        },
-                        errorMessage: errors.username?.message,
-                    },
-                    {
                         name: 'password',
                         type: 'textfield',
                         rules: {

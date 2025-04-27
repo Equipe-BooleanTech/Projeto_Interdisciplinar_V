@@ -73,6 +73,7 @@ const RegisterScreen = () => {
   };
 
   return (
+    <>
     <Form.Root controlled>
       <Typography variant="h1">Crie sua conta</Typography>
       <LoginTextContainer>
@@ -227,7 +228,7 @@ const RegisterScreen = () => {
         disabled={isSubmitting}
         children={isSubmitting ? 'Cadastrando...' : 'Cadastrar'}
       />
-
+      </Form.Root>
       {modal.visible && (
         <Alert
           isVisible={modal.visible}
@@ -246,7 +247,7 @@ const RegisterScreen = () => {
           cancelText="Cancelar"
         />
       )}
-    </Form.Root>
+    </>
   );
 };
 
