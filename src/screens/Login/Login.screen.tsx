@@ -32,7 +32,6 @@ const LoginScreen = () => {
     } = useForm({
         defaultValues: {
             email: '',
-            username: '',
             password: '',
             isOAuth: false,
         },
@@ -42,7 +41,11 @@ const LoginScreen = () => {
     const onSubmit = async (data: any) => {
         setIsSubmitting(true);
         try {
-            const res = await login(data);
+            const res = await login({
+                email: data.email,
+                password: data.password
+            });
+            console.log('Login response:', res);
             setModal({
                 visible: true,
                 message: 'Usuário autenticado com sucesso!',
