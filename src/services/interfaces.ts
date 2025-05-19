@@ -4,10 +4,11 @@ export interface LoginBody {
 }
 
 export interface RegisterBody {
+  name: string;
+  lastname: string;
   email: string;
   username: string;
-  password: string;
-  name: string;
-  lastName: string;
+  birthdate: string;
   phone: string;
+  password: string;
 }

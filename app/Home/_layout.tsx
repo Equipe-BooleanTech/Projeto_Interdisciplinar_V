@@ -23,7 +23,7 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     marginHorizontal: 16,
     fontWeight: 'bold',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   arrowLeft: {
     fontSize: 24,
@@ -168,13 +168,13 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 2,
   },
-  
+
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  
+
   modalValue: {
     fontSize: 18,
     color: '#444',

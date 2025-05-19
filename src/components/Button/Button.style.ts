@@ -1,6 +1,5 @@
 import styled from 'styled-components/native';
 import { theme } from '@/theme';
-import { ButtonProps } from './Button.interface';
 
 interface ButtonProps {
   variant: 'primary' | 'secondary' | 'social' | 'danger';
