@@ -1,5 +1,5 @@
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDevice, useStorage } from '../hooks';
 
 export const BASE_URL = 'http://localhost:8080/api'; // URL do backend (obtida do ngrok)
 
@@ -13,7 +13,7 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
-    const token = await getToken(); // Obtém o token armazenado
+    const token = await getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -25,5 +25,19 @@ api.interceptors.request.use(
 );
 
 export const getToken = async () => {
-  return await AsyncStorage.getItem('jwt_token'); // Token salvo no login
+  const { getItem } = useStorage();
+  const response = await getItem('token');
+  console.log('Token:', response);
+  return response;
+};
+
+
+export const setToken = async (token: string) => {
+  const { setItem } = useStorage();
+  setItem('token', token);
+};
+
+export const removeToken = async () => {
+  const { removeItem } = useStorage();
+  await removeItem('token');
 };

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, Pressable, SafeAreaView } from 'react-native';
 import images from '../../assets';
 import { styles } from './_layout';
 import { Image } from '@/src/components';
 import Chart from '../../src/components/Chart/Chart';
+import { useRedirect } from '@/src/hooks';
 
 const dummyData = [
   { value: 2500, color: '#6A994E', text: 'Gasto 1' },
@@ -41,6 +42,12 @@ const HomeScreen = () => {
   const handleNextMonth = () => {
     setCurrentMonthIndex((prev) => (prev === 11 ? 0 : prev + 1));
   };
+
+  const { redirect } = useRedirect();
+
+  useEffect(() => {
+    redirect();
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
