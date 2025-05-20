@@ -7,6 +7,7 @@ import { login } from '@/src/services/auth';
 import { router } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 import { LoginTextContainer, OrText } from './Login.styles';
+import { useRedirect } from '@/src/hooks';
 
 const LoginScreen = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,6 +24,7 @@ const LoginScreen = () => {
 
     const [isOAuth, setIsOAuth] = useState(false);
 
+    const { goToHome, backToLogin, redirect } = useRedirect()
     const {
         control,
         handleSubmit,
@@ -45,7 +47,7 @@ const LoginScreen = () => {
                 email: data.email,
                 password: data.password
             });
-            console.log('Login response:', res);
+            
             setModal({
                 visible: true,
                 message: 'Usuário autenticado com sucesso!',
@@ -59,13 +61,13 @@ const LoginScreen = () => {
                 error.response?.data?.error ||
                 error.message ||
                 'Ocorreu um erro durante a autenticação. Tente novamente mais tarde.';
-
+    
             setModal({
                 visible: true,
                 message: 'Ocorreu um erro ao autenticar. Tente novamente mais tarde.',
                 title: 'Erro',
             });
-
+            setIsSubmitting(false);
             return {
                 status: 'error',
                 error: errorMessage,
@@ -143,17 +145,17 @@ const LoginScreen = () => {
                 children={isSubmitting ? 'Realizando Login...' : 'Login'}
             />
 
-            {modal.visible && (
+             {modal.visible && (
                 <Alert
                     isVisible={modal.visible}
                     title={modal.title}
                     message={modal.message}
-                    onConfirm={() => {
+                    onConfirm={async () => {
                         setModal({ ...modal, visible: false });
                         if (modal.title === 'Sucesso') {
-                            router.push('/Home');
+                            // Force check authentication and navigate
+                            await router.replace('/Home');
                         }
-                        setModal({ ...modal, visible: false });
                         setIsSubmitting(false);
                         reset();
                     }}

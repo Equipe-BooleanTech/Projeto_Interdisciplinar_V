@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { useDevice, useStorage } from '../hooks';
 
-export const BASE_URL = 'http://localhost:8080/api'; // URL do backend (obtida do ngrok)
-
+export const BASE_URL = 'http://localhost:8080' // Loclx
 export const api = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -27,7 +26,6 @@ api.interceptors.request.use(
 export const getToken = async () => {
   const { getItem } = useStorage();
   const response = await getItem('token');
-  console.log('Token:', response);
   return response;
 };
 

@@ -5,11 +5,11 @@ import { useStorage } from '../hooks';
 export const login = async (params: LoginBody) => {
   const { setItem } = useStorage();
   const response = await api.post('/users/login', params);
-  console.log('Login response:', response.data);
+
   const token = response.data.token;
 
   if (token) {
-    await setItem('token', token); 
+    setItem('token', token); 
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
 
