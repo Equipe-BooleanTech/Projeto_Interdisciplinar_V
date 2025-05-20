@@ -5,6 +5,8 @@ import { useRouter } from "expo-router";
 
 const useRedirect = () => {
     const router = useRouter();
+    const [redirecting, setRedirecting] = useState(false);
+
     const { isFirstLaunchWeb, isFirstLaunchMobile } = useDevice();
     const isFirstLaunch = isFirstLaunchWeb || isFirstLaunchMobile;
     const { deviceType } = useDevice();
@@ -33,13 +35,17 @@ const useRedirect = () => {
     }, [checkAuthentication, router]);
         
     const redirect = useCallback(async () => {
+        if (redirecting) return; // Prevent recursive redirects
+
+        setRedirecting(true);
         const isAuth = await checkAuthentication();
         if (isAuth) {
             router.replace('/Home');
         } else {
             router.replace('/Login');
         }
-    }, [checkAuthentication, router]);
+        setRedirecting(false);
+    }, [checkAuthentication, router, redirecting]);
     
     return {
         backToLogin,

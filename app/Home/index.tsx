@@ -5,6 +5,7 @@ import { styles } from './_layout';
 import { Image } from '@/src/components';
 import Chart from '../../src/components/Chart/Chart';
 import { useRedirect } from '@/src/hooks';
+import { router } from 'expo-router';
 
 const dummyData = [
   { value: 2500, color: '#6A994E', text: 'Gasto 1' },
@@ -43,10 +44,17 @@ const HomeScreen = () => {
     setCurrentMonthIndex((prev) => (prev === 11 ? 0 : prev + 1));
   };
 
-  const { redirect } = useRedirect();
+  const { redirect, checkAuthentication } = useRedirect();
 
   useEffect(() => {
-    redirect();
+    const checkAuth = async () => {
+      const isAuth = await checkAuthentication();
+      if (!isAuth) {
+        router.replace('/Login');
+      }
+    };
+    
+    checkAuth();
   }, []);
 
   return (
