@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, Pressable, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, Pressable, SafeAreaView, ScrollView } from 'react-native';
 import images from '../../assets';
 import { styles } from './_layout';
 import { Image } from '@/src/components';
@@ -59,6 +59,7 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={styles.container}>
         <View style={styles.iconContainer}>
           <Image svg={images.car} imgWidth={100} imgHeight={100} viewBox="0 0 100 100" />
@@ -158,7 +159,8 @@ const HomeScreen = () => {
             </View>
           </View>
         </Modal>
-      </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
