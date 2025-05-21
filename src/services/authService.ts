@@ -19,7 +19,7 @@ export const login = async (email: string, password: string) => {
   }
 };
 
-// 🚪 Logout ➝ Remove o token
 export const logout = async () => {
   await AsyncStorage.removeItem('jwt_token');
+  await AsyncStorage.removeItem('token');
 };

@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { useDevice, useStorage } from '../hooks';
+import { Platform } from 'react-native';
+import { MMKV } from 'react-native-mmkv';
 
-export const BASE_URL = 'http://localhost:8080/api'; // URL do backend (obtida do ngrok)
-
+export const BASE_URL = 'http://localhost:8080/api'; // Loclx
 export const api = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -11,6 +11,50 @@ export const api = axios.create({
   withCredentials: true,
 });
 
+// Storage instance (similar to useStorage implementation but outside React)
+const storage = new MMKV({
+  id: 'storage',
+});
+
+// Direct storage functions that don't use hooks
+export const getToken = async () => {
+  try {
+    if (Platform.OS === 'web') {
+      return localStorage.getItem('token');
+    } else {
+      return storage.getString('token');
+    }
+  } catch (error) {
+    console.error('Error getting token:', error);
+    return null;
+  }
+};
+
+export const setToken = async (token: string) => {
+  try {
+    if (Platform.OS === 'web') {
+      localStorage.setItem('token', token);
+    } else {
+      storage.set('token', token);
+    }
+  } catch (error) {
+    console.error('Error setting token:', error);
+  }
+};
+
+export const removeToken = async () => {
+  try {
+    if (Platform.OS === 'web') {
+      localStorage.removeItem('token');
+    } else {
+      storage.delete('token');
+    }
+  } catch (error) {
+    console.error('Error removing token:', error);
+  }
+};
+
+// Setup interceptor with the non-hook version
 api.interceptors.request.use(
   async (config) => {
     const token = await getToken();
@@ -23,21 +67,3 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
-export const getToken = async () => {
-  const { getItem } = useStorage();
-  const response = await getItem('token');
-  console.log('Token:', response);
-  return response;
-};
-
-
-export const setToken = async (token: string) => {
-  const { setItem } = useStorage();
-  setItem('token', token);
-};
-
-export const removeToken = async () => {
-  const { removeItem } = useStorage();
-  await removeItem('token');
-};

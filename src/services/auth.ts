@@ -1,15 +1,12 @@
 import { LoginBody, RegisterBody } from './interfaces';
-import { api } from './API';
-import { useStorage } from '../hooks';
+import { api, setToken as storeToken, removeToken as clearToken } from './API';
 
 export const login = async (params: LoginBody) => {
-  const { setItem } = useStorage();
   const response = await api.post('/users/login', params);
-  console.log('Login response:', response.data);
   const token = response.data.token;
 
   if (token) {
-    await setItem('token', token); 
+    await storeToken(token);
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
 
@@ -22,8 +19,7 @@ export const register = async (params: RegisterBody) => {
 };
 
 export const logout = async () => {
-  const { removeItem } = useStorage();
-  await removeItem('token');
+  await clearToken();
   delete api.defaults.headers.common['Authorization'];
   return true;
 };
