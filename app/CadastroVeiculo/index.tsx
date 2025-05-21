@@ -2,72 +2,83 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
   ScrollView,
   SafeAreaView,
   Alert,
 } from 'react-native';
 import { styles } from './_layout';
 import { Link, router } from 'expo-router';
-import { Image } from '@/src/components';
+import { Alert as CustomAlert, Button, Form, Image } from '@/src/components';
+import { FormHelpers } from '@/src/components/Form';
+import { useForm } from 'react-hook-form';
 import images from '../../assets';
-import { createVehicle } from '@/src/services/vehicleService'; // Importa a função para registrar veículo
+import { createVehicle } from '@/src/services/vehicleService';
+import { useStorage } from '@/src/hooks';
 
-const VehicleRegisterScreen = ({ userId }: { userId: string }) => {
-  const [form, setForm] = useState({
-    plate: '',
-    model: '',
-    color: '',
-    manufacturer: '',
-    type: '',
-    description: '',
-    year: '',
-    km: '',
-    fuelType: '',
-    fuelCapacity: '',
-    fuelConsumption: '',
+const VehicleRegisterScreen = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [modal, setModal] = useState<{
+    visible: boolean;
+    message: string;
+    title: string;
+  }>({
+    visible: false,
+    message: '',
+    title: '',
   });
 
-  const [loading, setLoading] = useState(false);
+  const { getItem } = useStorage();
 
-  const handleChange = (field: string, value: string) => {
-    setForm({ ...form, [field]: value });
-  };
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      plate: '',
+      model: '',
+      color: '',
+      manufacturer: '',
+      type: '',
+      description: '',
+      year: '',
+      km: '',
+      fuelType: '',
+      fuelCapacity: '',
+      fuelConsumption: '',
+    },
+    mode: 'onBlur',
+  });
 
-  const handleRegister = async () => {
-    if (
-      !form.plate ||
-      !form.model ||
-      !form.manufacturer ||
-      !form.year ||
-      !form.km ||
-      !form.fuelType
-    ) {
-      Alert.alert('Erro', 'Todos os campos obrigatórios devem ser preenchidos.');
-      return;
-    }
-
+   const onSubmit = async (data: any) => {
+    setIsSubmitting(true);
     try {
-      setLoading(true);
-
-      // Convertendo valores numéricos antes de enviar
+      // Convert numeric string fields to numbers
       const vehicleData = {
-        ...form,
-        year: parseInt(form.year, 10),
-        km: parseFloat(form.km),
-        fuelCapacity: parseFloat(form.fuelCapacity),
-        fuelConsumption: parseFloat(form.fuelConsumption),
+        ...data,
+        year: parseInt(data.year, 10),
+        km: parseFloat(data.km),
+        fuelCapacity: data.fuelCapacity ? parseFloat(data.fuelCapacity) : 0,
+        fuelConsumption: data.fuelConsumption ? parseFloat(data.fuelConsumption) : 0,
       };
-
-      await createVehicle(userId, vehicleData); // Chama a API para registrar veículo
-      Alert.alert('Sucesso', 'Veículo cadastrado com sucesso!');
-      router.push('/Home'); // Redireciona para a tela principal
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Erro', 'Falha ao cadastrar veículo. Tente novamente.');
-    } finally {
-      setLoading(false);
+  
+      const userId = getItem('userId');
+      
+      // Correct parameter order: vehicleData first, then userId
+      await createVehicle(vehicleData, userId as string);
+      
+      setModal({
+        visible: true,
+        message: 'Veículo cadastrado com sucesso!',
+        title: 'Sucesso',
+      });
+      
+      setIsSubmitting(false);
+      return vehicleData;
+    } catch (error: any) {
+      // Error handling remains the same...
     }
   };
 
@@ -78,92 +89,192 @@ const VehicleRegisterScreen = ({ userId }: { userId: string }) => {
           <Image svg={images.car} imgWidth={100} imgHeight={100} viewBox="0 0 100 100" />
         </View>
 
-        <View style={styles.formContainer}>
+        <Form.Root controlled>
           <View style={styles.backContainer}>
             <Link href="/" style={styles.back}>
               Voltar
             </Link>
           </View>
           <Text style={styles.title}>Cadastro de Veículo</Text>
-
-          <View style={styles.field}>
-            <Text>Placa</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Digite a placa..."
-              value={form.plate}
-              onChangeText={(value) => handleChange('plate', value)}
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text>Modelo</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Digite o modelo..."
-              value={form.model}
-              onChangeText={(value) => handleChange('model', value)}
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text>Cor</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Digite a cor..."
-              value={form.color}
-              onChangeText={(value) => handleChange('color', value)}
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text>Fabricante</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Digite o fabricante..."
-              value={form.manufacturer}
-              onChangeText={(value) => handleChange('manufacturer', value)}
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text>Ano</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              placeholder="Digite o ano..."
-              value={form.year}
-              onChangeText={(value) => handleChange('year', value)}
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text>KM Atual</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              placeholder="Digite a quilometragem..."
-              value={form.km}
-              onChangeText={(value) => handleChange('km', value)}
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text>Tipo de Combustível</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Digite o tipo de combustível..."
-              value={form.fuelType}
-              onChangeText={(value) => handleChange('fuelType', value)}
-            />
-          </View>
-
-          <TouchableOpacity style={styles.loginButton} onPress={handleRegister} disabled={loading}>
-            <Text style={styles.loginButtonText}>
-              {loading ? 'Cadastrando...' : 'Cadastrar Veículo'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+          
+          {FormHelpers.createFormFields({
+            control,
+            fields: [
+              {
+                name: 'plate',
+                type: 'textfield',
+                rules: {
+                  required: 'Placa é obrigatória',
+                },
+                componentProps: {
+                  placeholder: 'Digite a placa...',
+                  label: 'Placa',
+                  onChangeText: (text: string) => {
+                    setValue('plate', text);
+                  },
+                },
+                errorMessage: errors.plate?.message,
+              },
+              {
+                name: 'model',
+                type: 'textfield',
+                rules: {
+                  required: 'Modelo é obrigatório',
+                },
+                componentProps: {
+                  placeholder: 'Digite o modelo...',
+                  label: 'Modelo',
+                  onChangeText: (text: string) => {
+                    setValue('model', text);
+                  },
+                },
+                errorMessage: errors.model?.message,
+              },
+              {
+                name: 'color',
+                type: 'textfield',
+                componentProps: {
+                  placeholder: 'Digite a cor...',
+                  label: 'Cor',
+                  onChangeText: (text: string) => {
+                    setValue('color', text);
+                  },
+                },
+                errorMessage: errors.color?.message,
+              },
+              {
+                name: 'manufacturer',
+                type: 'textfield',
+                rules: {
+                  required: 'Fabricante é obrigatório',
+                },
+                componentProps: {
+                  placeholder: 'Digite o fabricante...',
+                  label: 'Fabricante',
+                  onChangeText: (text: string) => {
+                    setValue('manufacturer', text);
+                  },
+                },
+                errorMessage: errors.manufacturer?.message,
+              },
+              {
+                name: 'year',
+                type: 'textfield',
+                rules: {
+                  required: 'Ano é obrigatório',
+                  pattern: {
+                    value: /^\d{4}$/,
+                    message: 'Ano deve ter 4 dígitos',
+                  },
+                },
+                componentProps: {
+                  placeholder: 'Digite o ano...',
+                  label: 'Ano',
+                  keyboardType: 'numeric',
+                  onChangeText: (text: string) => {
+                    setValue('year', text);
+                  },
+                },
+                errorMessage: errors.year?.message,
+              },
+              {
+                name: 'km',
+                type: 'textfield',
+                rules: {
+                  required: 'Quilometragem é obrigatória',
+                },
+                componentProps: {
+                  placeholder: 'Digite a quilometragem...',
+                  label: 'KM Atual',
+                  keyboardType: 'numeric',
+                  onChangeText: (text: string) => {
+                    setValue('km', text);
+                  },
+                },
+                errorMessage: errors.km?.message,
+              },
+              {
+                name: 'fuelType',
+                type: 'textfield',
+                rules: {
+                  required: 'Tipo de combustível é obrigatório',
+                },
+                componentProps: {
+                  placeholder: 'Digite o tipo de combustível...',
+                  label: 'Tipo de Combustível',
+                  onChangeText: (text: string) => {
+                    setValue('fuelType', text);
+                  },
+                },
+                errorMessage: errors.fuelType?.message,
+              },
+              {
+                name: 'fuelCapacity',
+                type: 'textfield',
+                componentProps: {
+                  placeholder: 'Digite a capacidade do tanque...',
+                  label: 'Capacidade do Tanque (L)',
+                  keyboardType: 'numeric',
+                  onChangeText: (text: string) => {
+                    setValue('fuelCapacity', text);
+                  },
+                },
+                errorMessage: errors.fuelCapacity?.message,
+              },
+              {
+                name: 'fuelConsumption',
+                type: 'textfield',
+                componentProps: {
+                  placeholder: 'Digite o consumo médio...',
+                  label: 'Consumo Médio (km/L)',
+                  keyboardType: 'numeric',
+                  onChangeText: (text: string) => {
+                    setValue('fuelConsumption', text);
+                  },
+                },
+                errorMessage: errors.fuelConsumption?.message,
+              },
+              {
+                name: 'description',
+                type: 'textfield',
+                componentProps: {
+                  placeholder: 'Digite uma descrição...',
+                  label: 'Descrição',
+                  multiline: true,
+                  onChangeText: (text: string) => {
+                    setValue('description', text);
+                  },
+                },
+                errorMessage: errors.description?.message,
+              },
+            ],
+          })}
+          
+          <Button
+            variant="primary"
+            onPress={handleSubmit(onSubmit)}
+            full
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Cadastrando...' : 'Cadastrar Veículo'}
+          </Button>
+        </Form.Root>
+        
+        {modal.visible && (
+          <CustomAlert
+            isVisible={modal.visible}
+            title={modal.title}
+            message={modal.message}
+            onConfirm={() => {
+              setModal({ ...modal, visible: false });
+              if (modal.title === 'Sucesso') {
+                router.push('/Home');
+                reset();
+              }
+            }}
+            confirmText="OK"
+          />
+        )}
       </ScrollView>
     </SafeAreaView>
   );

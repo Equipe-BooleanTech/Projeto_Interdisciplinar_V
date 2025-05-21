@@ -124,7 +124,7 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.addButton}>
+          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/CadastroVeiculo')}>
             <Text style={styles.addButtonText}>+</Text>
           </TouchableOpacity>
 
