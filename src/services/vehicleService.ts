@@ -1,24 +1,10 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api } from './API';
 
 // 🚗 Criar veículo
-export const createVehicle = async (
-  vehicleData: any,
-  userId: {
-    plate: string;
-    model: string;
-    color: string;
-    manufacturer: string;
-    type: string;
-    description: string;
-    year: number;
-    km: number;
-    fuelType: string;
-    fuelCapacity: number;
-    fuelConsumption: number;
-  }
-) => {
-  const response = await api.post(`/api/vehicle/create-vehicle/${userId}`, vehicleData);
+export const createVehicle = async (vehicleData: any, id: string) => {
+  const response = await api.post(`/vehicle/create-vehicle/${id}`, {
+    ...vehicleData,
+  });
   return response.data;
 };
 

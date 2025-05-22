@@ -6,14 +6,36 @@ import { Controller, Control, RegisterOptions } from 'react-hook-form';
 import { View } from 'react-native';
 import React from 'react';
 import MaskInput, { MaskArray } from 'react-native-mask-input';
-import { StyledLabel } from '../TextField/TextField.styles';
+import { StyledLabel, StyledPicker } from '../TextField/TextField.styles';
 import { StyledMaskedInput } from './styles/Field.styles';
 import { StyledErrorText } from '../TextField/TextField.styles';
+
+
+const Select = ({
+  selectedValue,
+  onValueChange,
+  children,
+  label,
+  ...rest
+}: React.ComponentProps<typeof Picker> & { label?: string }) => {
+  return (
+    <>
+      {label && <StyledLabel>{label}</StyledLabel>}
+      <StyledPicker
+        selectedValue={selectedValue}
+        onValueChange={onValueChange}
+        {...rest}
+      >
+        {children}
+      </StyledPicker>
+    </>
+  );
+};
 
 export const Form = {
   Field: {
     TextField: TextField,
-    Select: Picker,
+    Select: Select,
     Switch: Switch,
   },
   Root: Root,
@@ -35,6 +57,7 @@ type SelectFieldProps = BaseFieldProps & {
   type: 'select';
   componentProps?: React.ComponentProps<typeof Picker>;
   options: Array<{ label: string; value: any }>;
+  label?: string;
 };
 
 type SwitchFieldProps = BaseFieldProps & {
@@ -85,20 +108,23 @@ export const FormHelpers = {
                     );
                   case 'select':
                     return (
-                      <Form.Field.Select
-                        selectedValue={value}
-                        onValueChange={onChange}
-                        {...field.componentProps}
-                      >
-                        {field.options.map((option) => (
-                          <Picker.Item
-                            key={option.value}
-                            label={option.label}
-                            value={option.value}
-                          />
-                        ))}
-                      </Form.Field.Select>
-                    );
+                      <>
+                        {field.name && <StyledLabel>{field.label}</StyledLabel>}
+                        <Form.Field.Select
+                          selectedValue={value}
+                          onValueChange={onChange}
+                          {...field.componentProps}
+                        >
+                          {field.options.map((option) => (
+                            <Picker.Item
+                              key={option.value}
+                              label={option.label}
+                              value={option.value}
+                            />
+                          ))}
+                        </Form.Field.Select>
+                      </>
+                      );
                   case 'switch':
                     return (
                       <Form.Field.Switch
