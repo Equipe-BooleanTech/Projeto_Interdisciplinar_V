@@ -1,8 +1,8 @@
 import { api } from './API';
 
 // 🚗 Criar veículo
-export const createVehicle = async (vehicleData: any, userId: string) => {
-  const response = await api.post(`/vehicle/create-vehicle/${userId}`, {
+export const createVehicle = async (vehicleData: any, id: string) => {
+  const response = await api.post(`/vehicle/create-vehicle/${id}`, {
     ...vehicleData,
   });
   return response.data;

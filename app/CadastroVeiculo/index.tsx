@@ -78,7 +78,13 @@ const VehicleRegisterScreen = () => {
       setIsSubmitting(false);
       return vehicleData;
     } catch (error: any) {
-      // Error handling remains the same...
+      setModal({
+        visible: true,
+        message: error?.response?.data?.message || 'Erro ao cadastrar veículo',
+        title: 'Erro',
+      });
+      setIsSubmitting(false);
+      console.error('Error creating vehicle:', error);
     }
   };
 
@@ -195,16 +201,22 @@ const VehicleRegisterScreen = () => {
               },
               {
                 name: 'fuelType',
-                type: 'textfield',
+                label: 'Tipo de Combustível',
+                type: 'select',
+                options: [
+                  { label: 'Gasolina', value: 'GASOLINE' },
+                  { label: 'Gasolina Premium', value: 'GASOLINE_PREMIUM' },
+                  { label: 'Etanol', value: 'ETHANOL' },
+                  { label: 'Diesel', value: 'DIESEL' },
+                  { label: 'Elétrico', value: 'ELECTRIC' },
+                  { label: 'Gnv', value: 'GNV' },
+                ],
                 rules: {
                   required: 'Tipo de combustível é obrigatório',
                 },
                 componentProps: {
-                  placeholder: 'Digite o tipo de combustível...',
-                  label: 'Tipo de Combustível',
-                  onChangeText: (text: string) => {
-                    setValue('fuelType', text);
-                  },
+                  placeholder: 'Selecione o tipo de combustível...',
+                  
                 },
                 errorMessage: errors.fuelType?.message,
               },
