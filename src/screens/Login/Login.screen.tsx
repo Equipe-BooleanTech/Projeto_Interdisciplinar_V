@@ -82,7 +82,7 @@ const LoginScreen = () => {
             <LoginTextContainer>
                 <Typography variant="body1">
                     Não possui uma conta?{' '}
-                    <TouchableOpacity onPress={() => router.push('/Cadastro')}>
+                    <TouchableOpacity onPress={() => router.push('/Auth/Register')}>
                         <Typography variant="body1" color="#454F2C">
                             Cadastre-se
                         </Typography>

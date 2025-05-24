@@ -50,7 +50,7 @@ export default function Index() {
 
   const handleStepChange = useCallback(() => {
     if (step + 1 === 4) {
-      router.navigate('/Cadastro');
+      router.navigate('/Auth/Register');
       setStep(1);
       return;
     }

@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react';
 
 import { ScrollView } from 'react-native';
-import images from '../../assets';
+import images from '../../../assets';
 import { Container, IconContainer } from './styles';
 import { Image } from '@/src/components';
-import { Register } from '@/src/screens';
+import { Login } from '@/src/screens';
 import { theme } from '@/theme';
+import { useDevice } from '@/src/hooks';
 
-const RegisterScreen = () => {
+const LoginScreen = () => {
+  
   return (
     <ScrollView style={{ flex: 1, backgroundColor: theme.colors.normalBackground }}>
       <Container>
@@ -15,9 +17,9 @@ const RegisterScreen = () => {
           <Image svg={images.car} imgWidth={100} imgHeight={100} />
         </IconContainer>
       </Container>
-      <Register />
+      <Login />
     </ScrollView>
   );
 };
 
-export default RegisterScreen;
+export default LoginScreen;

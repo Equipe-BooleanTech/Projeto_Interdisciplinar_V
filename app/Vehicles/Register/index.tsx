@@ -11,7 +11,7 @@ import { Link, router } from 'expo-router';
 import { Alert as CustomAlert, Button, Form, Image } from '@/src/components';
 import { FormHelpers } from '@/src/components/Form';
 import { useForm } from 'react-hook-form';
-import images from '../../assets';
+import images from '../../../assets';
 import { createVehicle } from '@/src/services/vehicleService';
 import { useStorage } from '@/src/hooks';
 

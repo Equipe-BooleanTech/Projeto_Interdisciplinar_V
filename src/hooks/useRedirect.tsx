@@ -24,7 +24,7 @@ const useRedirect = () => {
     }, [checkAuthentication]);
 
     const backToLogin = useCallback(() => {
-        router.replace('/Login');
+        router.replace('/Auth/Login');
     }, [router]);
 
     const goToHome = useCallback(async () => {
@@ -42,7 +42,7 @@ const useRedirect = () => {
         if (isAuth) {
             router.replace('/Home');
         } else {
-            router.replace('/Login');
+            router.replace('/Auth/Login');
         }
         setRedirecting(false);
     }, [checkAuthentication, router, redirecting]);

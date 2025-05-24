@@ -50,7 +50,7 @@ const HomeScreen = () => {
     const checkAuth = async () => {
       const isAuth = await checkAuthentication();
       if (!isAuth) {
-        router.replace('/Login');
+        router.replace('/Auth/Login');
       }
     };
     
@@ -124,7 +124,7 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/CadastroVeiculo')}>
+          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/Vehicles/Register')}>
             <Text style={styles.addButtonText}>+</Text>
           </TouchableOpacity>
 
