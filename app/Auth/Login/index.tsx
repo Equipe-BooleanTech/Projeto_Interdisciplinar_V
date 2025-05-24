@@ -9,7 +9,6 @@ import { theme } from '@/theme';
 import { useDevice } from '@/src/hooks';
 
 const LoginScreen = () => {
-  
   return (
     <ScrollView style={{ flex: 1, backgroundColor: theme.colors.normalBackground }}>
       <Container>

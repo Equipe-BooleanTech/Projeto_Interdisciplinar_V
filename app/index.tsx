@@ -57,7 +57,6 @@ export default function Index() {
     setStep(step + 1);
   }, [step]);
 
-
   const { setNotFirstLaunch } = useDevice();
 
   useEffect(() => {
@@ -75,13 +74,11 @@ export default function Index() {
       if (firstLaunchValue === 'false') {
         redirect();
       }
-    }
+    };
     isFirstLaunch();
   }, [getItem, redirect]);
-  
 
   return (
-    
     <Introduction
       step={step}
       title={introData[step].title}

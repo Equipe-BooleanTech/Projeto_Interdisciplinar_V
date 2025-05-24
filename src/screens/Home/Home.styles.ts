@@ -9,7 +9,7 @@ const { width } = Dimensions.get('window');
 
 export const Container = styled.View`
   flex: 1;
-  background-color: #EEEDEB;
+  background-color: #eeedeb;
   align-items: center;
 `;
 
@@ -106,7 +106,7 @@ export const Indicator = styled.View`
   height: 8px;
   border-radius: 4px;
   margin: 4px;
-  background-color: #AAA;
+  background-color: #aaa;
 `;
 
 export const IndicatorActive = styled(Indicator)`
@@ -124,7 +124,7 @@ export const BottomMenu = styled.View`
   bottom: 0px;
   left: 0px;
   right: 0px;
-  background-color: #454F2C;
+  background-color: #454f2c;
   padding-vertical: 8px;
   flex-direction: row;
   justify-content: space-between;
@@ -171,7 +171,7 @@ export const AddButton = styled.TouchableOpacity`
 
 export const AddButtonText = styled.Text`
   font-size: 36px;
-  color: #454F2C;
+  color: #454f2c;
   font-weight: bold;
   margin-top: -7px;
 `;

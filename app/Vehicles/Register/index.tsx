@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  SafeAreaView,
-  Alert,
-} from 'react-native';
+import { View, Text, ScrollView, SafeAreaView, Alert } from 'react-native';
 import { styles } from './_layout';
 import { Link, router } from 'expo-router';
 import { Alert as CustomAlert, Button, Form, Image } from '@/src/components';
@@ -52,7 +46,7 @@ const VehicleRegisterScreen = () => {
     mode: 'onBlur',
   });
 
-   const onSubmit = async (data: any) => {
+  const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
       // Convert numeric string fields to numbers
@@ -63,18 +57,18 @@ const VehicleRegisterScreen = () => {
         fuelCapacity: data.fuelCapacity ? parseFloat(data.fuelCapacity) : 0,
         fuelConsumption: data.fuelConsumption ? parseFloat(data.fuelConsumption) : 0,
       };
-  
+
       const userId = getItem('userId');
-      
+
       // Correct parameter order: vehicleData first, then userId
       await createVehicle(vehicleData, userId as string);
-      
+
       setModal({
         visible: true,
         message: 'Veículo cadastrado com sucesso!',
         title: 'Sucesso',
       });
-      
+
       setIsSubmitting(false);
       return vehicleData;
     } catch (error: any) {
@@ -102,7 +96,7 @@ const VehicleRegisterScreen = () => {
             </Link>
           </View>
           <Text style={styles.title}>Cadastro de Veículo</Text>
-          
+
           {FormHelpers.createFormFields({
             control,
             fields: [
@@ -216,7 +210,6 @@ const VehicleRegisterScreen = () => {
                 },
                 componentProps: {
                   placeholder: 'Selecione o tipo de combustível...',
-                  
                 },
                 errorMessage: errors.fuelType?.message,
               },
@@ -261,17 +254,12 @@ const VehicleRegisterScreen = () => {
               },
             ],
           })}
-          
-          <Button
-            variant="primary"
-            onPress={handleSubmit(onSubmit)}
-            full
-            disabled={isSubmitting}
-          >
+
+          <Button variant="primary" onPress={handleSubmit(onSubmit)} full disabled={isSubmitting}>
             {isSubmitting ? 'Cadastrando...' : 'Cadastrar Veículo'}
           </Button>
         </Form.Root>
-        
+
         {modal.visible && (
           <CustomAlert
             isVisible={modal.visible}

@@ -51,10 +51,10 @@ export const VehicleGrid = styled.View`
 
 export const VehicleCard = styled.TouchableOpacity`
   background-color: #fff;
-  width: ${(width - 72) / 2}px;  // Slightly narrower
-  border-radius: 10px;  // Smaller border radius
-  padding: 8px;  // Less padding
-  margin-bottom: 12px;  // Less margin
+  width: ${(width - 72) / 2}px; // Slightly narrower
+  border-radius: 10px; // Smaller border radius
+  padding: 8px; // Less padding
+  margin-bottom: 12px; // Less margin
   align-items: center;
   shadow-color: #000;
   shadow-opacity: 0.1;
@@ -63,27 +63,27 @@ export const VehicleCard = styled.TouchableOpacity`
 `;
 
 export const VehicleImage = styled.Image`
-  width: 80px;  // Smaller image
-  height: 50px;  // Smaller image
+  width: 80px; // Smaller image
+  height: 50px; // Smaller image
   resize-mode: contain;
-  margin-bottom: 6px;  // Less spacing
+  margin-bottom: 6px; // Less spacing
 `;
 
 export const VehicleLabel = styled.Text`
   font-weight: bold;
-  font-size: 14px;  // Smaller font
+  font-size: 14px; // Smaller font
 `;
 
 export const VehiclePlate = styled.Text`
-  font-size: 12px;  // Smaller font
+  font-size: 12px; // Smaller font
   color: #333;
 `;
 
 export const AddCard = styled.TouchableOpacity`
   background-color: #fff;
-  width: ${(width - 72) / 2}px;  // Slightly narrower
-  height: 110px;  // Reduced height
-  border-radius: 10px;  // Smaller border radius
+  width: ${(width - 72) / 2}px; // Slightly narrower
+  height: 110px; // Reduced height
+  border-radius: 10px; // Smaller border radius
   align-items: center;
   justify-content: center;
   shadow-color: #000;

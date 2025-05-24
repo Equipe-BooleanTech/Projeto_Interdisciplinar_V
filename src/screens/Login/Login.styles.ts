@@ -15,7 +15,7 @@ export const LoginTextContainer = styled.View`
 `;
 
 export const Container = styled.View`
-  background-color: #DFDDD1;
+  background-color: #dfddd1;
   align-items: center;
   padding: 20px;
 `;
@@ -66,7 +66,7 @@ export const TitleInput = styled.Text`
 `;
 
 export const SignupText = styled.Text`
-  color: #454F2C;
+  color: #454f2c;
   font-weight: bold;
 `;
 
@@ -95,7 +95,7 @@ export const Checkbox = styled.View`
   margin-right: 10px;
   margin-top: 20px;
   margin-end: auto;
-  ${props => props.checked && `background-color: #fff;`}
+  ${(props) => props.checked && `background-color: #fff;`}
 `;
 
 export const Checkmark = styled.Text`
@@ -113,7 +113,7 @@ export const CheckboxLabel = styled.Text`
 `;
 
 export const LoginButton = styled.TouchableOpacity`
-  background-color: #454F2C;
+  background-color: #454f2c;
   width: 100%;
   height: 50px;
   border-radius: 10px;
@@ -144,12 +144,12 @@ export const GoogleButton = styled.TouchableOpacity`
   align-items: center;
   margin-bottom: 15px;
   border-width: 1px;
-  border-color: #454F2C;
+  border-color: #454f2c;
 `;
 
 export const OutlinedButtonText = styled.Text`
   font-size: 16px;
-  color: #454F2C;
+  color: #454f2c;
   font-weight: bold;
 `;
 
@@ -161,7 +161,7 @@ export const PhoneButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   border-width: 1px;
-  border-color: #454F2C;
+  border-color: #454f2c;
 `;
 
 export const ModalOverlay = styled.View`

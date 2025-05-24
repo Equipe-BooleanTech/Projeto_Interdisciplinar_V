@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Modal, Pressable, SafeAreaView } from 'react-native';
 import images from '@/assets';
-import { Image, Chart} from '@/src/components';
+import { Image, Chart } from '@/src/components';
 import { useRedirect } from '@/src/hooks';
 import { router } from 'expo-router';
 import { HomeProps } from '@/src/screens/Home/Home.interface';
@@ -23,7 +23,7 @@ import {
   ModalBackground,
   ModalBox,
   ModalTitle,
-  ModalValue
+  ModalValue,
 } from '@/src/screens/Home/Home.styles';
 
 const months = [
@@ -47,7 +47,7 @@ const HomeScreen: React.FC<HomeProps> = ({
   statistics,
   onItemPress,
   onModalClose,
-  modalVisible
+  modalVisible,
 }) => {
   const [currentMonthIndex, setCurrentMonthIndex] = React.useState(new Date().getMonth());
 
@@ -68,7 +68,7 @@ const HomeScreen: React.FC<HomeProps> = ({
         router.replace('/Login');
       }
     };
-    
+
     checkAuth();
   }, []);
 
@@ -76,7 +76,7 @@ const HomeScreen: React.FC<HomeProps> = ({
   const chartData = statistics.chartData.labels.map((label, index) => ({
     value: statistics.chartData.data[index],
     color: getChartColor(index),
-    text: label
+    text: label,
   }));
 
   // Function to generate chart colors
@@ -91,7 +91,7 @@ const HomeScreen: React.FC<HomeProps> = ({
         <IconContainer>
           <Image svg={images.car} imgWidth={100} imgHeight={100} viewBox="0 0 100 100" />
         </IconContainer>
-        
+
         <HeaderMonth>
           <Pressable onPress={handlePrevMonth}>
             <ArrowLeft>{'<'}</ArrowLeft>
@@ -107,7 +107,7 @@ const HomeScreen: React.FC<HomeProps> = ({
         <TitleText>Despesas Totais:</TitleText>
 
         <FilterRow>
-          {['semanal', 'mensal'].map((filtro) => (
+          {['semanal', 'mensal'].map((filtro) =>
             filter === filtro ? (
               <FilterButtonActive key={filtro} onPress={() => onFilterChange(filtro)}>
                 <TitleText>{filtro.charAt(0).toUpperCase() + filtro.slice(1)}</TitleText>
@@ -117,10 +117,16 @@ const HomeScreen: React.FC<HomeProps> = ({
                 <TitleText>{filtro.charAt(0).toUpperCase() + filtro.slice(1)}</TitleText>
               </FilterButton>
             )
-          ))}
+          )}
         </FilterRow>
 
-        <TotalText>R${statistics.total.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</TotalText>
+        <TotalText>
+          R$
+          {statistics.total.toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </TotalText>
         <TotalSubText>{statistics.totalSub}</TotalSubText>
 
         <ChartContainer>
@@ -136,7 +142,13 @@ const HomeScreen: React.FC<HomeProps> = ({
           />
         </ChartContainer>
 
-        <TotalText>R${calculateTotal(chartData).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</TotalText>
+        <TotalText>
+          R$
+          {calculateTotal(chartData).toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </TotalText>
         <TotalSubText>Total Gasto</TotalSubText>
 
         <Modal
@@ -149,7 +161,7 @@ const HomeScreen: React.FC<HomeProps> = ({
             <ModalBackground onPress={onModalClose} />
             <ModalBox>
               {/* The selected item will be passed from the parent component via onItemPress */}
-              <ModalTitle>{statistics.chartData.labels[0]}</ModalTitle>  
+              <ModalTitle>{statistics.chartData.labels[0]}</ModalTitle>
               <ModalValue>R${statistics.chartData.data[0].toFixed(2)}</ModalValue>
             </ModalBox>
           </ModalOverlay>
@@ -160,7 +172,7 @@ const HomeScreen: React.FC<HomeProps> = ({
 };
 
 // Helper function to calculate total from chart data
-function calculateTotal(data: Array<{value: number, color: string, text: string}>): number {
+function calculateTotal(data: Array<{ value: number; color: string; text: string }>): number {
   return data.reduce((sum, item) => sum + item.value, 0);
 }
 
