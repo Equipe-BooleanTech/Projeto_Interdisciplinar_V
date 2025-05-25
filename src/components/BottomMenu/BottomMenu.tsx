@@ -1,52 +1,46 @@
-import images from '@/assets';
 import { router } from 'expo-router';
 import React from 'react';
 import { Pressable } from 'react-native';
-import { Image } from '@/src/components';
 import {
   MenuSide,
   MenuItem,
   MenuText,
-  AddButton,
-  AddButtonText,
   BottomMenu,
 } from './BottomMenu.styles';
+import { Feather } from '@expo/vector-icons';
 
 const BottomMenuComponent = () => {
+  return (
   <BottomMenu>
     <MenuSide>
       <Pressable onPress={() => router.push('/Home')}>
         <MenuItem>
-          <Image svg={images.MoneyIcon} imgWidth={20} imgHeight={20} viewBox="0 0 100 100" />
+          <Feather name="dollar-sign" size={20} color="white" />
           <MenuText>Custos</MenuText>
         </MenuItem>
       </Pressable>
       <Pressable onPress={() => router.push('/Home')}>
         <MenuItem>
-          <Image svg={images.MapIcon} imgWidth={20} imgHeight={20} viewBox="0 0 100 100" />
+          <Feather name='map-pin' size={20} color="white" />
           <MenuText>Postos</MenuText>
         </MenuItem>
       </Pressable>
     </MenuSide>
-
-    <AddButton onPress={() => router.push('/Home')}>
-      <AddButtonText>+</AddButtonText>
-    </AddButton>
-
     <MenuSide>
       <Pressable onPress={() => router.push('/Home')}>
         <MenuItem>
-          <Image svg={images.ScrewdriverIcon} imgWidth={20} imgHeight={20} viewBox="0 0 100 100" />
+          <Feather name='tool' size={20} color="white" />
           <MenuText>Revisões</MenuText>
         </MenuItem>
       </Pressable>
       <Pressable onPress={() => router.push('/Home')}>
         <MenuItem>
-          <Image svg={images.GroupIcon} imgWidth={20} imgHeight={20} viewBox="0 0 100 100" />
-          <MenuText>Conta</MenuText>
+          <Feather name='user' size={20} color="white" />
+          <MenuText>Minha conta</MenuText>
         </MenuItem>
       </Pressable>
     </MenuSide>
-  </BottomMenu>;
+    </BottomMenu>
+  );
 };
 export default BottomMenuComponent;

@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, SafeAreaView, Alert } from 'react-native';
+import { View, Text, ScrollView, SafeAreaView } from 'react-native';
 import { styles } from './_layout';
 import { Link, router } from 'expo-router';
 import { Alert as CustomAlert, Button, Form, Image } from '@/src/components';
 import { FormHelpers } from '@/src/components/Form';
 import { useForm } from 'react-hook-form';
-import images from '../../../assets';
+import images from '@/assets';
 import { createVehicle } from '@/src/services/vehicleService';
 import { useStorage } from '@/src/hooks';
+import { IconButton } from '@/app/(tabs)/vehicles/styles';
+import { Feather } from '@expo/vector-icons';
+import { IconContainer } from '@/app/Auth/Login/styles';
 
 const VehicleRegisterScreen = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -85,16 +88,14 @@ const VehicleRegisterScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.iconContainer}>
-          <Image svg={images.car} imgWidth={100} imgHeight={100} viewBox="0 0 100 100" />
-        </View>
-
+        <IconContainer>
+          <Link href="/(tabs)/dashboard">
+            <IconButton>
+              <Feather name="arrow-left" size={24} color="#fff" />
+            </IconButton>
+          </Link>
+        </IconContainer>
         <Form.Root controlled>
-          <View style={styles.backContainer}>
-            <Link href="/" style={styles.back}>
-              Voltar
-            </Link>
-          </View>
           <Text style={styles.title}>Cadastro de Veículo</Text>
 
           {FormHelpers.createFormFields({

@@ -6,7 +6,7 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web",
+    "web": "expo start --web",  
     "test": "jest --watchAll",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix --config eslint.config.mjs",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
@@ -76,7 +76,8 @@
     "styled-components": "^6.1.18",
     "victory-native": "^41.16.1",
     "yup": "^1.6.1",
-    "expo-secure-store": "~14.2.3"
+    "expo-secure-store": "~14.2.3",
+    "expo-navigation-bar": "~4.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

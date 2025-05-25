@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,12 +8,9 @@ import {
   SafeAreaView,
   ScrollView,
 } from 'react-native';
-import images from '../../assets';
+import images from '@/assets';
 import { styles } from './_layout';
-import { Image } from '@/src/components';
-import Chart from '../../src/components/Chart/Chart';
-import { useRedirect } from '@/src/hooks';
-import { router } from 'expo-router';
+import { BottomMenu, Chart, Image } from '@/src/components';
 
 const dummyData = [
   { value: 2500, color: '#6A994E', text: 'Gasto 1' },
@@ -51,19 +48,6 @@ const HomeScreen = () => {
   const handleNextMonth = () => {
     setCurrentMonthIndex((prev) => (prev === 11 ? 0 : prev + 1));
   };
-
-  const { redirect, checkAuthentication } = useRedirect();
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const isAuth = await checkAuthentication();
-      if (!isAuth) {
-        router.replace('/Auth/Login');
-      }
-    };
-
-    checkAuth();
-  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -122,42 +106,6 @@ const HomeScreen = () => {
 
           <Text style={styles.totalText}>R$11.300,85</Text>
           <Text style={styles.totalSubText}>Total Gasto</Text>
-
-          <View style={styles.bottomMenu}>
-            <View style={styles.menuSide}>
-              <TouchableOpacity style={styles.menuItem}>
-                <Image svg={images.MoneyIcon} imgWidth={20} imgHeight={20} viewBox="0 0 100 100" />
-                <Text style={styles.menuText}>Custos</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.menuItem}>
-                <Image svg={images.MapIcon} imgWidth={20} imgHeight={20} viewBox="0 0 100 100" />
-                <Text style={styles.menuText}>Postos</Text>
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={() => router.push('/Vehicles/Register')}
-            >
-              <Text style={styles.addButtonText}>+</Text>
-            </TouchableOpacity>
-
-            <View style={styles.menuSide}>
-              <TouchableOpacity style={styles.menuItem}>
-                <Image
-                  svg={images.ScrewdriverIcon}
-                  imgWidth={20}
-                  imgHeight={20}
-                  viewBox="0 0 100 100"
-                />
-                <Text style={styles.menuText}>Revisões</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.menuItem}>
-                <Image svg={images.GroupIcon} imgWidth={20} imgHeight={20} viewBox="0 0 100 100" />
-                <Text style={styles.menuText}>Conta</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
 
           <Modal
             transparent

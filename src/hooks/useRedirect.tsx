@@ -30,7 +30,7 @@ const useRedirect = () => {
   const goToHome = useCallback(async () => {
     const isAuth = await checkAuthentication();
     if (isAuth) {
-      router.replace('/Home');
+      router.replace('/dashboard');
     }
   }, [checkAuthentication, router]);
 
@@ -40,7 +40,7 @@ const useRedirect = () => {
     setRedirecting(true);
     const isAuth = await checkAuthentication();
     if (isAuth) {
-      router.replace('/Home');
+      router.replace('/dashboard');
     } else {
       router.replace('/Auth/Login');
     }
