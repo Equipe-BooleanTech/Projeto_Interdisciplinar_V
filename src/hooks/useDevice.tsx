@@ -29,7 +29,7 @@ export const useDevice = () => {
         console.error('Error checking first launch status:', error);
       }
     };
-    
+
     checkFirstLaunch();
   }, [deviceType, getItem, setItem]);
 
@@ -37,7 +37,7 @@ export const useDevice = () => {
     if (isFirstLaunchState !== null) {
       return isFirstLaunchState;
     }
-    
+
     // Fallback if state isn't set yet
     const firstLaunchValue = await getItem('isFirstLaunch');
     return firstLaunchValue === null;
@@ -47,7 +47,7 @@ export const useDevice = () => {
     if (isFirstLaunchState !== null) {
       return isFirstLaunchState;
     }
-    
+
     // Fallback if state isn't set yet
     const firstLaunchValue = localStorage.getItem('isFirstLaunch');
     return firstLaunchValue === null;
@@ -64,9 +64,10 @@ export const useDevice = () => {
 
   return {
     deviceType,
-    isFirstLaunch: deviceType === 'web' 
-      ? () => isFirstLaunchState ?? false
-      : async () => isFirstLaunchState ?? false,
+    isFirstLaunch:
+      deviceType === 'web'
+        ? () => isFirstLaunchState ?? false
+        : async () => isFirstLaunchState ?? false,
     isFirstLaunchMobile,
     isFirstLaunchWeb,
     setNotFirstLaunch,

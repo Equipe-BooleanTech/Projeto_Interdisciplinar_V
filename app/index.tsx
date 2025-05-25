@@ -62,7 +62,7 @@ export default function Index() {
     const handleFinishIntro = async () => {
       await setNotFirstLaunch();
     };
-    
+
     if (step === 4) {
       handleFinishIntro();
     }
@@ -75,7 +75,7 @@ export default function Index() {
         redirect();
       }
     };
-    
+
     checkFirstLaunch();
   }, [isFirstLaunch, redirect]);
 
