@@ -5,8 +5,16 @@
     "module": "ESNext",
     "strict": true,
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "assets/index.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "assets/index.ts",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ]
 }

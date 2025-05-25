@@ -3,7 +3,7 @@ import { Introduction } from '@/src/screens';
 import images from '@/assets';
 import { router } from 'expo-router';
 import React from 'react';
-import { useDevice, useRedirect, useStorage } from '@/src/hooks';
+import { useDevice, useRedirect } from '@/src/hooks';
 
 interface IntroData {
   [key: number]: {
@@ -43,10 +43,11 @@ const introData: IntroData = {
     step: 4,
   },
 };
+
 export default function Index() {
   const [step, setStep] = useState(0);
   const { redirect } = useRedirect();
-  const { getItem } = useStorage();
+  const { isFirstLaunch, setNotFirstLaunch } = useDevice();
 
   const handleStepChange = useCallback(() => {
     if (step + 1 === 4) {
@@ -57,26 +58,26 @@ export default function Index() {
     setStep(step + 1);
   }, [step]);
 
-  const { setNotFirstLaunch } = useDevice();
-
   useEffect(() => {
     const handleFinishIntro = async () => {
       await setNotFirstLaunch();
     };
+    
     if (step === 4) {
       handleFinishIntro();
     }
-  }, [step, setNotFirstLaunch, redirect]);
+  }, [step, setNotFirstLaunch]);
 
   useEffect(() => {
-    const isFirstLaunch = async () => {
-      const firstLaunchValue = await getItem('isFirstLaunch');
-      if (firstLaunchValue === 'false') {
+    const checkFirstLaunch = async () => {
+      const isFirst = await isFirstLaunch();
+      if (!isFirst) {
         redirect();
       }
     };
-    isFirstLaunch();
-  }, [getItem, redirect]);
+    
+    checkFirstLaunch();
+  }, [isFirstLaunch, redirect]);
 
   return (
     <Introduction

@@ -1,8 +1,32 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
-import { MMKV } from 'react-native-mmkv';
+import * as SecureStore from 'expo-secure-store';
 
-export const BASE_URL = 'http://localhost:8080/api'; // Loclx
+// Create non-hook token utility functions
+export const getToken = async () => {
+  if (Platform.OS === 'web') {
+    return localStorage.getItem('token');
+  }
+  return await SecureStore.getItemAsync('token');
+};
+
+export const setToken = async (token: string) => {
+  if (Platform.OS === 'web') {
+    localStorage.setItem('token', token);
+  } else {
+    await SecureStore.setItemAsync('token', token);
+  }
+};
+
+export const removeToken = async () => {
+  if (Platform.OS === 'web') {
+    localStorage.removeItem('token');
+  } else {
+    await SecureStore.deleteItemAsync('token');
+  }
+};
+
+const BASE_URL = 'http://localhost:8080/api';
 export const api = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -10,49 +34,6 @@ export const api = axios.create({
   },
   withCredentials: true,
 });
-
-// Storage instance (similar to useStorage implementation but outside React)
-const storage = new MMKV({
-  id: 'storage',
-});
-
-// Direct storage functions that don't use hooks
-export const getToken = async () => {
-  try {
-    if (Platform.OS === 'web') {
-      return localStorage.getItem('token');
-    } else {
-      return storage.getString('token');
-    }
-  } catch (error) {
-    console.error('Error getting token:', error);
-    return null;
-  }
-};
-
-export const setToken = async (token: string) => {
-  try {
-    if (Platform.OS === 'web') {
-      localStorage.setItem('token', token);
-    } else {
-      storage.set('token', token);
-    }
-  } catch (error) {
-    console.error('Error setting token:', error);
-  }
-};
-
-export const removeToken = async () => {
-  try {
-    if (Platform.OS === 'web') {
-      localStorage.removeItem('token');
-    } else {
-      storage.delete('token');
-    }
-  } catch (error) {
-    console.error('Error removing token:', error);
-  }
-};
 
 // Setup interceptor with the non-hook version
 api.interceptors.request.use(
@@ -67,3 +48,5 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+export default { api, getToken, setToken, removeToken };

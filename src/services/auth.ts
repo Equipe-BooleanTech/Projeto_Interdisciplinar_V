@@ -1,16 +1,25 @@
 import { LoginBody, RegisterBody } from './interfaces';
-import { api, setToken as storeToken, removeToken as clearToken } from './API';
-import { useStorage } from '../hooks';
+import { api, setToken, removeToken } from './API';
+import { Platform } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+
+// Direct storage utility function (not a hook)
+const storeUserId = async (userId: string) => {
+  if (Platform.OS === 'web') {
+    localStorage.setItem('userId', userId);
+  } else {
+    await SecureStore.setItemAsync('userId', userId);
+  }
+};
 
 export const login = async (params: LoginBody) => {
-  const { setItem } = useStorage();
   const response = await api.post('/users/login', params);
   const token = response.data.token;
   const userId = response.data.id;
 
   if (token) {
-    await storeToken(token);
-    await setItem('userId', userId);
+    await setToken(token);
+    await storeUserId(userId);
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
 
@@ -23,7 +32,7 @@ export const register = async (params: RegisterBody) => {
 };
 
 export const logout = async () => {
-  await clearToken();
+  await removeToken();
   delete api.defaults.headers.common['Authorization'];
   return true;
 };
