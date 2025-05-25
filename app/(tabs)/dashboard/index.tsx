@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,8 @@ import {
 } from 'react-native';
 import images from '@/assets';
 import { styles } from './_layout';
-import { BottomMenu, Chart, Image } from '@/src/components';
+import { Chart, Image } from '@/src/components';
+import { useRedirect } from '@/src/hooks';
 
 const dummyData = [
   { value: 2500, color: '#6A994E', text: 'Gasto 1' },
@@ -48,6 +49,18 @@ const HomeScreen = () => {
   const handleNextMonth = () => {
     setCurrentMonthIndex((prev) => (prev === 11 ? 0 : prev + 1));
   };
+
+  const { checkAuthentication, redirect } = useRedirect();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const isAuth = await checkAuthentication();
+      if (!isAuth) {
+        redirect();
+      }
+    };
+    checkAuth();
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>

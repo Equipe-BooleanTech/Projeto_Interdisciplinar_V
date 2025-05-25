@@ -153,8 +153,7 @@ const LoginScreen = () => {
           onConfirm={async () => {
             setModal({ ...modal, visible: false });
             if (modal.title === 'Sucesso') {
-              // Force check authentication and navigate
-              await router.replace('/Home');
+              await router.replace('/(tabs)/dashboard');
             }
             setIsSubmitting(false);
             reset();

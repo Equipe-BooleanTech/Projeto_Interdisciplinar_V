@@ -237,7 +237,7 @@ const RegisterScreen = () => {
           onConfirm={() => {
             setModal({ ...modal, visible: false });
             if (modal.title === 'Sucesso') {
-              router.push('/Login');
+              router.push('/Auth/Login');
             }
             setModal({ ...modal, visible: false });
             setIsSubmitting(false);

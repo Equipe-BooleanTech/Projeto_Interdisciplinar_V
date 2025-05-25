@@ -1,5 +1,5 @@
 import { LoginBody, RegisterBody } from './interfaces';
-import { api, setToken, removeToken } from './API';
+import { api, setToken, removeToken, setRefreshToken } from './API';
 import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
@@ -19,6 +19,7 @@ export const login = async (params: LoginBody) => {
 
   if (token) {
     await setToken(token);
+    await setRefreshToken(response.data.refreshToken);
     await storeUserId(userId);
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }

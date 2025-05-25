@@ -1,16 +1,23 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, SafeAreaView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, ScrollView, SafeAreaView } from 'react-native';
 import { styles } from './_layout';
 import { Link, router } from 'expo-router';
-import { Alert as CustomAlert, Button, Form, Image } from '@/src/components';
+import { Alert as CustomAlert, Button, Form } from '@/src/components';
 import { FormHelpers } from '@/src/components/Form';
-import { useForm } from 'react-hook-form';
-import images from '@/assets';
+import { set, useForm } from 'react-hook-form';
 import { createVehicle } from '@/src/services/vehicleService';
-import { useStorage } from '@/src/hooks';
+import { useRedirect, useStorage } from '@/src/hooks';
 import { IconButton } from '@/app/(tabs)/vehicles/styles';
 import { Feather } from '@expo/vector-icons';
 import { IconContainer } from '@/app/Auth/Login/styles';
+import { get } from '@/src/services';
+import { VehicleManufacturer, VehicleModel, VehicleYear } from '@/src/@types';
+import ToastManager, { Toast } from 'toastify-react-native'
+
+export type SelectData = {
+  label: string;
+  value: string;
+};
 
 const VehicleRegisterScreen = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,7 +31,27 @@ const VehicleRegisterScreen = () => {
     title: '',
   });
 
+  const [vehicleManufacturers, setVehicleManufacturers] = useState<SelectData[]>([]);
+  const [vehicleModels, setVehicleModels] = useState<SelectData[]>([]);
+
+
+  const [vehicleManufacturer, setVehicleManufacturer] = useState<VehicleManufacturer | null>(null);
+  const [vehicleModel, setVehicleModel] = useState<VehicleModel | null>(null);
+
   const { getItem } = useStorage();
+
+  const { checkAuthentication, redirect } = useRedirect();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const isAuth = await checkAuthentication();
+      if (!isAuth) {
+        redirect();
+      }
+    };
+    checkAuth();
+  }, []);
+
 
   const {
     control,
@@ -52,7 +79,6 @@ const VehicleRegisterScreen = () => {
   const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
-      // Convert numeric string fields to numbers
       const vehicleData = {
         ...data,
         year: parseInt(data.year, 10),
@@ -63,27 +89,77 @@ const VehicleRegisterScreen = () => {
 
       const userId = getItem('userId');
 
-      // Correct parameter order: vehicleData first, then userId
       await createVehicle(vehicleData, userId as string);
-
-      setModal({
-        visible: true,
-        message: 'Veículo cadastrado com sucesso!',
-        title: 'Sucesso',
-      });
+      Toast.success('Veículo cadastrado com sucesso!');
 
       setIsSubmitting(false);
       return vehicleData;
     } catch (error: any) {
-      setModal({
-        visible: true,
-        message: error?.response?.data?.message || 'Erro ao cadastrar veículo',
-        title: 'Erro',
-      });
+      Toast.error('Ocorreu um erro ao cadastrar veículo. Verifique os dados e tente novamente.');
       setIsSubmitting(false);
       console.error('Error creating vehicle:', error);
     }
   };
+
+  // ------------------------------------------------------
+  // Fetch vehicle brands based on FIPE API
+  // ------------------------------------------------------
+
+  useEffect(() => {
+    const fetchManufacturers = async () => {
+      try {
+        const response = await get<null, VehicleManufacturer[]>('/fipe/marcas');
+        const brands = response.map((model) => ({
+          label: model.nome,
+          value: model.codigo,
+        }))
+        setVehicleManufacturers(brands);
+      } catch (error) {
+        console.error('Error fetching vehicle models:', error);
+        setModal({
+          visible: true,
+          message: 'Erro ao buscar marcas de veículos',
+          title: 'Erro',
+        });
+      }
+    }
+    fetchManufacturers();
+  }, []);
+
+  // ------------------------------------------------------
+  // Fetch vehicle models based on FIPE API
+  // ------------------------------------------------------
+
+  useEffect(() => {
+    const fetchModels = async () => {
+      if (vehicleManufacturer) {
+        try {
+          const response = await get<null, VehicleModel[]>(`/fipe/marcas/${vehicleManufacturer.codigo}/modelos`);
+          // Check the actual response structure and extract models properly
+          let modelsList = [];
+
+          if (Array.isArray(response)) {
+            modelsList = response;
+          } else if (response) {
+            modelsList = response.modelos || [];
+          } else {
+            Toast.error('Formato de resposta da API inesperado');
+            return;
+          }
+
+          const models = modelsList.map((model: any) => ({
+            label: model.nome,
+            value: model.codigo,
+          }));
+          setVehicleModels(models);
+        } catch (error) {
+          console.error('Error fetching models:', error);
+          Toast.error(`Erro ao buscar modelos de veículos`);
+        }
+      }
+    }
+    fetchModels();
+  }, [vehicleManufacturer]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -117,46 +193,62 @@ const VehicleRegisterScreen = () => {
                 errorMessage: errors.plate?.message,
               },
               {
-                name: 'model',
-                type: 'textfield',
-                rules: {
-                  required: 'Modelo é obrigatório',
-                },
-                componentProps: {
-                  placeholder: 'Digite o modelo...',
-                  label: 'Modelo',
-                  onChangeText: (text: string) => {
-                    setValue('model', text);
-                  },
-                },
-                errorMessage: errors.model?.message,
-              },
-              {
-                name: 'color',
-                type: 'textfield',
-                componentProps: {
-                  placeholder: 'Digite a cor...',
-                  label: 'Cor',
-                  onChangeText: (text: string) => {
-                    setValue('color', text);
-                  },
-                },
-                errorMessage: errors.color?.message,
-              },
-              {
                 name: 'manufacturer',
-                type: 'textfield',
+                type: 'select',
+                label: 'Fabricante',
                 rules: {
                   required: 'Fabricante é obrigatório',
                 },
-                componentProps: {
-                  placeholder: 'Digite o fabricante...',
-                  label: 'Fabricante',
-                  onChangeText: (text: string) => {
-                    setValue('manufacturer', text);
+                options: [
+                  {
+                    label: 'Selecione o fabricante...',
+                    value: '',
                   },
+                  ...vehicleManufacturers
+                ],
+                errorMessage: errors.model?.message,
+                componentProps: {
+                  onValueChange: (itemValue: unknown) => {
+                    const valueStr = String(itemValue);
+                    const selected = vehicleManufacturers.find(m => m.value === valueStr);
+                    if (selected) {
+                      setVehicleManufacturer({
+                        codigo: selected.value,
+                        nome: selected.label,
+                      });
+                      setValue('manufacturer', selected.value);
+                    }
+                  }
+                }
+              },
+              {
+                name: 'model',
+                type: 'select',
+                label: 'Modelo',
+                rules: {
+                  required: 'Modelo é obrigatório',
                 },
-                errorMessage: errors.manufacturer?.message,
+                options: [
+                  {
+                    label: 'Selecione o modelo...',
+                    value: '',
+                  },
+                  ...vehicleModels
+                ],
+                componentProps: {
+                  onValueChange: (itemValue: unknown) => {
+                    const valueStr = String(itemValue);
+                    const selected = vehicleModels.find(m => m.value === valueStr);
+                    if (selected) {
+                      setVehicleModel({
+                        codigo: selected.value,
+                        nome: selected.label,
+                      });
+                      setValue('model', selected.value);
+                    }
+                  }
+                },
+                errorMessage: errors.model?.message,
               },
               {
                 name: 'year',
@@ -179,6 +271,18 @@ const VehicleRegisterScreen = () => {
                 errorMessage: errors.year?.message,
               },
               {
+                name: 'color',
+                type: 'textfield',
+                componentProps: {
+                  placeholder: 'Digite a cor...',
+                  label: 'Cor',
+                  onChangeText: (text: string) => {
+                    setValue('color', text);
+                  },
+                },
+                errorMessage: errors.color?.message,
+              },
+              {
                 name: 'km',
                 type: 'textfield',
                 rules: {
@@ -186,7 +290,7 @@ const VehicleRegisterScreen = () => {
                 },
                 componentProps: {
                   placeholder: 'Digite a quilometragem...',
-                  label: 'KM Atual',
+                  label: 'Quilometragem Atual',
                   keyboardType: 'numeric',
                   onChangeText: (text: string) => {
                     setValue('km', text);
@@ -269,14 +373,20 @@ const VehicleRegisterScreen = () => {
             onConfirm={() => {
               setModal({ ...modal, visible: false });
               if (modal.title === 'Sucesso') {
-                router.push('/Home');
+                router.push('/(tabs)/vehicles');
                 reset();
               }
             }}
             confirmText="OK"
           />
         )}
+
       </ScrollView>
+      <ToastManager
+        position="bottom"
+        duration={3000}
+        textStyle={{ fontSize: 12 }}
+      />
     </SafeAreaView>
   );
 };
