@@ -1,96 +1,159 @@
 import React, { useState } from 'react';
-import { Alert, SafeAreaView, ScrollView, StatusBar } from 'react-native';
+import { SafeAreaView, ScrollView, StatusBar, Animated, Easing, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import * as ImagePicker from 'expo-image-picker';
-import { User } from './types';
+import { MaterialIcons, Feather, Ionicons, AntDesign } from '@expo/vector-icons';
+import { AccountMenuItem } from './types';
 import { router } from 'expo-router';
+import { User } from '@/src/@types';
 
 const AccountScreen: React.FC = () => {
+  const [scaleValue] = useState(new Animated.Value(1));
 
-    const [user, setUser] = useState<User>({
-        id: '1',
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        phone: '+1 (555) 123-4567',
-        avatar: null,
+  const [user, setUser] = useState<User>({
+    id: '1',
+    name: 'Henrique Costa',
+    email: 'henrique.costa@example.com',
+    phone: '+55 (11) 97279-9862',
+    avatar: null,
+    joinDate: 'Joined March 2022',
+  });
+
+  const menuItems: AccountMenuItem[] = [
+    { id: '1', title: 'Editar Perfil', icon: 'edit', screen: 'Account/Edit' },
+    { id: '2', title: 'Configurações de Notificação', icon: 'notifications' },
+    { id: '4', title: 'Segurança', icon: 'lock' },
+    { id: '6', title: 'Convide Amigos', icon: 'person-add' },
+  ];
+
+  const animateButton = () => {
+    Animated.sequence([
+      Animated.timing(scaleValue, {
+        toValue: 0.95,
+        duration: 100,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleValue, {
+        toValue: 1,
+        duration: 100,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const handleChangeAvatar = async () => {
+    animateButton();
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      Alert.alert('Permissão negada!');
+      return;
+    }
+
+    const pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
     });
 
-    const handleChangeAvatar = async () => {
-        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!pickerResult.canceled && pickerResult.assets) {
+      setUser({ ...user, avatar: pickerResult.assets[0].uri });
+    }
+  };
 
-        if (!permissionResult.granted) {
-            Alert.alert(
-                'Permission Required',
-                'You need to grant permission to access the photo library.',
-                [{ text: 'OK' }],
-            );
-            return;
-        }
+  const renderIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'edit':
+        return <MaterialIcons name="edit" size={24} color="#454F2C" />;
+      case 'notifications':
+        return <Ionicons name="notifications-outline" size={24} color="#454F2C" />;
+      case 'credit-card':
+        return <Feather name="credit-card" size={24} color="#454F2C" />;
+      case 'lock':
+        return <Feather name="lock" size={24} color="#454F2C" />;
+      case 'help-center':
+        return <MaterialIcons name="help-outline" size={24} color="#454F2C" />;
+      case 'person-add':
+        return <MaterialIcons name="person-add" size={24} color="#454F2C" />;
+      default:
+        return <Feather name="settings" size={24} color="#454F2C" />;
+    }
+  };
 
-        const pickerResult = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 1,
-        });
+  return (
+    <Container>
+      <StatusBar barStyle="dark-content" />
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
+        <Header>
+          <Title>My Profile</Title>
+          <SettingsButton onPress={() => router.navigate('/dashboard')}>
+            <Feather name="settings" size={24} color="#333" />
+          </SettingsButton>
+        </Header>
 
-        if (!pickerResult.canceled && pickerResult.assets) {
-            setUser({ ...user, avatar: pickerResult.assets[0].uri });
-        }
-    };
+        <AvatarContainer>
+          <AvatarWrapper>
+            {user.avatar ? (
+              <Avatar source={{ uri: user.avatar }} />
+            ) : (
+              <DefaultAvatar>
+                <AvatarText>{user.name.charAt(0)}</AvatarText>
+              </DefaultAvatar>
+            )}
+            
+          </AvatarWrapper>
 
-    const navigateToEditProfile = () => {
-        router.push('/Account', { user });
-    };
+          <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
+            <ChangeAvatarButton onPress={handleChangeAvatar}>
+              <MaterialIcons name="photo-camera" size={20} color="white" />
+              <ChangeAvatarText>Change Photo</ChangeAvatarText>
+            </ChangeAvatarButton>
+          </Animated.View>
 
-    return (
-        <Container>
-            <StatusBar barStyle="dark-content" />
-            <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
-                <Header>
-                    <Title>Minha Conta</Title>
-                </Header>
+          <UserName>{user.name}</UserName>
+          <UserEmail>{user.email}</UserEmail>
+          <JoinDate>{user.joinDate}</JoinDate>
+        </AvatarContainer>
 
-                <AvatarContainer>
-                    {user.avatar ? (
-                        <Avatar source={{ uri: user.avatar }} />
-                    ) : (
-                        <DefaultAvatar>
-                            <AvatarText>{user.name.charAt(0)}</AvatarText>
-                        </DefaultAvatar>
-                    )}
-                    <ChangeAvatarButton onPress={handleChangeAvatar}>
-                        <ChangeAvatarText>Mudar foto de perfil</ChangeAvatarText>
-                    </ChangeAvatarButton>
-                </AvatarContainer>
+        <StatsContainer>
+          <StatItem>
+            <StatValue>24</StatValue>
+            <StatLabel>Veículos Cadastrados</StatLabel>
+          </StatItem>
+          <StatDivider />
+          <StatItem>
+            <StatValue>8</StatValue>
+            <StatLabel>Manutenções Pendentes</StatLabel>
+          </StatItem>
+          <StatDivider />
+        </StatsContainer>
 
-                <InfoContainer>
-                    <InfoItem>
-                        <InfoLabel>Nome Completo</InfoLabel>
-                        <InfoValue>{user.name}</InfoValue>
-                    </InfoItem>
+        <MenuContainer>
+          {menuItems.map((item) => (
+            <MenuItem
+              key={item.id}
+              onPress={() => item.screen ? router.push(item.screen as any) : null}
+              activeOpacity={0.7}
+            >
+              <MenuItemLeft>
+                {renderIcon(item.icon)}
+                <MenuItemText>{item.title}</MenuItemText>
+              </MenuItemLeft>
+              <AntDesign name="right" size={18} color="#999" />
+            </MenuItem>
+          ))}
+        </MenuContainer>
 
-                    <InfoItem>
-                        <InfoLabel>E-mail</InfoLabel>
-                        <InfoValue>{user.email}</InfoValue>
-                    </InfoItem>
-
-                    <InfoItem>
-                        <InfoLabel>Celular</InfoLabel>
-                        <InfoValue>{user.phone}</InfoValue>
-                    </InfoItem>
-                </InfoContainer>
-
-                <EditButton onPress={navigateToEditProfile}>
-                    <EditButtonText>Editar Perfil</EditButtonText>
-                </EditButton>
-
-                <SignOutButton onPress={() => console.log('Sign out')}>
-                    <SignOutButtonText>Sign Out</SignOutButtonText>
-                </SignOutButton>
-            </ScrollView>
-        </Container>
-    );
+        <SignOutButton onPress={() => console.log('Sign out')}>
+          <SignOutButtonText>Sign Out</SignOutButtonText>
+          <MaterialIcons name="logout" size={20} color="#ff4444" />
+        </SignOutButton>
+      </ScrollView>
+    </Container>
+  );
 };
 
 // Styled components
@@ -100,7 +163,10 @@ const Container = styled(SafeAreaView)`
 `;
 
 const Header = styled.View`
-  padding: 24px 16px 16px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 20px 16px;
 `;
 
 const Title = styled.Text`
@@ -109,9 +175,18 @@ const Title = styled.Text`
   color: #333;
 `;
 
+const SettingsButton = styled.TouchableOpacity`
+  padding: 8px;
+`;
+
 const AvatarContainer = styled.View`
   align-items: center;
   margin: 16px 0 24px;
+`;
+
+const AvatarWrapper = styled.View`
+  position: relative;
+  margin-bottom: 16px;
 `;
 
 const Avatar = styled.Image`
@@ -136,64 +211,140 @@ const AvatarText = styled.Text`
   color: white;
 `;
 
+const MembershipBadge = styled.View<{ membershipLevel: string }>`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: ${props =>
+    props.membershipLevel === 'gold' ? '#FFD700' :
+      props.membershipLevel === 'platinum' ? '#E5E4E2' : '#C0C0C0'};
+  padding: 4px 8px;
+  border-radius: 12px;
+  min-width: 60px;
+  align-items: center;
+`;
+
+const MembershipBadgeText = styled.Text`
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: ${props => props.membershipLevel === 'gold' ? '#333' : '#333'};
+`;
+
 const ChangeAvatarButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  background-color: #454F2C;
+  padding: 10px 16px;
+  border-radius: 20px;
   margin-top: 12px;
 `;
 
 const ChangeAvatarText = styled.Text`
-  color: #454F2C;
-  font-size: 16px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 8px;
 `;
 
-const InfoContainer = styled.View`
+const UserName = styled.Text`
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+  margin-top: 12px;
+`;
+
+const UserEmail = styled.Text`
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+`;
+
+const JoinDate = styled.Text`
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+`;
+
+const StatsContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-around;
   background-color: white;
   margin: 16px;
   border-radius: 12px;
-  padding: 16px;
+  padding: 20px;
   elevation: 2;
+  shadow-color: #000;
+  shadow-opacity: 0.1;
+  shadow-radius: 8px;
 `;
 
-const InfoItem = styled.View`
-  margin-bottom: 16px;
-`;
-
-const InfoLabel = styled.Text`
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 4px;
-`;
-
-const InfoValue = styled.Text`
-  font-size: 16px;
-  color: #333;
-`;
-
-const EditButton = styled.TouchableOpacity`
-  background-color: #454F2C;
-  padding: 16px;
-  border-radius: 8px;
-  margin: 16px;
+const StatItem = styled.View`
   align-items: center;
 `;
 
-const EditButtonText = styled.Text`
-  color: white;
+const StatValue = styled.Text`
+  font-size: 20px;
+  font-weight: 700;
+  color: #454F2C;
+`;
+
+const StatLabel = styled.Text`
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+`;
+
+const StatDivider = styled.View`
+  width: 1px;
+  height: 40px;
+  background-color: #eee;
+`;
+
+const MenuContainer = styled.View`
+  background-color: white;
+  margin: 16px;
+  border-radius: 12px;
+  padding: 8px 0;
+  elevation: 2;
+  shadow-color: #000;
+  shadow-opacity: 0.1;
+  shadow-radius: 8px;
+`;
+
+const MenuItem = styled.TouchableOpacity`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+`;
+
+const MenuItemLeft = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const MenuItemText = styled.Text`
   font-size: 16px;
-  font-weight: 600;
+  color: #333;
+  margin-left: 16px;
 `;
 
 const SignOutButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
   padding: 16px;
   border-radius: 8px;
-  margin: 0 16px;
-  align-items: center;
-  border: 1px solid #ff4444;
+  margin: 16px;
+  background-color: rgba(255, 68, 68, 0.1);
 `;
 
 const SignOutButtonText = styled.Text`
   color: #ff4444;
   font-size: 16px;
   font-weight: 600;
+  margin-right: 8px;
 `;
 
 export default AccountScreen;
