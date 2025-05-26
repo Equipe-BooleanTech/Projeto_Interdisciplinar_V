@@ -1,9 +1,8 @@
-import {  useFontLoader } from '@/src/hooks';
+import { useFontLoader } from '@/src/hooks';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
 import { useEffect } from 'react';
-
 
 export default function Layout() {
   const { fontsLoaded } = useFontLoader();
@@ -21,5 +20,9 @@ export default function Layout() {
     return null;
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    </Stack>
+  );
 }

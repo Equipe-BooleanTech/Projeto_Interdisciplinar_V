@@ -18,5 +18,3 @@ export const StyledPicker = styled(Picker)`
   background-color: #f0f0f0;
   border: 1px solid #ccc;
 `;
-
-

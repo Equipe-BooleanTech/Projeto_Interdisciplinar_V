@@ -10,7 +10,6 @@ import { StyledLabel, StyledPicker } from '../TextField/TextField.styles';
 import { StyledMaskedInput } from './styles/Field.styles';
 import { StyledErrorText } from '../TextField/TextField.styles';
 
-
 const Select = ({
   selectedValue,
   onValueChange,
@@ -21,11 +20,7 @@ const Select = ({
   return (
     <>
       {label && <StyledLabel>{label}</StyledLabel>}
-      <StyledPicker
-        selectedValue={selectedValue}
-        onValueChange={onValueChange}
-        {...rest}
-      >
+      <StyledPicker selectedValue={selectedValue} onValueChange={onValueChange} {...rest}>
         {children}
       </StyledPicker>
     </>
@@ -124,7 +119,7 @@ export const FormHelpers = {
                           ))}
                         </Form.Field.Select>
                       </>
-                      );
+                    );
                   case 'switch':
                     return (
                       <Form.Field.Switch

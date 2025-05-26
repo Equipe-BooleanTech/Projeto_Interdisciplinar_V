@@ -7,5 +7,6 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "[typescriptreact]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
-  }
+  },
+  "sarif-viewer.connectToGithubCodeScanning": "off"
 }

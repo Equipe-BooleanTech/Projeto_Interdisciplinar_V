@@ -1,11 +1,11 @@
-import styled from "styled-components/native";
+import styled from 'styled-components/native';
 
 export const BottomMenu = styled.View`
   position: absolute;
   bottom: 0px;
   left: 0px;
   right: 0px;
-  background-color: #454F2C;
+  background-color: #454f2c;
   padding-vertical: 8px;
   flex-direction: row;
   justify-content: space-between;
@@ -52,7 +52,7 @@ export const AddButton = styled.TouchableOpacity`
 
 export const AddButtonText = styled.Text`
   font-size: 36px;
-  color: #454F2C;
+  color: #454f2c;
   font-weight: bold;
   margin-top: -7px;
 `;
