@@ -39,24 +39,16 @@ const VehicleScreen = () => {
   // Fetch user vehicles from the API
   // ------------------------------------------------------
 
-  useEffect(() => {
+    useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        const response = await get(`/vehicle/listall-vehicle/`);
-        console.log('Response:', response);
-        if (!response.ok) {
-          Toast.error(`Ocorreu um erro ao buscar os veículos: ${response.statusText}`);
-          return;
-        }
-        const data = await response.json() || {};
-        setVehicles(data.content || []);
-        console.log('Fetched vehicles:', data.content);
-        Toast.success('Veículos carregados com sucesso!');
+        const response = await get('/vehicle/listall-vehicle');
+        setVehicles(response.content);
       } catch (error) {
-        console.error('Failed to fetch vehicles:', error.message);
-        Toast.error(`Ocorreu um erro ao buscar os veículos: ${error.message}`);
+        Toast.error('Erro ao carregar veículos');
+        console.error('Error fetching vehicles:', error);
       }
-    };
+    }
     fetchVehicles();
   }, []);
 
@@ -66,7 +58,7 @@ const VehicleScreen = () => {
         <IconButton onPress={() => router.push('/Vehicles/Register')}>
           <Feather name="plus" size={18} color="#fff" />
         </IconButton>
-        <ProfileButton onPress={() => router.push('/Account')}>
+        <ProfileButton onPress={() => router.push('/account/index')}>
           <Feather name="user" size={20} color="#000" />
         </ProfileButton>
       </Header>
@@ -81,7 +73,7 @@ const VehicleScreen = () => {
                 uri: 'https://www.shutterstock.com/image-vector/car-vectorcar-monochrome-iconcoupe-iconcar-600nw-2318254387.jpg',
               }}
             />
-            <VehicleName>{vehicle.name}</VehicleName>
+            <VehicleName>{vehicle.model}</VehicleName>
             <PlateText>{vehicle.plate}</PlateText>
           </Card>
         ))}

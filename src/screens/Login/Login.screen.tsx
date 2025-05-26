@@ -8,6 +8,7 @@ import { router } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 import { LoginTextContainer, OrText } from './Login.styles';
 import { useRedirect } from '@/src/hooks';
+import { Toast } from 'toastify-react-native';
 
 const LoginScreen = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,6 +54,8 @@ const LoginScreen = () => {
         message: 'Usuário autenticado com sucesso!',
         title: 'Sucesso',
       });
+
+      Toast.success('Autenticado com sucesso!');
       setIsSubmitting(false);
       return res;
     } catch (error: any) {
@@ -64,9 +67,10 @@ const LoginScreen = () => {
 
       setModal({
         visible: true,
-        message: 'Ocorreu um erro ao autenticar. Tente novamente mais tarde.',
+        message: 'Ocorreu um erro ao autenticar. Verifique suas credenciais e tente novamente.',
         title: 'Erro',
       });
+
       setIsSubmitting(false);
       return {
         status: 'error',

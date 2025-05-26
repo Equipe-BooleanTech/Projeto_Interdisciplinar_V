@@ -72,6 +72,7 @@ const VehicleRegisterScreen = () => {
       fuelType: '',
       fuelCapacity: '',
       fuelConsumption: '',
+      userId: getItem('userId')
     },
     mode: 'onBlur',
   });
@@ -216,7 +217,7 @@ const VehicleRegisterScreen = () => {
                         codigo: selected.value,
                         nome: selected.label,
                       });
-                      setValue('manufacturer', selected.value);
+                      setValue('manufacturer', selected.label);
                     }
                   }
                 }
@@ -244,7 +245,7 @@ const VehicleRegisterScreen = () => {
                         codigo: selected.value,
                         nome: selected.label,
                       });
-                      setValue('model', selected.value);
+                      setValue('model', selected.label);
                     }
                   }
                 },

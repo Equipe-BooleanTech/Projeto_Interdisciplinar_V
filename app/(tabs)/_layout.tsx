@@ -19,6 +19,14 @@ const tabConfig = [
     ),
     show: true,
   },
+  {
+    name: 'account/index',
+    title: 'Minha Conta',
+    icon: (focused: boolean, color: string) => (
+      <Ionicons name={focused ? 'person-sharp' : 'person-outline'} size={24} color={color} />
+    ),
+    show: true,
+  }
 ];
 
 export default function TabLayout() {
