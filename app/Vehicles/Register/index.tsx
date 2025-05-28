@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { Text, ScrollView, SafeAreaView } from 'react-native';
 import { styles } from './_layout';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 import { Alert as CustomAlert, Button, Form } from '@/src/components';
 import { FormHelpers } from '@/src/components/Form';
-import { set, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { createVehicle } from '@/src/services/vehicleService';
 import { useRedirect, useStorage } from '@/src/hooks';
 import { IconButton } from '@/app/(tabs)/vehicles/styles';
 import { Feather } from '@expo/vector-icons';
 import { IconContainer } from '@/app/Auth/Login/styles';
 import { get } from '@/src/services';
-import { VehicleManufacturer, VehicleModel, VehicleYear } from '@/src/@types';
+import { VehicleManufacturer, VehicleModel } from '@/src/@types';
 import ToastManager, { Toast } from 'toastify-react-native'
 
 export type SelectData = {
@@ -77,6 +77,7 @@ const VehicleRegisterScreen = () => {
     mode: 'onBlur',
   });
 
+
   const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
@@ -116,7 +117,6 @@ const VehicleRegisterScreen = () => {
         }))
         setVehicleManufacturers(brands);
       } catch (error) {
-        console.error('Error fetching vehicle models:', error);
         setModal({
           visible: true,
           message: 'Erro ao buscar marcas de veículos',
@@ -166,11 +166,9 @@ const VehicleRegisterScreen = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <ScrollView contentContainerStyle={styles.container}>
         <IconContainer>
-          <Link href="/(tabs)/dashboard">
-            <IconButton>
+            <IconButton onPress={() => router.push("/(tabs)/vehicles")}>
               <Feather name="arrow-left" size={24} color="#fff" />
             </IconButton>
-          </Link>
         </IconContainer>
         <Form.Root controlled>
           <Text style={styles.title}>Cadastro de Veículo</Text>
@@ -201,10 +199,6 @@ const VehicleRegisterScreen = () => {
                   required: 'Fabricante é obrigatório',
                 },
                 options: [
-                  {
-                    label: 'Selecione o fabricante...',
-                    value: '',
-                  },
                   ...vehicleManufacturers
                 ],
                 errorMessage: errors.model?.message,
@@ -217,7 +211,7 @@ const VehicleRegisterScreen = () => {
                         codigo: selected.value,
                         nome: selected.label,
                       });
-                      setValue('manufacturer', selected.label);
+                      setValue('manufacturer', valueStr);
                     }
                   }
                 }
@@ -230,10 +224,6 @@ const VehicleRegisterScreen = () => {
                   required: 'Modelo é obrigatório',
                 },
                 options: [
-                  {
-                    label: 'Selecione o modelo...',
-                    value: '',
-                  },
                   ...vehicleModels
                 ],
                 componentProps: {
@@ -245,7 +235,7 @@ const VehicleRegisterScreen = () => {
                         codigo: selected.value,
                         nome: selected.label,
                       });
-                      setValue('model', selected.label);
+                      setValue('model', valueStr);
                     }
                   }
                 },

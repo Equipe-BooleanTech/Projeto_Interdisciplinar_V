@@ -6,10 +6,11 @@ import { MaterialIcons, Feather, Ionicons, AntDesign } from '@expo/vector-icons'
 import { AccountMenuItem } from './types';
 import { router } from 'expo-router';
 import { User } from '@/src/@types';
+import { useStorage } from '@/src/hooks';
 
 const AccountScreen: React.FC = () => {
   const [scaleValue] = useState(new Animated.Value(1));
-
+  const { clear } = useStorage();
   const [user, setUser] = useState<User>({
     id: '1',
     name: 'Henrique Costa',
@@ -128,7 +129,6 @@ const AccountScreen: React.FC = () => {
             <StatValue>8</StatValue>
             <StatLabel>Manutenções Pendentes</StatLabel>
           </StatItem>
-          <StatDivider />
         </StatsContainer>
 
         <MenuContainer>
@@ -147,8 +147,11 @@ const AccountScreen: React.FC = () => {
           ))}
         </MenuContainer>
 
-        <SignOutButton onPress={() => console.log('Sign out')}>
-          <SignOutButtonText>Sign Out</SignOutButtonText>
+        <SignOutButton onPress={() => {
+          clear()
+          router.replace('/Auth/Login');
+        }}>
+          <SignOutButtonText>Sair</SignOutButtonText>
           <MaterialIcons name="logout" size={20} color="#ff4444" />
         </SignOutButton>
       </ScrollView>

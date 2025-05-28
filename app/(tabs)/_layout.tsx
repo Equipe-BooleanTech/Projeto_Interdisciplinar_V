@@ -21,7 +21,7 @@ const tabConfig = [
   },
   {
     name: 'account/index',
-    title: 'Minha Conta',
+    title: 'Conta',
     icon: (focused: boolean, color: string) => (
       <Ionicons name={focused ? 'person-sharp' : 'person-outline'} size={24} color={color} />
     ),

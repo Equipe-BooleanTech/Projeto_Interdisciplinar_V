@@ -21,6 +21,7 @@ const Select = ({
     <>
       {label && <StyledLabel>{label}</StyledLabel>}
       <StyledPicker selectedValue={selectedValue} onValueChange={onValueChange} {...rest}>
+        <Picker.Item label="Selecione uma opção..." value="" />
         {children}
       </StyledPicker>
     </>
@@ -53,6 +54,7 @@ type SelectFieldProps = BaseFieldProps & {
   componentProps?: React.ComponentProps<typeof Picker>;
   options: Array<{ label: string; value: any }>;
   label?: string;
+  selectedValue?: any;
 };
 
 type SwitchFieldProps = BaseFieldProps & {

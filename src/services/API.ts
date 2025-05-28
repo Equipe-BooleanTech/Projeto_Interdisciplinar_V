@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import * as Network from 'expo-network';
 
 // Create non-hook token utility functions
 export const getToken = async () => {
@@ -48,9 +49,10 @@ export const removeRefreshToken = async () => {
   } else {
     await SecureStore.deleteItemAsync('refreshToken');
   }
-};
+}; 
 
-const BASE_URL = 'http://localhost:8080/api';
+let BASE_URL = 'http://localhost:8080/api';
+
 export const api = axios.create({
   baseURL: BASE_URL,
   headers: {

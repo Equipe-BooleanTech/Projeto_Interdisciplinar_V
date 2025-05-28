@@ -41,10 +41,10 @@ export const Title = styled.Text`
   color: #333;
 `;
 
-export const Card = styled.View`
+export const Card = styled.TouchableOpacity`
   background-color: #fff;
   border-radius: 12px;
-  width: 45%;
+  width: 42%;
   margin: 10px;
   padding: 10px;
   align-items: center;

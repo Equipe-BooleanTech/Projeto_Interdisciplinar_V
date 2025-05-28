@@ -39,14 +39,13 @@ const VehicleScreen = () => {
   // Fetch user vehicles from the API
   // ------------------------------------------------------
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchVehicles = async () => {
       try {
         const response = await get('/vehicle/listall-vehicle');
         setVehicles(response.content);
       } catch (error) {
         Toast.error('Erro ao carregar veículos');
-        console.error('Error fetching vehicles:', error);
       }
     }
     fetchVehicles();
@@ -58,16 +57,15 @@ const VehicleScreen = () => {
         <IconButton onPress={() => router.push('/Vehicles/Register')}>
           <Feather name="plus" size={18} color="#fff" />
         </IconButton>
-        <ProfileButton onPress={() => router.push('/account/index')}>
+        <ProfileButton onPress={() => router.push('/(tabs)/account')}>
           <Feather name="user" size={20} color="#000" />
         </ProfileButton>
       </Header>
 
       <Title>Meus Veículos</Title>
-
-      <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+      <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
         {vehicles.map((vehicle) => (
-          <Card key={vehicle.id}>
+          <Card key={vehicle.plate} onPress={() => router.push(`/Vehicles/Update/${vehicle.plate}`)}>
             <VehicleImage
               source={{
                 uri: 'https://www.shutterstock.com/image-vector/car-vectorcar-monochrome-iconcoupe-iconcar-600nw-2318254387.jpg',
