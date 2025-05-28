@@ -1,7 +1,7 @@
-export type User = {
+export type AccountMenuItem = {
     id: string;
-    name: string;
-    email: string;
-    phone: string;
-    avatar: string | null;
-};
+    title: string;
+    icon: string;
+    screen?: string;
+    action?: () => void;
+  };
