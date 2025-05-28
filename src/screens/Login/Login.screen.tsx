@@ -7,8 +7,6 @@ import { login } from '@/src/services/auth';
 import { router } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 import { LoginTextContainer, OrText } from './Login.styles';
-import { useRedirect } from '@/src/hooks';
-import { Toast } from 'toastify-react-native';
 
 const LoginScreen = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,7 +23,6 @@ const LoginScreen = () => {
 
   const [isOAuth, setIsOAuth] = useState(false);
 
-  const { goToHome, backToLogin, redirect } = useRedirect();
   const {
     control,
     handleSubmit,
@@ -55,10 +52,10 @@ const LoginScreen = () => {
         title: 'Sucesso',
       });
 
-      Toast.success('Autenticado com sucesso!');
       setIsSubmitting(false);
       return res;
     } catch (error: any) {
+      console.error('Erro ao autenticar:', error);
       const errorMessage =
         error.response?.data?.message ||
         error.response?.data?.error ||
@@ -157,7 +154,7 @@ const LoginScreen = () => {
           onConfirm={async () => {
             setModal({ ...modal, visible: false });
             if (modal.title === 'Sucesso') {
-              await router.replace('/(tabs)/dashboard');
+              router.push('/(tabs)/dashboard');
             }
             setIsSubmitting(false);
             reset();

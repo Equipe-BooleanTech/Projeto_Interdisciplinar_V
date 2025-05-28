@@ -17,7 +17,6 @@ import { router } from 'expo-router';
 import { useRedirect } from '@/src/hooks';
 import { get } from '@/src/services';
 import { Toast } from 'toastify-react-native';
-import ToastManager from 'toastify-react-native/components/ToastManager';
 
 const VehicleScreen = () => {
   const [vehicles, setVehicles] = React.useState([]);
@@ -84,11 +83,6 @@ const VehicleScreen = () => {
           </TouchableOpacity>
         </AddCard>
       </ScrollView>
-      <ToastManager
-        position="bottom"
-        duration={3000}
-        textStyle={{ fontSize: 12 }}
-      />
     </Container>
   );
 };

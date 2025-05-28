@@ -7,6 +7,7 @@ import { AccountMenuItem } from './types';
 import { router } from 'expo-router';
 import { User } from '@/src/@types';
 import { useStorage } from '@/src/hooks';
+import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 
 const AccountScreen: React.FC = () => {
   const [scaleValue] = useState(new Animated.Value(1));
@@ -17,7 +18,7 @@ const AccountScreen: React.FC = () => {
     email: 'henrique.costa@example.com',
     phone: '+55 (11) 97279-9862',
     avatar: null,
-    joinDate: 'Joined March 2022',
+    joinDate: 'Ingressou em Março de 2022',
   });
 
   const menuItems: AccountMenuItem[] = [
@@ -85,77 +86,79 @@ const AccountScreen: React.FC = () => {
   };
 
   return (
-    <Container>
-      <StatusBar barStyle="dark-content" />
-      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
-        <Header>
-          <Title>My Profile</Title>
-          <SettingsButton onPress={() => router.navigate('/dashboard')}>
-            <Feather name="settings" size={24} color="#333" />
-          </SettingsButton>
-        </Header>
+    <ProtectedRoute>
+      <Container>
+        <StatusBar barStyle="dark-content" />
+        <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
+          <Header>
+            <Title>My Profile</Title>
+            <SettingsButton onPress={() => router.navigate('/dashboard')}>
+              <Feather name="settings" size={24} color="#333" />
+            </SettingsButton>
+          </Header>
 
-        <AvatarContainer>
-          <AvatarWrapper>
-            {user.avatar ? (
-              <Avatar source={{ uri: user.avatar }} />
-            ) : (
-              <DefaultAvatar>
-                <AvatarText>{user.name.charAt(0)}</AvatarText>
-              </DefaultAvatar>
-            )}
-            
-          </AvatarWrapper>
+          <AvatarContainer>
+            <AvatarWrapper>
+              {user.avatar ? (
+                <Avatar source={{ uri: user.avatar }} />
+              ) : (
+                <DefaultAvatar>
+                  <AvatarText>{user.name.charAt(0)}</AvatarText>
+                </DefaultAvatar>
+              )}
 
-          <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
-            <ChangeAvatarButton onPress={handleChangeAvatar}>
-              <MaterialIcons name="photo-camera" size={20} color="white" />
-              <ChangeAvatarText>Change Photo</ChangeAvatarText>
-            </ChangeAvatarButton>
-          </Animated.View>
+            </AvatarWrapper>
 
-          <UserName>{user.name}</UserName>
-          <UserEmail>{user.email}</UserEmail>
-          <JoinDate>{user.joinDate}</JoinDate>
-        </AvatarContainer>
+            <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
+              <ChangeAvatarButton onPress={handleChangeAvatar}>
+                <MaterialIcons name="photo-camera" size={20} color="white" />
+                <ChangeAvatarText>Change Photo</ChangeAvatarText>
+              </ChangeAvatarButton>
+            </Animated.View>
 
-        <StatsContainer>
-          <StatItem>
-            <StatValue>24</StatValue>
-            <StatLabel>Veículos Cadastrados</StatLabel>
-          </StatItem>
-          <StatDivider />
-          <StatItem>
-            <StatValue>8</StatValue>
-            <StatLabel>Manutenções Pendentes</StatLabel>
-          </StatItem>
-        </StatsContainer>
+            <UserName>{user.name}</UserName>
+            <UserEmail>{user.email}</UserEmail>
+            <JoinDate>{user.joinDate}</JoinDate>
+          </AvatarContainer>
 
-        <MenuContainer>
-          {menuItems.map((item) => (
-            <MenuItem
-              key={item.id}
-              onPress={() => item.screen ? router.push(item.screen as any) : null}
-              activeOpacity={0.7}
-            >
-              <MenuItemLeft>
-                {renderIcon(item.icon)}
-                <MenuItemText>{item.title}</MenuItemText>
-              </MenuItemLeft>
-              <AntDesign name="right" size={18} color="#999" />
-            </MenuItem>
-          ))}
-        </MenuContainer>
+          <StatsContainer>
+            <StatItem>
+              <StatValue>24</StatValue>
+              <StatLabel>Veículos Cadastrados</StatLabel>
+            </StatItem>
+            <StatDivider />
+            <StatItem>
+              <StatValue>8</StatValue>
+              <StatLabel>Manutenções Pendentes</StatLabel>
+            </StatItem>
+          </StatsContainer>
 
-        <SignOutButton onPress={() => {
-          clear()
-          router.replace('/Auth/Login');
-        }}>
-          <SignOutButtonText>Sair</SignOutButtonText>
-          <MaterialIcons name="logout" size={20} color="#ff4444" />
-        </SignOutButton>
-      </ScrollView>
-    </Container>
+          <MenuContainer>
+            {menuItems.map((item) => (
+              <MenuItem
+                key={item.id}
+                onPress={() => item.screen ? router.push(item.screen as any) : null}
+                activeOpacity={0.7}
+              >
+                <MenuItemLeft>
+                  {renderIcon(item.icon)}
+                  <MenuItemText>{item.title}</MenuItemText>
+                </MenuItemLeft>
+                <AntDesign name="right" size={18} color="#999" />
+              </MenuItem>
+            ))}
+          </MenuContainer>
+
+          <SignOutButton onPress={() => {
+            clear()
+            router.replace('/Auth/Login');
+          }}>
+            <SignOutButtonText>Sair</SignOutButtonText>
+            <MaterialIcons name="logout" size={20} color="#ff4444" />
+          </SignOutButton>
+        </ScrollView>
+      </Container>
+    </ProtectedRoute>
   );
 };
 
@@ -212,26 +215,6 @@ const AvatarText = styled.Text`
   font-size: 48px;
   font-weight: bold;
   color: white;
-`;
-
-const MembershipBadge = styled.View<{ membershipLevel: string }>`
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background-color: ${props =>
-    props.membershipLevel === 'gold' ? '#FFD700' :
-      props.membershipLevel === 'platinum' ? '#E5E4E2' : '#C0C0C0'};
-  padding: 4px 8px;
-  border-radius: 12px;
-  min-width: 60px;
-  align-items: center;
-`;
-
-const MembershipBadgeText = styled.Text`
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: capitalize;
-  color: ${props => props.membershipLevel === 'gold' ? '#333' : '#333'};
 `;
 
 const ChangeAvatarButton = styled.TouchableOpacity`

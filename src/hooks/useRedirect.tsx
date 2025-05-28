@@ -1,27 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useDevice } from '.';
-import { getToken } from '../services';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'expo-router';
+import { useAuth } from '../providers/auth/AuthProvider';
 
 const useRedirect = () => {
   const router = useRouter();
   const [redirecting, setRedirecting] = useState(false);
-
-  const { isFirstLaunchWeb, isFirstLaunchMobile } = useDevice();
-  const isFirstLaunch = isFirstLaunchWeb || isFirstLaunchMobile;
-  const { deviceType } = useDevice();
-
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  const checkAuthentication = useCallback(async () => {
-    const token = await getToken();
-    setIsAuthenticated(!!token);
-    return !!token;
-  }, []);
-
-  useEffect(() => {
-    checkAuthentication();
-  }, [checkAuthentication]);
+  
+  // Use the auth context instead of implementing authentication logic here
+  const { isAuthenticated, checkAuthentication } = useAuth();
 
   const backToLogin = useCallback(() => {
     router.replace('/Auth/Login');
@@ -31,11 +17,13 @@ const useRedirect = () => {
     const isAuth = await checkAuthentication();
     if (isAuth) {
       router.replace('/dashboard');
+    } else {
+      backToLogin();
     }
-  }, [checkAuthentication, router]);
+  }, [router, checkAuthentication, backToLogin]);
 
   const redirect = useCallback(async () => {
-    if (redirecting) return; // Prevent recursive redirects
+    if (redirecting) return;
 
     setRedirecting(true);
     const isAuth = await checkAuthentication();
@@ -45,7 +33,7 @@ const useRedirect = () => {
       router.replace('/Auth/Login');
     }
     setRedirecting(false);
-  }, [checkAuthentication, router, redirecting]);
+  }, [router, redirecting, checkAuthentication]);
 
   return {
     backToLogin,
