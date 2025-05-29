@@ -109,6 +109,9 @@ export const StyledPicker = styled(PickerIOS)`
     background-color: #f0f0f0;
     color: #000;
   }
+
+  z-index: 100;
+  position: relative;
 `;
 
 export const StyledPickerWeb = styled(WebPicker)`
