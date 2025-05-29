@@ -26,7 +26,7 @@ export const removeToken = async () => {
   }
 };
 
-let BASE_URL = 'https://blue-bobcats-poke.loca.lt/api';
+let BASE_URL = 'https://light-candles-repeat.loca.lt/api';
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -58,6 +58,10 @@ api.interceptors.response.use(
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
       
       await removeToken();
+      await SecureStore.deleteItemAsync('userId'); // Clear user data if needed
+      if (Platform.OS === 'web') {
+        localStorage.removeItem('userId'); // Clear user data for web
+      }
       
 }
     

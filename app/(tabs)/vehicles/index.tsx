@@ -30,6 +30,7 @@ const VehicleScreen = () => {
       if (!isAuth) {
         redirect();
       }
+      return;
     };
     checkAuth();
   }, [checkAuthentication, redirect]);

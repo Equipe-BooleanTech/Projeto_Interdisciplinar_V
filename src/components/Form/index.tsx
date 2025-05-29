@@ -76,8 +76,6 @@ const SelectField = ({
             </PickerContainer>
           </ModalContainer>
         </Modal>
-
-        {error && <ErrorText>{error}</ErrorText>}
       </SelectContainer>
     );
   }
@@ -101,8 +99,6 @@ const SelectField = ({
           />
         ))}
       </WebPicker>
-
-      {error && <ErrorText>{error}</ErrorText>}
     </SelectContainer>
   );
 };

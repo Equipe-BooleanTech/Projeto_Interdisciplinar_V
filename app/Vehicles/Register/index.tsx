@@ -18,6 +18,7 @@ import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 export type SelectData = {
   label: string;
   value: string;
+  code?: string;
 };
 
 const VehicleRegisterScreen = () => {
@@ -51,8 +52,10 @@ const VehicleRegisterScreen = () => {
     defaultValues: {
       plate: '',
       model: '',
+      modelName: '',
       color: '',
       manufacturer: '',
+      manufacturerName: '',
       type: '',
       description: '',
       year: '',
@@ -60,7 +63,6 @@ const VehicleRegisterScreen = () => {
       fuelType: '',
       fuelCapacity: '',
       fuelConsumption: '',
-      userId: getItem('userId')
     },
     mode: 'onBlur',
   });
@@ -71,6 +73,8 @@ const VehicleRegisterScreen = () => {
     try {
       const vehicleData = {
         ...data,
+        manufacturer: data.manufacturerName || '',
+        model: data.modelName || '',
         year: parseInt(data.year, 10),
         km: parseFloat(data.km),
         fuelCapacity: data.fuelCapacity ? parseFloat(data.fuelCapacity) : 0,
@@ -81,11 +85,20 @@ const VehicleRegisterScreen = () => {
 
       await createVehicle(vehicleData, userId as string);
       Toast.success('Veículo cadastrado com sucesso!');
-
+      setModal({
+        visible: true,
+        message: 'Veículo cadastrado com sucesso!',
+        title: 'Sucesso',
+      });
       setIsSubmitting(false);
       return vehicleData;
     } catch (error: any) {
       Toast.error('Ocorreu um erro ao cadastrar veículo. Verifique os dados e tente novamente.');
+      setModal({
+        visible: true,
+        message: error?.message || 'Ocorreu um erro ao cadastrar veículo. Tente novamente.',
+        title: 'Erro',
+      });
       setIsSubmitting(false);
       console.error('Error creating vehicle:', error);
     }
@@ -101,8 +114,7 @@ const VehicleRegisterScreen = () => {
         const response = await get<null, VehicleManufacturer[]>('/fipe/marcas');
         const brands = response.map((model) => ({
           label: model.nome,
-          value: model.nome,
-          codigo: model.codigo, // Ensure to include the code if needed later
+          value: model.codigo,
         }))
         setVehicleManufacturers(brands);
       } catch (error) {
@@ -201,7 +213,10 @@ const VehicleRegisterScreen = () => {
                           codigo: selected.value,
                           nome: selected.label,
                         });
-                        setValue('manufacturer', selected.label || '');
+                        // Store the CODE in the form value, not the label
+                        setValue('manufacturer', selected.value);
+                        // Store the label in a separate field if needed for display/submission
+                        setValue('manufacturerName', selected.label);
                       }
                     }
                   }
@@ -225,7 +240,8 @@ const VehicleRegisterScreen = () => {
                           codigo: selected.value,
                           nome: selected.label,
                         });
-                        setValue('model', selected.label || '');
+                        setValue('model', selected.value);
+                        setValue('modelName', selected.label);
                       }
                     }
                   },

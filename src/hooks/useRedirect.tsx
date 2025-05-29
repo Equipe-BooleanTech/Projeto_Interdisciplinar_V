@@ -6,7 +6,6 @@ const useRedirect = () => {
   const router = useRouter();
   const [redirecting, setRedirecting] = useState(false);
   
-  // Use the auth context instead of implementing authentication logic here
   const { isAuthenticated, checkAuthentication } = useAuth();
 
   const backToLogin = useCallback(() => {
