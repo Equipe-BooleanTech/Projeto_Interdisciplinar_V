@@ -26,7 +26,7 @@ export const removeToken = async () => {
   }
 };
 
-let BASE_URL = 'https://angry-news-double.loca.lt/api';
+let BASE_URL = 'http://localhost:8080/api'; // Always change this to your actual API base URL
 
 export const api = axios.create({
   baseURL: BASE_URL,
