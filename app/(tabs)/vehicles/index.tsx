@@ -17,6 +17,7 @@ import { router } from 'expo-router';
 import { useRedirect } from '@/src/hooks';
 import { get } from '@/src/services';
 import { Toast } from 'toastify-react-native';
+import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 
 const VehicleScreen = () => {
   const [vehicles, setVehicles] = React.useState([]);
@@ -52,39 +53,41 @@ const VehicleScreen = () => {
   }, []);
 
   return (
-    <Container>
-      <Header>
-        <IconButton onPress={() => router.push('/Vehicles/Register')}>
-          <Feather name="plus" size={18} color="#fff" />
-        </IconButton>
-        <ProfileButton onPress={() => router.push('/(tabs)/account')}>
-          <Feather name="user" size={20} color="#000" />
-        </ProfileButton>
-      </Header>
+    <ProtectedRoute>
+      <Container>
+        <Header>
+          <IconButton onPress={() => router.push('/Vehicles/Register')}>
+            <Feather name="plus" size={18} color="#fff" />
+          </IconButton>
+          <ProfileButton onPress={() => router.push('/(tabs)/account')}>
+            <Feather name="user" size={20} color="#000" />
+          </ProfileButton>
+        </Header>
 
-      <Title>Meus Veículos</Title>
-      <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
-        {vehicles.map((vehicle) => (
-          <Card key={vehicle.plate} onPress={() => router.push(`/Vehicles/Update/${vehicle.plate}`)}>
-            <VehicleImage
-              source={{
-                uri: 'https://www.shutterstock.com/image-vector/car-vectorcar-monochrome-iconcoupe-iconcar-600nw-2318254387.jpg',
-              }}
-            />
-            <VehicleName>{vehicle.model}</VehicleName>
-            <PlateText>{vehicle.plate}</PlateText>
-          </Card>
-        ))}
+        <Title>Meus Veículos</Title>
+        <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
+          {vehicles.map((vehicle) => (
+            <Card key={vehicle.plate} onPress={() => router.push(`/Vehicles/Update/${vehicle.plate}`)}>
+              <VehicleImage
+                source={{
+                  uri: 'https://www.shutterstock.com/image-vector/car-vectorcar-monochrome-iconcoupe-iconcar-600nw-2318254387.jpg',
+                }}
+              />
+              <VehicleName>{vehicle.model}</VehicleName>
+              <PlateText>{vehicle.plate}</PlateText>
+            </Card>
+          ))}
 
-        <AddCard>
-          <TouchableOpacity>
-            <IconButton onPress={() => router.push('/Vehicles/Register')}>
-              <Feather name="plus" size={22} color="#fff" />
-            </IconButton>
-          </TouchableOpacity>
-        </AddCard>
-      </ScrollView>
-    </Container>
+          <AddCard>
+            <TouchableOpacity>
+              <IconButton onPress={() => router.push('/Vehicles/Register')}>
+                <Feather name="plus" size={22} color="#fff" />
+              </IconButton>
+            </TouchableOpacity>
+          </AddCard>
+        </ScrollView>
+      </Container>
+    </ProtectedRoute>
   );
 };
 

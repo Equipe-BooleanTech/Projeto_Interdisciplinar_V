@@ -46,36 +46,29 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({
     );
 
     return (
-        <Container>
+        <>
             <MobileHeader
-                title="Minha Conta"
+                title="Minhas notificações"
                 onBackPress={() => router.back()}
                 onNotificationPress={() => router.push('/notifications')}
                 notificationCount={5}
             />
-            <Header>
-                <HeaderTitle>Notificações</HeaderTitle>
-                {notifications.length > 0 && (
-                    <MarkAllButton onPress={onMarkAllAsRead}>
-                        <MarkAllText>Mark all as read</MarkAllText>
-                    </MarkAllButton>
+            <Container>
+                {notifications.length === 0 ? (
+                    <EmptyState>
+                        <Ionicons name="notifications-off-outline" size={48} color="#cccccc" />
+                        <EmptyStateText>No notifications yet</EmptyStateText>
+                    </EmptyState>
+                ) : (
+                    <NotificationList
+                        data={notifications}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.id}
+                        showsVerticalScrollIndicator={false}
+                    />
                 )}
-            </Header>
-
-            {notifications.length === 0 ? (
-                <EmptyState>
-                    <Ionicons name="notifications-off-outline" size={48} color="#cccccc" />
-                    <EmptyStateText>No notifications yet</EmptyStateText>
-                </EmptyState>
-            ) : (
-                <NotificationList
-                    data={notifications}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id}
-                    showsVerticalScrollIndicator={false}
-                />
-            )}
-        </Container>
+            </Container>
+        </>
     );
 };
 

@@ -12,6 +12,7 @@ import images from '@/assets';
 import { styles } from './_layout';
 import { Chart, Image } from '@/src/components';
 import { useRedirect } from '@/src/hooks';
+import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 
 const dummyData = [
   { value: 2500, color: '#6A994E', text: 'Gasto 1' },
@@ -63,80 +64,82 @@ const HomeScreen = () => {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={styles.container}>
-          <View style={styles.iconContainer}>
-            <Image svg={images.car} imgWidth={100} imgHeight={100} viewBox="0 0 100 100" />
-          </View>
-          <View style={styles.headerMonth}>
-            <TouchableOpacity onPress={handlePrevMonth}>
-              <Text style={styles.arrowLeft}>{'<'}</Text>
-            </TouchableOpacity>
-
-            <Text style={styles.monthText}>{months[currentMonthIndex]}</Text>
-
-            <TouchableOpacity onPress={handleNextMonth}>
-              <Text style={styles.arrowRight}>{'>'}</Text>
-            </TouchableOpacity>
-          </View>
-
-          <Text style={styles.titleText}>Despesas Totais:</Text>
-
-          <View style={styles.filterRow}>
-            {['semanal', 'mensal'].map((filtro) => (
-              <TouchableOpacity
-                key={filtro}
-                onPress={() => setSelectedFilter(filtro as 'semanal' | 'mensal')}
-                style={[
-                  styles.filterButton,
-                  selectedFilter === filtro && styles.filterButtonActive,
-                ]}
-              >
-                <Text>{filtro.charAt(0).toUpperCase() + filtro.slice(1)}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <Text style={styles.totalText}>R$14.500,89</Text>
-          <Text style={styles.totalSubText}>Total Estimado</Text>
-
-          <View style={styles.chartContainer}>
-            <Chart
-              type="pie"
-              data={dummyData}
-              donut
-              textColor="black"
-              innerCircleColor="#eee"
-              innerRadius={80}
-              radius={100}
-              onPress={(item: any) => {
-                setSelectedItem(item);
-                setModalVisible(true);
-              }}
-            />
-          </View>
-
-          <Text style={styles.totalText}>R$11.300,85</Text>
-          <Text style={styles.totalSubText}>Total Gasto</Text>
-
-          <Modal
-            transparent
-            animationType="fade"
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(false)}
-          >
-            <View style={styles.modalOverlay}>
-              <Pressable style={styles.modalBackground} onPress={() => setModalVisible(false)} />
-              <View style={styles.modalBox}>
-                <Text style={styles.modalTitle}>{selectedItem?.text}</Text>
-                <Text style={styles.modalValue}>R${selectedItem?.value.toFixed(2)}</Text>
-              </View>
+    <ProtectedRoute>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <View style={styles.container}>
+            <View style={styles.iconContainer}>
+              <Image svg={images.car} imgWidth={100} imgHeight={100} viewBox="0 0 100 100" />
             </View>
-          </Modal>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            <View style={styles.headerMonth}>
+              <TouchableOpacity onPress={handlePrevMonth}>
+                <Text style={styles.arrowLeft}>{'<'}</Text>
+              </TouchableOpacity>
+
+              <Text style={styles.monthText}>{months[currentMonthIndex]}</Text>
+
+              <TouchableOpacity onPress={handleNextMonth}>
+                <Text style={styles.arrowRight}>{'>'}</Text>
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.titleText}>Despesas Totais:</Text>
+
+            <View style={styles.filterRow}>
+              {['semanal', 'mensal'].map((filtro) => (
+                <TouchableOpacity
+                  key={filtro}
+                  onPress={() => setSelectedFilter(filtro as 'semanal' | 'mensal')}
+                  style={[
+                    styles.filterButton,
+                    selectedFilter === filtro && styles.filterButtonActive,
+                  ]}
+                >
+                  <Text>{filtro.charAt(0).toUpperCase() + filtro.slice(1)}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <Text style={styles.totalText}>R$14.500,89</Text>
+            <Text style={styles.totalSubText}>Total Estimado</Text>
+
+            <View style={styles.chartContainer}>
+              <Chart
+                type="pie"
+                data={dummyData}
+                donut
+                textColor="black"
+                innerCircleColor="#eee"
+                innerRadius={80}
+                radius={100}
+                onPress={(item: any) => {
+                  setSelectedItem(item);
+                  setModalVisible(true);
+                }}
+              />
+            </View>
+
+            <Text style={styles.totalText}>R$11.300,85</Text>
+            <Text style={styles.totalSubText}>Total Gasto</Text>
+
+            <Modal
+              transparent
+              animationType="fade"
+              visible={modalVisible}
+              onRequestClose={() => setModalVisible(false)}
+            >
+              <View style={styles.modalOverlay}>
+                <Pressable style={styles.modalBackground} onPress={() => setModalVisible(false)} />
+                <View style={styles.modalBox}>
+                  <Text style={styles.modalTitle}>{selectedItem?.text}</Text>
+                  <Text style={styles.modalValue}>R${selectedItem?.value.toFixed(2)}</Text>
+                </View>
+              </View>
+            </Modal>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </ProtectedRoute>
   );
 };
 

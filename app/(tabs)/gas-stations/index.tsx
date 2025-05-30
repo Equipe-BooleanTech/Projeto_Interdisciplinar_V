@@ -1,4 +1,5 @@
 import { Alert, Header } from '@/src/components';
+import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 import { getCurrentPositionAsync, LocationAccuracy, LocationObject, requestForegroundPermissionsAsync, watchPositionAsync } from 'expo-location';
 import { router } from 'expo-router';
 import React, { useEffect, useState, useRef } from 'react';
@@ -48,7 +49,7 @@ const GasStationMap = () => {
     }, []);
 
     return (
-        <>
+        <ProtectedRoute>
             <Header
                 title="Postos de Gasolina"
                 onBackPress={() => router.back()}
@@ -84,7 +85,7 @@ const GasStationMap = () => {
                     />
                 )}
             </SafeAreaView>
-        </>
+        </ProtectedRoute>
     )
 }
 

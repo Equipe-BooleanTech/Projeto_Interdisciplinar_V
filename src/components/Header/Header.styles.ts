@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import { theme } from '@/theme';
 
 export const HeaderContainer = styled.View`
-  height: ${Platform.OS === 'ios' ? 90 : 60}px;
+  height: ${Platform.OS === 'ios' ? 120 : 90}px;
   padding-top: ${Platform.OS === 'ios' ? 30 : 0}px;
   background-color: #ffffff;
   flex-direction: row;

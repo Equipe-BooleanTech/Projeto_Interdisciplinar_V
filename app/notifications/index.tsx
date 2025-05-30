@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Notification } from '@/src/screens';
 import type { NotificationType } from '@/src/screens/Notification/Notification.interface';
+import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 
 const Notifications = () => {
     const [notifications, setNotifications] = useState([
@@ -14,19 +15,27 @@ const Notifications = () => {
         },
         {
             id: '2',
-            title: 'System update',
-            message: 'A new version of the app is available',
-            time: '1 hour ago',
-            isRead: true,
-            type: 'system' as NotificationType
+            title: 'Atualização de Software Disponível',
+            message: 'Uma nova atualização de software está disponível para o seu veículo. Por favor, conecte-se ao Wi-Fi para baixar.',
+            time: '1 hora atrás',
+            isRead: false,
+            type: 'update' as NotificationType
         },
         {
             id: '3',
-            title: 'Alert',
-            message: 'Your storage is almost full',
-            time: '3 hours ago',
+            title: 'Lembrete de Revisão',
+            message: 'Seu veículo precisa de uma revisão completa em breve. Agende uma visita ao nosso centro de serviços.',
+            time: '3 horas atrás',
+            isRead: true,
+            type: 'reminder' as NotificationType
+        },
+        {
+            id: '4',
+            title: 'Promoção Especial',
+            message: 'Aproveite nossa promoção especial de combustível com 20% de desconto até o final do mês.',
+            time: '1 dia atrás',
             isRead: false,
-            type: 'alert' as NotificationType
+            type: 'promotion' as NotificationType
         }
     ]);
 
@@ -44,11 +53,13 @@ const Notifications = () => {
     };
 
     return (
-        <Notification
-            notifications={notifications}
-            onNotificationPress={handleNotificationPress}
-            onMarkAllAsRead={handleMarkAllAsRead}
-        />
+        <ProtectedRoute>
+            <Notification
+                notifications={notifications}
+                onNotificationPress={handleNotificationPress}
+                onMarkAllAsRead={handleMarkAllAsRead}
+            />
+        </ProtectedRoute>
     );
 }
 
