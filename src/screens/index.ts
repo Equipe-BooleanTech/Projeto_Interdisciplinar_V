@@ -12,3 +12,6 @@ export { default as Home } from './Home/Home.screen';
 
 export * from './Notification/Notification.screen';
 export { default as Notification } from './Notification/Notification.screen';
+
+export * from './VehicleManagement/VehicleManagement';
+export { default as VehicleManagement } from './VehicleManagement/VehicleManagement';

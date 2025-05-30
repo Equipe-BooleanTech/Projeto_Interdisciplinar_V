@@ -3,7 +3,7 @@ import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 import { getCurrentPositionAsync, LocationAccuracy, LocationObject, requestForegroundPermissionsAsync, watchPositionAsync } from 'expo-location';
 import { router } from 'expo-router';
 import React, { useEffect, useState, useRef } from 'react';
-import { SafeAreaView } from 'react-native';
+import { Platform, SafeAreaView, Text } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 const GasStationMap = () => {
     const [modal, setModal] = useState<{
@@ -48,6 +48,9 @@ const GasStationMap = () => {
         })
     }, []);
 
+    if (Platform.OS === 'web') {
+        return <Text>Este recurso não está disponível na web.</Text>;
+      }
     return (
         <ProtectedRoute>
             <Header

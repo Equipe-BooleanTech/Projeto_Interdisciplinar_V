@@ -67,7 +67,7 @@ const VehicleScreen = () => {
         <Title>Meus Veículos</Title>
         <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
           {vehicles.map((vehicle) => (
-            <Card key={vehicle.plate} onPress={() => router.push(`/Vehicles/Update/${vehicle.plate}`)}>
+            <Card key={vehicle.plate} onPress={() => router.push(`/Vehicles/Management/VehicleManagement`)}>
               <VehicleImage
                 source={{
                   uri: 'https://www.shutterstock.com/image-vector/car-vectorcar-monochrome-iconcoupe-iconcar-600nw-2318254387.jpg',
