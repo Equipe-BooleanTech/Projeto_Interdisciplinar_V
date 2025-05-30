@@ -26,7 +26,7 @@ export const removeToken = async () => {
   }
 };
 
-let BASE_URL = 'https://light-candles-repeat.loca.lt/api';
+let BASE_URL = 'https://angry-news-double.loca.lt/api';
 
 export const api = axios.create({
   baseURL: BASE_URL,

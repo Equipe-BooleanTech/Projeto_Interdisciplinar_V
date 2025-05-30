@@ -82,7 +82,9 @@
     "styled-components": "^6.1.18",
     "toastify-react-native": "^7.2.0",
     "victory-native": "^41.16.1",
-    "yup": "^1.6.1"
+    "yup": "^1.6.1",
+    "expo-location": "~18.1.5",
+    "react-native-maps": "1.20.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

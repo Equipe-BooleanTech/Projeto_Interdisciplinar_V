@@ -9,3 +9,6 @@ export { default as Login } from './Login/Login.screen';
 
 export * from './Home/Home.screen';
 export { default as Home } from './Home/Home.screen';
+
+export * from './Notification/Notification.screen';
+export { default as Notification } from './Notification/Notification.screen';

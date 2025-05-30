@@ -8,6 +8,7 @@ import { router } from 'expo-router';
 import { User } from '@/src/@types';
 import { useStorage } from '@/src/hooks';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
+import { Header as MobileHeader } from '@/src/components';
 
 const AccountScreen: React.FC = () => {
   const [scaleValue] = useState(new Animated.Value(1));
@@ -87,6 +88,20 @@ const AccountScreen: React.FC = () => {
 
   return (
     <ProtectedRoute>
+      <MobileHeader
+        title="Minha Conta"
+        onBackPress={() => router.back()}
+                onSearchPress={(route: string) => {
+          if (route) {
+            const validRoute = route.startsWith('/') ? route : `/${route}`;
+            router.push(validRoute as never);
+          } else {
+            router.push('/(tabs)/account');
+          }
+        }}
+        onNotificationPress={() => router.push('/notifications')}
+        notificationCount={5}
+      />
       <Container>
         <StatusBar barStyle="dark-content" />
         <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
