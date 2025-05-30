@@ -1,7 +1,8 @@
 import { theme } from '@/theme';
 import styled from 'styled-components/native';
 import { TextFieldProps } from './TextField.interface';
-import { Picker } from '@react-native-picker/picker';
+import { Picker } from 'react-native-ui-lib';
+import { PickerIOS, Picker as WebPicker } from '@react-native-picker/picker';
 
 export const StyledTextFieldContainer = styled.View<Partial<TextFieldProps>>`
   display: flex;
@@ -78,10 +79,70 @@ export const StyledPhoneContainer = styled.View`
   width: 100%;
 `;
 
-export const StyledPicker = styled(Picker)`
+export const StyledPicker = styled(PickerIOS)`
   width: 100%;
   height: 50px;
   border-radius: 8px;
+  padding: 10px;
   background-color: #f0f0f0;
   border: 1px solid #ccc;
+  color: #000;
+  option {
+    color: #000;
+  }
+  option:disabled {
+    color: #999;
+  }
+  option:checked {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+  option:focus {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+  option:hover {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+  option:active {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+
+  z-index: 100;
+  position: relative;
 `;
+
+export const StyledPickerWeb = styled(WebPicker)`
+  width: 100%;
+  height: 50px;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  color: #000;
+  option {
+    color: #000;
+  }
+  option:disabled {
+    color: #999;
+  }
+  option:checked {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+  option:focus {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+  option:hover {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+  option:active {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+`
+

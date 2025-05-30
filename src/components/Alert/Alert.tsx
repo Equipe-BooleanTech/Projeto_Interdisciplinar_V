@@ -1,7 +1,7 @@
 import { Modal } from 'react-native';
 import { AlertProps } from './Alert.interface';
 import React from 'react';
-import { ButtonContainer, Container, Message, Title } from './Alert.styles';
+import { ButtonContainer, Container, Message, ModalView, Title } from './Alert.styles';
 import { Button } from '..';
 
 const Alert = (Props: AlertProps) => {
@@ -16,28 +16,30 @@ const Alert = (Props: AlertProps) => {
       }}
     >
       <Container>
-        <Title>{title}</Title>
-        <Message>{message}</Message>
-        <ButtonContainer>
-          {onCancel && (
+        <ModalView>
+          <Title>{title}</Title>
+          <Message>{message}</Message>
+          <ButtonContainer>
+            {onCancel && (
+              <Button
+                onPress={() => {
+                  onCancel();
+                }}
+                variant="primary"
+              >
+                {cancelText || 'Cancelar'}
+              </Button>
+            )}
             <Button
               onPress={() => {
-                onCancel();
+                onConfirm();
               }}
               variant="primary"
             >
-              {cancelText || 'Cancelar'}
+              {confirmText || 'OK'}
             </Button>
-          )}
-          <Button
-            onPress={() => {
-              onConfirm();
-            }}
-            variant="primary"
-          >
-            {confirmText || 'OK'}
-          </Button>
-        </ButtonContainer>
+          </ButtonContainer>
+        </ModalView>
       </Container>
     </Modal>
   );

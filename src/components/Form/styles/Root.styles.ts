@@ -12,6 +12,6 @@ export const RootStyles = styled.View`
   elevation: 2;
   display: flex;
   flex-direction: column;
-  width: 90%;
+  width: 95%;
   margin: auto;
 `;

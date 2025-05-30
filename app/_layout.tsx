@@ -1,8 +1,10 @@
 import { useFontLoader } from '@/src/hooks';
+import { AuthProvider } from '@/src/providers';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
 import { useEffect } from 'react';
+import ToastManager from 'toastify-react-native/components/ToastManager';
 
 export default function Layout() {
   const { fontsLoaded } = useFontLoader();
@@ -21,8 +23,11 @@ export default function Layout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-    </Stack>
+    <AuthProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
+      <ToastManager position="bottom" duration={3000} />
+    </AuthProvider>
   );
 }
