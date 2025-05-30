@@ -8,6 +8,7 @@ import { router } from 'expo-router';
 import { User } from '@/src/@types';
 import { useStorage } from '@/src/hooks';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
+import { Header as MobileHeader } from '@/src/components';
 
 const AccountScreen: React.FC = () => {
   const [scaleValue] = useState(new Animated.Value(1));
@@ -87,15 +88,23 @@ const AccountScreen: React.FC = () => {
 
   return (
     <ProtectedRoute>
+      <MobileHeader
+        title="Minha Conta"
+        onBackPress={() => router.back()}
+        onSearchPress={(route: string) => {
+          if (route) {
+            const validRoute = route.startsWith('/') ? route : `/${route}`;
+            router.push(validRoute as never);
+          } else {
+            router.push('/(tabs)/account');
+          }
+        }}
+        onNotificationPress={() => router.push('/notifications')}
+        notificationCount={5}
+      />
       <Container>
         <StatusBar barStyle="dark-content" />
         <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
-          <Header>
-            <Title>My Profile</Title>
-            <SettingsButton onPress={() => router.navigate('/dashboard')}>
-              <Feather name="settings" size={24} color="#333" />
-            </SettingsButton>
-          </Header>
 
           <AvatarContainer>
             <AvatarWrapper>
@@ -260,6 +269,7 @@ const StatsContainer = styled.View`
   border-radius: 12px;
   padding: 20px;
   elevation: 2;
+  gap: 16px;
   shadow-color: #000;
   shadow-opacity: 0.1;
   shadow-radius: 8px;
@@ -272,6 +282,7 @@ const StatItem = styled.View`
 const StatValue = styled.Text`
   font-size: 20px;
   font-weight: 700;
+  text-wrap: wrap;
   color: #454F2C;
 `;
 
@@ -279,6 +290,11 @@ const StatLabel = styled.Text`
   font-size: 14px;
   color: #666;
   margin-top: 4px;
+  text-align: center;
+  text-wrap: wrap;
+  width: 90%;
+  max-width: 120px;
+
 `;
 
 const StatDivider = styled.View`

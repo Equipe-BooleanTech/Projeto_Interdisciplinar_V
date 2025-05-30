@@ -20,6 +20,22 @@ const tabConfig = [
     show: true,
   },
   {
+    name: 'gas-stations/index',
+    title: 'Postos de Gasolina',
+    icon: (focused: boolean, color: string) => (
+      <Ionicons name={focused ? 'locate-sharp' : 'locate-outline'} size={24} color={color} />
+    ),
+    show: true,
+  },
+  {
+    name: 'notifications/index',
+    title: 'Notificações',
+    icon: (focused: boolean, color: string) => (
+      <Ionicons name={focused ? 'notifications-sharp' : 'notifications-outline'} size={24} color={color} />
+    ),
+    show: true,
+  },
+  {
     name: 'account/index',
     title: 'Conta',
     icon: (focused: boolean, color: string) => (

@@ -4,13 +4,14 @@ import styled from 'styled-components/native';
 import { MaterialIcons, Feather } from '@expo/vector-icons';
 import { User } from '@/src/@types';
 import { router, useLocalSearchParams } from 'expo-router';
+import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 
 const EditProfileScreen: React.FC = () => {
   const params = useLocalSearchParams();
 
-    const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [changesMade, setChangesMade] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [changesMade, setChangesMade] = useState(false);
 
   useEffect(() => {
     // If user was passed via params
@@ -29,113 +30,115 @@ const EditProfileScreen: React.FC = () => {
       // fetchUserData();
     }
   }, [params]);
-  
-    const handleInputChange = (field: keyof User, value: string) => {
-        setUser({ ...user, [field]: value });
-        setChangesMade(true);
-    };
 
-    const handleSave = () => {
-        setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            setIsLoading(false);
-            setChangesMade(false);
-            Alert.alert('Success', 'Your profile has been updated!');
-            router.back();
-        }, 1500);
-    };
+  const handleInputChange = (field: keyof User, value: string) => {
+    setUser({ ...user, [field]: value });
+    setChangesMade(true);
+  };
 
-    return (
-        <Container>
-            <StatusBar barStyle="dark-content" />
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={{ flex: 1 }}
-            >
-                <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
-                    <Header>
-                        <BackButton onPress={() => router.push('/(tabs)/account')}>
-                            <Feather name="chevron-left" size={28} color="#454F2C" />
-                        </BackButton>
-                        <HeaderTitle>Editar Perfil</HeaderTitle>
-                        <SaveButton
-                            onPress={handleSave}
-                            disabled={!changesMade || isLoading}
-                        >
-                            {isLoading ? (
-                                <LoadingIndicator size="small" color="#454F2C" />
-                            ) : (
-                                <SaveButtonText disabled={!changesMade}>Salvar</SaveButtonText>
-                            )}
-                        </SaveButton>
-                    </Header>
+  const handleSave = () => {
+    setIsLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false);
+      setChangesMade(false);
+      Alert.alert('Success', 'Your profile has been updated!');
+      router.back();
+    }, 1500);
+  };
 
-                    <AvatarSection>
-                        <AvatarContainer>
-                            {user?.avatar ? (
-                                <Avatar source={{ uri: user?.avatar }} />
-                            ) : (
-                                <DefaultAvatar>
-                                    <AvatarText>{user?.name.charAt(0)}</AvatarText>
-                                </DefaultAvatar>
-                            )}
-                            <EditAvatarButton>
-                                <MaterialIcons name="edit" size={20} color="white" />
-                            </EditAvatarButton>
-                        </AvatarContainer>
-                    </AvatarSection>
+  return (
+    <ProtectedRoute>
+      <Container>
+        <StatusBar barStyle="dark-content" />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+        >
+          <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
+            <Header>
+              <BackButton onPress={() => router.push('/(tabs)/account')}>
+                <Feather name="chevron-left" size={28} color="#454F2C" />
+              </BackButton>
+              <HeaderTitle>Editar Perfil</HeaderTitle>
+              <SaveButton
+                onPress={handleSave}
+                disabled={!changesMade || isLoading}
+              >
+                {isLoading ? (
+                  <LoadingIndicator size="small" color="#454F2C" />
+                ) : (
+                  <SaveButtonText disabled={!changesMade}>Salvar</SaveButtonText>
+                )}
+              </SaveButton>
+            </Header>
 
-                    <FormContainer>
-                        <InputContainer>
-                            <InputLabel>Nome Completo</InputLabel>
-                            <TextInput
-                                value={user?.name}
-                                onChangeText={(text) => handleInputChange('name', text)}
-                                placeholder="Digite seu nome completo..."
-                            />
-                            <MaterialIcons name="person" size={20} color="#999" style={styles.icon} />
-                        </InputContainer>
+            <AvatarSection>
+              <AvatarContainer>
+                {user?.avatar ? (
+                  <Avatar source={{ uri: user?.avatar }} />
+                ) : (
+                  <DefaultAvatar>
+                    <AvatarText>{user?.name.charAt(0)}</AvatarText>
+                  </DefaultAvatar>
+                )}
+                <EditAvatarButton>
+                  <MaterialIcons name="edit" size={20} color="white" />
+                </EditAvatarButton>
+              </AvatarContainer>
+            </AvatarSection>
 
-                        <InputContainer>
-                            <InputLabel>Email</InputLabel>
-                            <TextInput
-                                value={user?.email}
-                                onChangeText={(text) => handleInputChange('email', text)}
-                                placeholder="Digite seu email..."
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                            />
-                            <MaterialIcons name="email" size={20} color="#999" style={styles.icon} />
-                        </InputContainer>
+            <FormContainer>
+              <InputContainer>
+                <InputLabel>Nome Completo</InputLabel>
+                <TextInput
+                  value={user?.name}
+                  onChangeText={(text) => handleInputChange('name', text)}
+                  placeholder="Digite seu nome completo..."
+                />
+                <MaterialIcons name="person" size={20} color="#999" style={styles.icon} />
+              </InputContainer>
 
-                        <InputContainer>
-                            <InputLabel>Número de Celular</InputLabel>
-                            <TextInput
-                                value={user?.phone}
-                                onChangeText={(text) => handleInputChange('phone', text)}
-                                placeholder="Digite o número do seu celular..."
-                                keyboardType="phone-pad"
-                            />
-                            <Feather name="phone" size={20} color="#999" style={styles.icon} />
-                        </InputContainer>
+              <InputContainer>
+                <InputLabel>Email</InputLabel>
+                <TextInput
+                  value={user?.email}
+                  onChangeText={(text) => handleInputChange('email', text)}
+                  placeholder="Digite seu email..."
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+                <MaterialIcons name="email" size={20} color="#999" style={styles.icon} />
+              </InputContainer>
 
-                        <DeleteAccountButton onPress={() => Alert.alert('Confirme a exclusão', 'Tem certeza que deseja excluir sua conta?')}>
-                            <DeleteAccountText>Excluir Conta</DeleteAccountText>
-                        </DeleteAccountButton>
-                    </FormContainer>
-                </ScrollView>
-            </KeyboardAvoidingView>
-        </Container>
-    );
+              <InputContainer>
+                <InputLabel>Número de Celular</InputLabel>
+                <TextInput
+                  value={user?.phone}
+                  onChangeText={(text) => handleInputChange('phone', text)}
+                  placeholder="Digite o número do seu celular..."
+                  keyboardType="phone-pad"
+                />
+                <Feather name="phone" size={20} color="#999" style={styles.icon} />
+              </InputContainer>
+
+              <DeleteAccountButton onPress={() => Alert.alert('Confirme a exclusão', 'Tem certeza que deseja excluir sua conta?')}>
+                <DeleteAccountText>Excluir Conta</DeleteAccountText>
+              </DeleteAccountButton>
+            </FormContainer>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </Container>
+    </ProtectedRoute>
+  );
 };
 
 const styles = {
-    icon: {
-        position: 'absolute',
-        left: 16,
-        top: 40,
-    },
+  icon: {
+    position: 'absolute',
+    left: 16,
+    top: 40,
+  },
 };
 
 // Styled components

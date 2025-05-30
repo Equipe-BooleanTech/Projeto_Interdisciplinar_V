@@ -26,7 +26,7 @@ export const removeToken = async () => {
   }
 };
 
-let BASE_URL = 'https://light-candles-repeat.loca.lt/api';
+let BASE_URL = 'https://fresh-carrots-joke.loca.lt/api'; // Always change this to your actual API base URL
 
 export const api = axios.create({
   baseURL: BASE_URL,
