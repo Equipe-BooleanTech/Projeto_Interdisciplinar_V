@@ -1,14 +1,14 @@
 import { LoginBody, RegisterBody } from './interfaces';
 import { api, setToken, removeToken } from './API';
 import { Platform } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Direct storage utility function (not a hook)
 const storeUserId = async (userId: string) => {
   if (Platform.OS === 'web') {
     localStorage.setItem('userId', userId);
   } else {
-    await SecureStore.setItemAsync('userId', userId);
+    await AsyncStorage.setItem('userId', userId);
   }
 };
 
@@ -22,7 +22,10 @@ export const login = async (params: LoginBody) => {
     await storeUserId(userId);
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
-
+  console.log(response.data);
+  console.log('User ID:', userId);
+  console.log('Token:', token);
+  
   return response.data;
 };
 

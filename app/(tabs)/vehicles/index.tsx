@@ -5,10 +5,8 @@ import {
   AddCard,
   Card,
   Container,
-  Header,
   IconButton,
   PlateText,
-  ProfileButton,
   Title,
   VehicleImage,
   VehicleName,
@@ -18,6 +16,7 @@ import { useRedirect } from '@/src/hooks';
 import { get } from '@/src/services';
 import { Toast } from 'toastify-react-native';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
+import { Header } from '@/src/components';
 
 const VehicleScreen = () => {
   const [vehicles, setVehicles] = React.useState([]);
@@ -54,16 +53,13 @@ const VehicleScreen = () => {
 
   return (
     <ProtectedRoute>
+      <Header
+        title="Veículos"
+        notificationCount={0}
+        onBackPress={() => router.back()}
+        onNotificationPress={() => router.push('/Notifications')}
+      />
       <Container>
-        <Header>
-          <IconButton onPress={() => router.push('/Vehicles/Register')}>
-            <Feather name="plus" size={18} color="#fff" />
-          </IconButton>
-          <ProfileButton onPress={() => router.push('/(tabs)/account')}>
-            <Feather name="user" size={20} color="#000" />
-          </ProfileButton>
-        </Header>
-
         <Title>Meus Veículos</Title>
         <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
           {vehicles.map((vehicle) => (

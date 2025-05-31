@@ -84,13 +84,12 @@ const SelectField = ({
   return (
     <SelectContainer>
       {label && <Label>{label}</Label>}
-
       <WebPicker
         selectedValue={selectedValue}
         onValueChange={onValueChange}
         {...rest}
       >
-        <Picker.Item label={placeholder} value="" />
+        <Picker.Item label={placeholder} value="" enabled={false} />
         {options.map((option) => (
           <Picker.Item
             key={option.value}
