@@ -1,10 +1,10 @@
 import styled from 'styled-components/native';
 import { Platform } from 'react-native';
-import { theme } from '@/theme';
+import { theme } from '@/src/theme/theme';
 
 export const HeaderContainer = styled.View`
-  height: ${Platform.OS === 'ios' ? 105 : 90}px;
-  padding-top: 30px;
+  height: 90px;
+  padding-top: ${Platform.OS === 'ios' ? 30 : 20}px;
   background-color: #ffffff;
   flex-direction: row;
   align-items: center;

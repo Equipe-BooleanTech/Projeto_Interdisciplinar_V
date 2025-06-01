@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
-// Import the correct interfaces from screens
 import { VehicleManagement as VehicleManagementScreen } from "@/src/screens";
 import React from "react";
 import { FuelRefillDTO, FuelRefillSummaryDTO, FuelType } from "./VehicleManagement.interface";
 import { Alert, Button, Header } from "@/src/components";
 import { router } from "expo-router";
-import { SearchInput } from "react-native-ui-lib";
 import { ButtonContainer } from "./VehicleManagement.style";
-// Remove the local interface import
-// import { FuelRefillDTO } from "./VehicleManagement.interface";
+
 
 const VehicleManagement = () => {
     const [modal, setModal] = useState<{
@@ -92,7 +89,11 @@ const VehicleManagement = () => {
     const [stationNames, setStationNames] = useState<Record<string, string>>({});
 
     const onAddFueling = () => {
-        // Implementation here
+
+    };
+
+    const onEditVehicle = () => {
+        router.push('/Vehicles/Update');
     };
 
     const onSearch = (query: string) => {
@@ -128,6 +129,9 @@ const VehicleManagement = () => {
             <ButtonContainer>
                 <Button onPress={onAddFueling} variant="primary">
                     Novo Abastecimento
+                </Button>
+                <Button variant="secondary" onPress={onEditVehicle}>
+                    Editar Veículo
                 </Button>
             </ButtonContainer>
             <VehicleManagementScreen

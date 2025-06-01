@@ -1,4 +1,4 @@
-import { Alert, Header } from '@/src/components';
+import { Alert, Button, Header } from '@/src/components';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 import { getCurrentPositionAsync, LocationAccuracy, LocationObject, requestForegroundPermissionsAsync, watchPositionAsync } from 'expo-location';
 import { router } from 'expo-router';
@@ -58,6 +58,12 @@ const GasStationMap = () => {
                 onBackPress={() => router.back()}
             />
             <SafeAreaView style={{ flex: 1 }}>
+                <Button variant='primary' onPress={() => {
+                    router.push('/gas-stations/register');
+                }
+                } style={{ margin: 10 }}>
+                    Novo Posto de Gasolina
+                </Button>
                 {location && (
                     <MapView
                         ref={mapRef}

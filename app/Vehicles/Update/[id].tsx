@@ -5,7 +5,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Alert as CustomAlert, Button, Form } from '@/src/components';
 import { FormHelpers } from '@/src/components/Form';
 import { useForm } from 'react-hook-form';
-import { updateVehicle } from '@/src/services/vehicleService';
+import { findVehicleByPlate, updateVehicle } from '@/src/services/vehicleService';
 import { useRedirect, useStorage } from '@/src/hooks';
 import { IconButton } from '@/app/(tabs)/vehicles/styles';
 import { Feather } from '@expo/vector-icons';
@@ -73,7 +73,7 @@ const VehicleUpdateScreen = () => {
       try {
         setIsLoading(true);
         // Fetch the vehicle data based on the ID
-        const vehicleData = await getVehicleById(id as string);
+        const vehicleData = await findVehicleByPlate(id as string);
 
         // Pre-populate form with existing data
         if (vehicleData) {

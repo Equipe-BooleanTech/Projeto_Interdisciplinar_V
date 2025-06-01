@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { Platform } from 'react-native';
-import { theme } from '@/theme';
+import { theme } from '@/src/theme/theme';
 
 export const Container = styled.SafeAreaView`
   flex: 1;

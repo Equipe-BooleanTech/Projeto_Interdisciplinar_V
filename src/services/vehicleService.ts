@@ -26,8 +26,8 @@ export const listVehicles = async (page = 0, size = 10) => {
   return response.data;
 };
 
-// 🔎 Buscar veículo por ID
-export const findVehicleById = async (id: string) => {
-  const response = await api.get(`/api/vehicle/findbyid-vehicle/${id}`);
+// 🔎 Buscar veículo por placa
+export const findVehicleByPlate = async (plate: string) => {
+  const response = await api.get(`/vehicle/findbyplate/${plate}`);
   return response.data;
-};
+}

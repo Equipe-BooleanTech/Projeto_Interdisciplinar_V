@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import { theme } from '@/theme';
+import { theme } from '@/src/theme/theme';
 
 export const Content = styled.View`
   flex: 1;
@@ -35,14 +35,14 @@ export const FuelingCard = styled.View<{ fuelType: string }>`
   margin: 8px 16px;
   border-left-width: 6px;
   border-left-color: ${({ theme, fuelType }) => {
-        switch (fuelType) {
-            case 'GASOLINE': return theme.colors.green;
-            case 'DIESEL': return theme.colors.brown;
-            case 'ETHANOL': return theme.colors.warning;
-            case 'FLEX': return theme.colors.success;
-            default: return theme.colors.stroke;
-        }
-    }};
+    switch (fuelType) {
+      case 'GASOLINE': return theme.colors.green;
+      case 'DIESEL': return theme.colors.brown;
+      case 'ETHANOL': return theme.colors.warning;
+      case 'FLEX': return theme.colors.success;
+      default: return theme.colors.stroke;
+    }
+  }};
   elevation: 2;
 `;
 
@@ -123,7 +123,9 @@ export const ButtonContainer = styled.View`
   flex-direction: row;
   justify-content: center;
   padding: 16px;
-  background-color: ${theme.colors.normalBackground};
   margin: auto;
   width: 100%;
+  max-width: 400px;
+  flex-wrap: wrap;
+  
 `;

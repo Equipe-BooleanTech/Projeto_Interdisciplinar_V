@@ -1,47 +1,62 @@
 import React from 'react';
 import { TextFieldProps } from './TextField.interface';
-import { StyledLabel, StyledTextFieldContainer, StyledTextInput } from './TextField.styles';
+import { StyledTextInput } from './TextField.styles';
+import { theme } from '@/theme';
+import { HelperText } from 'react-native-paper';
 
 const TextField = (Props: TextFieldProps) => {
   const {
     label,
-    labelAlign = 'left',
     placeholder,
     error,
     disabled,
     required,
+    fieldType,
     multiline,
-    type = 'text',
+    type,
+    secureTextEntry,
     value,
     ...rest
   } = Props;
 
   return (
     <>
-      {label && <StyledLabel error={error}>{label}</StyledLabel>}
-      <StyledTextFieldContainer
-        error={error}
-        disabled={disabled}
-        labelAlign={labelAlign}
-        required={required}
-        multiline={multiline}
-        type={type}
+      {label && (
+        <HelperText
+          type={error.message ? 'error' : 'info'}
+          visible={!!label}
+          style={{ fontSize: 16, color: theme.colors.primary }}
+        >
+          {label}
+          {required && <span style={{ color: theme.colors.error }}>*</span>}
+        </HelperText>
+      )}
+      <StyledTextInput
+        label={placeholder}
+        placeholder={placeholder}
         value={value}
-        {...rest}
-      >
-        <StyledTextInput
-          placeholder={placeholder}
-          error={error}
-          disabled={disabled}
-          multiline={multiline}
-          value={value}
-          keyboardType={type === 'date' ? 'numeric' : 'default'}
-          onChangeText={(text: string) => {
-            rest.onChangeTextString?.(text);
-          }}
-          {...rest}
-        />
-      </StyledTextFieldContainer>
+        onChangeText={rest.onChangeText}
+        error={!!error}
+        selectionColor={error ? theme.colors.error : theme.colors.primary}
+        disabled={disabled}
+        mode="outlined"
+        type={type}
+        fieldType={fieldType}
+        secureTextEntry={secureTextEntry || fieldType === 'password'}
+        keyboardType={
+          type === 'number'
+            ? 'numeric'
+            : type === 'email'
+              ? 'email-address'
+              : type === 'phone'
+                ? 'phone-pad'
+                : 'default'
+        }
+        multiline={multiline}
+        numberOfLines={multiline ? 4 : 1}
+        helperText={error?.show ? error.message : undefined}
+        required={required}
+      />
     </>
   );
 };

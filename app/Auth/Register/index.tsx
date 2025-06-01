@@ -4,7 +4,7 @@ import { Image, ScrollView } from 'react-native';
 import images from '../../../assets';
 import { Container, IconContainer } from './styles';
 import { Register } from '@/src/screens';
-import { theme } from '@/theme';
+import { theme } from '@/src/theme/theme';
 
 const RegisterScreen = () => {
   return (

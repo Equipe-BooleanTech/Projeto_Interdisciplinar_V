@@ -4,7 +4,7 @@ import { ScrollView, Image } from 'react-native';
 import images from '../../../assets';
 import { Container } from './styles';
 import { Login } from '@/src/screens';
-import { theme } from '@/theme';
+import { theme } from '@/src/theme/theme';
 
 const LoginScreen = () => {
   return (

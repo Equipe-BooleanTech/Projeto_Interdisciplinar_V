@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
   Text,
   Dimensions,
@@ -13,7 +13,6 @@ import { Ionicons } from '@expo/vector-icons';
 import Carousel from 'react-native-snap-carousel';
 import images from '@/assets';
 import { Alert } from '@/src/components';
-import { useRedirect } from '@/src/hooks';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 
 const { width: screenWidth } = Dimensions.get('window');

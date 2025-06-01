@@ -113,6 +113,7 @@ const LoginScreen = () => {
           {
             name: 'password',
             type: 'textfield',
+            fieldType: 'password',
             rules: {
               required: 'Senha é obrigatória',
               minLength: {
@@ -129,10 +130,10 @@ const LoginScreen = () => {
             componentProps: {
               placeholder: 'Digite sua senha...',
               label: 'Senha',
-              secureTextEntry: true,
               onChangeText: (text) => {
                 setValue('password', text);
               },
+              secureTextEntry: true,
             },
             errorMessage: errors.password?.message,
           },

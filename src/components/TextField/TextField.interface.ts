@@ -4,11 +4,6 @@ export interface TextFieldProps extends TextInputProps {
   label?: string;
   labelAlign?: 'left' | 'center' | 'right';
   placeholder?: string;
-  error?: {
-    message: string;
-    type: 'error' | 'warning' | 'info';
-    show: boolean;
-  };
   formatter?: (text: string) => string;
   validator?: (text: string) => boolean | string;
   helperText?: string;
@@ -27,6 +22,10 @@ export interface TextFieldProps extends TextInputProps {
     component: any;
     size: number;
   };
+  fieldType?: 'text' | 'password' | 'email' | 'number' | 'select' | 'date' | 'phone';
+  secureTextEntry?: boolean;
+  options?: { label: string; value: string }[];
+  error?: any;
 }
 
 export interface TextProps {

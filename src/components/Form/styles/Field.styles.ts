@@ -1,5 +1,6 @@
-import { theme } from "@/theme";
+import { theme } from "@/src/theme/theme";
 import { Picker } from "@react-native-picker/picker";
+import MaskInput from "react-native-mask-input";
 import styled from "styled-components/native";
 
 export const SelectContainer = styled.View`
@@ -13,6 +14,17 @@ export const Label = styled.Text`
   font-weight: 600;
   margin-bottom: 8px;
   color: ${theme.colors.text};
+`;
+
+export const StyledMaskInput = styled(MaskInput)`
+  width: 100%;
+  height: 50px;
+  border: 1px solid ${theme.colors.primary};
+  border-radius: 4px;
+  &::placeholder {
+    color: #999;
+  }
+
 `;
 
 export const SelectTrigger = styled.TouchableOpacity`

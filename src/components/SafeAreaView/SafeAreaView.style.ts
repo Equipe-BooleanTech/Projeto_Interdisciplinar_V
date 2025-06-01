@@ -1,4 +1,4 @@
-import { theme } from '@/theme';
+import { theme } from '@/src/theme/theme';
 import styled from 'styled-components/native';
 
 export const StyledSafeAreaView = styled.SafeAreaView`

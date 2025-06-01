@@ -12,7 +12,7 @@ export const RootStyles = styled.View`
   elevation: 2;
   display: flex;
   flex-direction: column;
-  width: 90%;
+  width: 100%;
   margin: auto;
   margin-bottom: 50px;
   

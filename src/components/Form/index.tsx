@@ -1,118 +1,99 @@
-import { Picker } from '@react-native-picker/picker';
 import TextField from '../TextField/TextField';
 import Root from './Root';
-import { Modal, Platform, Switch, TouchableOpacity } from 'react-native';
+import { Switch } from 'react-native';
 import { Controller, Control, RegisterOptions } from 'react-hook-form';
-import { View } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import MaskInput, { MaskArray } from 'react-native-mask-input';
-import { StyledLabel, StyledPicker } from '../TextField/TextField.styles';
-import { AndroidPicker, ButtonText, Label, ModalContainer, ModalHeader, PickerContainer, SelectContainer, SelectTrigger, SelectValue, StyledMaskedInput } from './styles/Field.styles';
-import { StyledErrorText } from '../TextField/TextField.styles';
+import { StyledMaskInput } from './styles/Field.styles';
+import { HelperText } from 'react-native-paper';
 import { theme } from '@/theme';
+import { Dropdown } from 'react-native-element-dropdown';
 
 const SelectField = ({
-  label,
-  options = [],
-  selectedValue,
-  onValueChange,
-  error,
+  options,
   placeholder = "Selecione uma opção...",
   ...rest
 }) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [tempValue, setTempValue] = useState(selectedValue);
 
-  const displayValue = options.find(opt => opt.value === selectedValue)?.label || placeholder;
-  const isPlaceholder = !options.find(opt => opt.value === selectedValue);
+  const styles = StyleSheet.create({
+    dropdown: {
+      fontSize: 16,
+      padding: 12,
+      height: 50,
+      borderRadius: 4,
+      borderWidth: 1,
+      borderColor: '#333',
+      width: '100%',
+    },
+    icon: {
+      marginRight: 5,
+    },
+    item: {
+      padding: 17,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    textItem: {
+      flex: 1,
+      fontSize: 16,
+    },
+    placeholderStyle: {
+      fontSize: 16,
+    },
+    selectedTextStyle: {
+      fontSize: 16,
+    },
+    iconStyle: {
+      width: 20,
+      height: 20,
+    },
+    inputSearchStyle: {
+      height: 40,
+      fontSize: 16,
+    },
+  });
+  const [value, setValue] = useState(null);
 
-  const handleTempChange = (value) => {
-    setTempValue(value);
-  };
-
-  const handleConfirm = () => {
-    onValueChange(tempValue);
-    setModalVisible(false);
-  };
-
-  if (Platform.OS === 'ios') {
+  const renderItem = item => {
     return (
-      <SelectContainer>
-        {label && <Label>{label}</Label>}
-
-        <SelectTrigger onPress={() => setModalVisible(true)} activeOpacity={0.7}>
-          <SelectValue placeholder={isPlaceholder}>{displayValue}</SelectValue>
-        </SelectTrigger>
-
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <ModalContainer>
-            <PickerContainer>
-              <ModalHeader>
-                <TouchableOpacity onPress={() => setModalVisible(false)}>
-                  <ButtonText>Cancelar</ButtonText>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleConfirm}>
-                  <ButtonText bold>Confirmar</ButtonText>
-                </TouchableOpacity>
-              </ModalHeader>
-
-              <StyledPicker
-                selectedValue={tempValue}
-                onValueChange={handleTempChange}
-                itemStyle={{
-                  fontSize: 16,
-                  color: theme.colors.text
-                }}
-              >
-                {options.map((option) => (
-                  <Picker.Item
-                    key={option.value}
-                    label={option.label}
-                    value={option.value}
-                  />
-                ))}
-              </StyledPicker>
-            </PickerContainer>
-          </ModalContainer>
-        </Modal>
-      </SelectContainer>
+      <View style={styles.item}>
+        <Text style={styles.textItem}>{item.label}</Text>
+      </View>
     );
   }
-
-  // For Android
   return (
-    <SelectContainer>
-      {label && <Label>{label}</Label>}
-      <AndroidPicker
-        selectedValue={selectedValue}
-        onValueChange={onValueChange}
-        {...rest}
-      >
-        <Picker.Item
-          label={placeholder}
-          value=""
-          color="#999"
-        />
-        {options.map((option) => (
-          <Picker.Item
-            key={option.value}
-            label={option.label}
-            value={option.value}
-            color={theme.colors.text}
-          />
-        ))}
-      </AndroidPicker>
-      {error && <ErrorText>{error}</ErrorText>}
-    </SelectContainer>
+    <>
+      {rest.label && (
+        <HelperText type='info' visible={!!rest.label}
+          style={{ fontSize: 16, color: theme.colors.primary }}>
+          {rest.label}
+        </HelperText>
+      )}
+      <Dropdown
+        style={styles.dropdown}
+        placeholderStyle={styles.placeholderStyle}
+        selectedTextStyle={styles.selectedTextStyle}
+        inputSearchStyle={styles.inputSearchStyle}
+        iconStyle={styles.iconStyle}
+        data={options}
+        search
+        maxHeight={300}
+        labelField="label"
+        valueField="value"
+        placeholder="Selecione uma opção..."
+        searchPlaceholder="Search..."
+        value={value}
+        onChange={item => {
+          setValue(item.value);
+          rest.onValueChange(item.value, item.index);
+        }}
+        renderItem={renderItem}
+      />
+    </>
   );
 };
-
-
 
 export const Form = {
   Field: {
@@ -133,26 +114,22 @@ type BaseFieldProps = {
 type TextFieldProps = BaseFieldProps & {
   type: 'textfield';
   componentProps?: React.ComponentProps<typeof TextField>;
+  fieldType?: 'text' | 'password' | 'email' | 'number';
 };
-
-interface SelectOption {
-  label: string;
-  value: string | number; // Adjust based on what values you actually use
-}
 
 interface SelectProps {
   label?: string;
   placeholder?: string;
   selectedValue: string | number;
   onValueChange: (value: string | number, index: number) => void;
-  options: SelectOption[];
+  options: any[];
   error?: string;
   [key: string]: any;
 }
 
 type SelectFieldProps = BaseFieldProps & {
   type: 'select';
-  options: SelectOption[];
+  options: any[];
   label?: string;
   componentProps?: Partial<SelectProps>;
 };
@@ -193,18 +170,22 @@ export const FormHelpers = {
             <Controller
               control={control}
               rules={field.rules || {}}
-              render={({ field: { onChange, value } }) => {
+              render={({ field: { onChange, onBlur, value } }) => {
                 switch (field.type) {
                   case 'textfield':
                     return (
                       <Form.Field.TextField
+                        onChange={onChange}
                         onChangeText={onChange}
+                        onBlur={() => onBlur && onBlur()}
                         value={value}
                         helperText={field.errorMessage}
                         label={field.name}
+                        error={!!control._formState.errors[field.name]}
                         placeholder={field.componentProps?.placeholder}
                         secureTextEntry={field.componentProps?.secureTextEntry}
                         {...field.componentProps}
+
                       />
                     );
                   case 'select':
@@ -212,7 +193,7 @@ export const FormHelpers = {
                       <Form.Field.Select
                         selectedValue={value}
                         onValueChange={onChange}
-                        options={field.options as Array<{ label: string; value: any }>}
+                        options={field.options}
                         label={field.label}
                         error={field.errorMessage}
                         placeholder={field.componentProps?.placeholder || "Selecione uma opção..."}
@@ -230,15 +211,19 @@ export const FormHelpers = {
                   case 'maskedtextfield':
                     return (
                       <>
-                        <StyledLabel>{field.label}</StyledLabel>
-                        <StyledMaskedInput
-                          onChangeText={(masked: any, unmasked: any) => {
-                            onChange(unmasked);
-                          }}
+                        {field.label && (
+                          <HelperText type={field.errorMessage ? 'error' : 'info'} visible={!!field.label}
+                            style={{ fontSize: 16, color: theme.colors.primary }}>
+                            {field.label}
+                          </HelperText>
+                        )}
+                        <StyledMaskInput
+                          mask={field.mask}
                           value={value}
-                          mask={field?.mask}
+                          label={field.label}
+                          onChangeText={onChange}
                           placeholder={field.placeholder}
-                          keyboardType={field.componentProps?.keyboardType}
+                          secureTextEntry={field.componentProps?.secureTextEntry}
                           {...field.componentProps}
                         />
                       </>
@@ -250,9 +235,9 @@ export const FormHelpers = {
               name={field.name}
             />
             {control._formState.errors[field.name] && (
-              <StyledErrorText>
+              <HelperText type='error'>
                 {field.errorMessage || 'Campo inválido. Verifique e tente novamente!'}
-              </StyledErrorText>
+              </HelperText>
             )}
           </View>
         ))}

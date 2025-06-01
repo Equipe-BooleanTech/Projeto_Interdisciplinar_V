@@ -7,9 +7,6 @@ import { FormHelpers } from '@/src/components/Form';
 import { useForm } from 'react-hook-form';
 import { createVehicle } from '@/src/services/vehicleService';
 import { useStorage } from '@/src/hooks';
-import { IconButton } from '@/app/(tabs)/vehicles/styles';
-import { Feather } from '@expo/vector-icons';
-import { IconContainer } from '@/app/Auth/Login/styles';
 import { get } from '@/src/services';
 import { VehicleManufacturer, VehicleModel } from '@/src/@types';
 import { Toast } from 'toastify-react-native'
@@ -19,6 +16,7 @@ export type SelectData = {
   label: string;
   value: string;
   code?: string;
+  search?: string;
 };
 
 const VehicleRegisterScreen = () => {
@@ -189,7 +187,7 @@ const VehicleRegisterScreen = () => {
 
   return (
     <ProtectedRoute>
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <>
         <Header
           title="Cadastro de Veículo"
           onBackPress={() => router.back()}
@@ -404,7 +402,7 @@ const VehicleRegisterScreen = () => {
           )}
 
         </ScrollView>
-      </SafeAreaView>
+      </>
     </ProtectedRoute>
   );
 };
