@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, StatusBar, Animated, Easing, Alert } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { SafeAreaView, ScrollView, StatusBar, Animated, Easing, Alert, ActivityIndicator, View } from 'react-native';
 import styled from 'styled-components/native';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialIcons, Feather, Ionicons, AntDesign } from '@expo/vector-icons';
@@ -9,24 +9,18 @@ import { User } from '@/src/@types';
 import { useStorage } from '@/src/hooks';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 import { Header as MobileHeader } from '@/src/components';
+import { get } from '@/src/services';
 
 const AccountScreen: React.FC = () => {
   const [scaleValue] = useState(new Animated.Value(1));
   const { clear } = useStorage();
-  const [user, setUser] = useState<User>({
-    id: '1',
-    name: 'Henrique Costa',
-    email: 'henrique.costa@example.com',
-    phone: '+55 (11) 97279-9862',
-    avatar: null,
-    joinDate: 'Ingressou em Março de 2022',
-  });
+  const [user, setUser] = useState<User | null>();
+  const [loading, setLoading] = useState(true);
 
   const menuItems: AccountMenuItem[] = [
     { id: '1', title: 'Editar Perfil', icon: 'edit', screen: 'Account/Edit' },
     { id: '2', title: 'Configurações de Notificação', icon: 'notifications' },
     { id: '4', title: 'Segurança', icon: 'lock' },
-    { id: '6', title: 'Convide Amigos', icon: 'person-add' },
   ];
 
   const animateButton = () => {
@@ -67,6 +61,8 @@ const AccountScreen: React.FC = () => {
     }
   };
 
+  const { getItem } = useStorage();
+
   const renderIcon = (iconName: string) => {
     switch (iconName) {
       case 'edit':
@@ -86,112 +82,140 @@ const AccountScreen: React.FC = () => {
     }
   };
 
+  const getUserId = async () => {
+    const userId = await getItem('userId');
+    if (!userId) {
+      Alert.alert('Usuário não encontrado', 'Por favor, faça login novamente.');
+      router.replace('/Auth/Login');
+      return null;
+    }
+    return userId;
+  };
+
+  const fetchUserVehiclesCount = useCallback(() => {
+    return user?.vehicles ? user.vehicles.length : 0;
+  }, [user]);
+
+  // -------------------------------------------------
+  // Busca os dados do usuário aqui, se necessário
+  // -------------------------------------------------
+  useEffect(() => {
+    const fetchUserData = async () => {
+      setLoading(true);
+      const userId = await getUserId();
+      if (!userId) return;
+      try {
+        const userData = await get<{ userId: string }, User>(`/users/find-by-id/${userId}`);
+        if (userData) {
+          setUser(userData);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados do usuário:', error);
+        Alert.alert('Erro ao buscar dados do usuário');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserData();
+  }, []);
+
   return (
     <ProtectedRoute>
-      <MobileHeader
-        title="Minha Conta"
-        onBackPress={() => router.back()}
-        onSearchPress={(route: string) => {
-          if (route) {
-            const validRoute = route.startsWith('/') ? route : `/${route}`;
-            router.push(validRoute as never);
-          } else {
-            router.push('/(tabs)/account');
-          }
-        }}
-        onNotificationPress={() => router.push('/notifications')}
-        notificationCount={5}
-      />
-      <Container>
-        <StatusBar barStyle="dark-content" />
-        <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
+      {loading ? (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color="#454F2C" />
+        </View>
+      ) : (
+        <>
+          <MobileHeader
+            title="Minha Conta"
+            onBackPress={() => router.back()}
+            onSearchPress={(route: string) => {
+              if (route) {
+                const validRoute = route.startsWith('/') ? route : `/${route}`;
+                router.push(validRoute as never);
+              } else {
+                router.push('/(tabs)/account');
+              }
+            }}
+            onNotificationPress={() => router.push('/notifications')}
+            notificationCount={5}
+          />
+          <Container>
+            <StatusBar barStyle="dark-content" />
+            <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
 
-          <AvatarContainer>
-            <AvatarWrapper>
-              {user.avatar ? (
-                <Avatar source={{ uri: user.avatar }} />
-              ) : (
-                <DefaultAvatar>
-                  <AvatarText>{user.name.charAt(0)}</AvatarText>
-                </DefaultAvatar>
-              )}
+              <AvatarContainer>
+                <AvatarWrapper>
+                  {user?.avatar ? (
+                    <Avatar source={{ uri: user?.avatar }} />
+                  ) : (
+                    <DefaultAvatar>
+                      <AvatarText>{user?.name.charAt(0)}</AvatarText>
+                    </DefaultAvatar>
+                  )}
 
-            </AvatarWrapper>
+                </AvatarWrapper>
 
-            <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
-              <ChangeAvatarButton onPress={handleChangeAvatar}>
-                <MaterialIcons name="photo-camera" size={20} color="white" />
-                <ChangeAvatarText>Change Photo</ChangeAvatarText>
-              </ChangeAvatarButton>
-            </Animated.View>
+                <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
+                  <ChangeAvatarButton onPress={handleChangeAvatar}>
+                    <MaterialIcons name="photo-camera" size={20} color="white" />
+                    <ChangeAvatarText>Mudar Foto</ChangeAvatarText>
+                  </ChangeAvatarButton>
+                </Animated.View>
 
-            <UserName>{user.name}</UserName>
-            <UserEmail>{user.email}</UserEmail>
-            <JoinDate>{user.joinDate}</JoinDate>
-          </AvatarContainer>
+                <UserName>{user?.name}</UserName>
+                <UserEmail>{user?.email}</UserEmail>
+              </AvatarContainer>
 
-          <StatsContainer>
-            <StatItem>
-              <StatValue>24</StatValue>
-              <StatLabel>Veículos Cadastrados</StatLabel>
-            </StatItem>
-            <StatDivider />
-            <StatItem>
-              <StatValue>8</StatValue>
-              <StatLabel>Manutenções Pendentes</StatLabel>
-            </StatItem>
-          </StatsContainer>
+              <StatsContainer>
+                <StatItem>
+                    <StatValue>{fetchUserVehiclesCount()}</StatValue>
+                  <StatLabel>Veículos Cadastrados</StatLabel>
+                </StatItem>
+                <StatDivider />
+                <StatItem>
+                  <StatValue>8</StatValue>
+                  <StatLabel>Manutenções Pendentes</StatLabel>
+                </StatItem>
+              </StatsContainer>
 
-          <MenuContainer>
-            {menuItems.map((item) => (
-              <MenuItem
-                key={item.id}
-                onPress={() => item.screen ? router.push(item.screen as any) : null}
-                activeOpacity={0.7}
-              >
-                <MenuItemLeft>
-                  {renderIcon(item.icon)}
-                  <MenuItemText>{item.title}</MenuItemText>
-                </MenuItemLeft>
-                <AntDesign name="right" size={18} color="#999" />
-              </MenuItem>
-            ))}
-          </MenuContainer>
+              <MenuContainer>
+                {menuItems.map((item) => (
+                  <MenuItem
+                    key={item.id}
+                    onPress={() => item.screen ? router.push(item.screen as any) : null}
+                    activeOpacity={0.7}
+                  >
+                    <MenuItemLeft>
+                      {renderIcon(item.icon)}
+                      <MenuItemText>{item.title}</MenuItemText>
+                    </MenuItemLeft>
+                    <AntDesign name="right" size={18} color="#999" />
+                  </MenuItem>
+                ))}
+              </MenuContainer>
 
-          <SignOutButton onPress={() => {
-            clear()
-            router.replace('/Auth/Login');
-          }}>
-            <SignOutButtonText>Sair</SignOutButtonText>
-            <MaterialIcons name="logout" size={20} color="#ff4444" />
-          </SignOutButton>
-        </ScrollView>
-      </Container>
+              <SignOutButton onPress={() => {
+                clear()
+                router.replace('/Auth/Login');
+              }}>
+                <SignOutButtonText>Sair</SignOutButtonText>
+                <MaterialIcons name="logout" size={20} color="#ff4444" />
+              </SignOutButton>
+            </ScrollView>
+          </Container>
+        </>
+      )}
     </ProtectedRoute>
   );
-};
+}
+
 
 // Styled components
 const Container = styled(SafeAreaView)`
   flex: 1;
   background-color: #f8f9fa;
-`;
-
-const Header = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 20px 16px;
-`;
-
-const Title = styled.Text`
-  font-size: 28px;
-  font-weight: 700;
-  color: #333;
-`;
-
-const SettingsButton = styled.TouchableOpacity`
-  padding: 8px;
 `;
 
 const AvatarContainer = styled.View`

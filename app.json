@@ -9,6 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "flipper": true,
+      "bundleIdentifier": "com.anonymous.Lembraí",
       "supportsTablet": true,
       "infoPlist": {
         "NSAppTransportSecurity": {

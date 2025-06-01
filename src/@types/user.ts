@@ -3,6 +3,6 @@ export type User = {
     name: string;
     email: string;
     phone: string;
-    avatar: string | null;
-    joinDate: string;
+    avatar: string;
+    vehicles?: any[];
 };

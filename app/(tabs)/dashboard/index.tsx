@@ -4,16 +4,16 @@ import {
   Dimensions,
   ScrollView,
   SafeAreaView,
-  Modal,
   Image,
+  View,
 } from 'react-native';
 import { PieChart, BarChart, LineChart, RadarChart } from 'react-native-gifted-charts';
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
 import Carousel from 'react-native-snap-carousel';
 import images from '@/assets';
-import { Alert } from '@/src/components';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
+import { theme } from '@/theme';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -106,7 +106,6 @@ const CarouselContainer = styled.View`
 `;
 
 const ChartCard = styled.View`
-  height: 320px;
   border-radius: 12px;
   elevation: 3;
   padding: 16px;
@@ -114,6 +113,7 @@ const ChartCard = styled.View`
   margin: 20px;
   display: flex;
   flex-direction: column;
+  min-height: 300px;
   align-items: center;
 `;
 
@@ -165,56 +165,73 @@ const HomeScreen = () => {
     setModalVisible(true);
   }, []);
 
-  
+
   const chartConfigs = [
     {
       title: 'Gastos por Categoria',
       component: (props: any) => (
-        <PieChart
-          data={[
-            { value: 2500, color: '#6A994E'},
-            { value: 1500, color: '#BC4749'},
-            { value: 2000, color: '#F2E8CF'},
-            { value: 1300, color: '#A98467'},
-            { value: 1000, color: '#F4A261'},
-          ]}
-          donut
-          showText
-          textColor="black"
-          radius={120}
-          innerRadius={80}
-          innerCircleColor="#EEEDEB"
-          centerLabelComponent={() => (
-            <Text style={{ fontSize: 16, color: '#5a5c69' }}>Total</Text>
-          )}
-          onPress={(item: any) => props.onPress(item)}
-        />
+        <>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
+            <View style={{ flexDirection: 'column', width: '100%' }}>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 5 }}>
+                {[
+                  { color: '#6A994E', label: 'Combustível', value: 2500 },
+                  { color: '#BC4749', label: 'Manutenção', value: 1500 },
+                  { color: '#F2E8CF', label: 'Seguro', value: 2000 },
+                  { color: '#A98467', label: 'Impostos', value: 1300 },
+                  { color: '#F4A261', label: 'Peças', value: 1000 },
+                ].map((item, index) => (
+                  <View key={index} style={{ flexDirection: 'row', alignItems: 'center', width: '45%', marginBottom: 8 }}>
+                    <View style={{ width: 12, height: 12, backgroundColor: item.color, borderRadius: 6, marginRight: 8 }} />
+                    <Text style={{ fontSize: 12 }}>{item.label}: R${item.value.toFixed(2)}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          </View>
+          <PieChart
+            data={[
+              { value: 2500, color: '#6A994E' },
+              { value: 1500, color: '#BC4749' },
+              { value: 2000, color: '#F2E8CF' },
+              { value: 1300, color: '#A98467' },
+              { value: 1000, color: '#F4A261' },
+            ]}
+            donut
+            showText
+            textColor="black"
+            radius={120}
+            innerRadius={80}
+            innerCircleColor="#EEEDEB"
+            centerLabelComponent={() => (
+              <Text style={{ fontSize: 16, color: '#5a5c69' }}>Total</Text>
+            )}
+          />
+        </>
       )
     },
     {
-      title: 'Gastos Semanais',
+      title: 'Gastos Mensais',
       component: (props: any) => (
-        <BarChart
-          data={[
-            { value: 2500, label: 'Seg', frontColor: '#6A994E' },
-            { value: 1500, label: 'Ter', frontColor: '#BC4749' },
-            { value: 2000, label: 'Qua', frontColor: '#F2E8CF' },
-            { value: 1800, label: 'Qui', frontColor: '#A98467' },
-            { value: 2200, label: 'Sex', frontColor: '#F4A261' },
-            { value: 1200, label: 'Sáb', frontColor: '#6A994E' },
-            { value: 1700, label: 'Dom', frontColor: '#BC4749' },
-          ]}
-          barWidth={30}
-          spacing={18}
-          roundedTop
-          yAxisThickness={0}
-          xAxisThickness={0}
-          noOfSections={5}
-          showReferenceLine1
-          referenceLine1Position={2000}
-          referenceLine1Config={{ color: 'gray', dashWidth: 2, dashGap: 3 }}
-          onPress={(item: any) => props.onPress(item)}
-        />
+        <>
+          <BarChart
+            data={[
+              { value: 2500, label: 'Sem. 1', frontColor: '#6A994E' },
+              { value: 1500, label: 'Sem. 2', frontColor: '#BC4749' },
+              { value: 2000, label: 'Sem. 3', frontColor: '#F2E8CF' },
+              { value: 1800, label: 'Sem. 4', frontColor: '#A98467' },
+            ]}
+            barWidth={35}
+            spacing={18}
+            yAxisThickness={0}
+            xAxisThickness={0}
+            noOfSections={5}
+            showReferenceLine1
+            referenceLine1Position={2000}
+            referenceLine1Config={{ color: 'gray', dashWidth: 2, dashGap: 3 }}
+            onPress={(item: any) => props.onPress(item)}
+          />
+        </>
       )
     },
     {
@@ -222,8 +239,6 @@ const HomeScreen = () => {
       component: (props: any) => (
         <LineChart
           data={[
-            { value: 2500, label: 'Jan' },
-            { value: 1500, label: 'Fev' },
             { value: 2000, label: 'Mar' },
             { value: 1800, label: 'Abr' },
             { value: 2200, label: 'Mai' },
@@ -243,12 +258,12 @@ const HomeScreen = () => {
       component: (props: any) => (
         <RadarChart
           data={[2500, 1500, 2000, 1800, 2200]}
-          labels={['Alimentação', 'Transporte', 'Moradia', 'Lazer', 'Saúde']}
+          labels={['Seguro', 'Manutenção', 'Combustível', 'Impostos', 'Peças']}
         />
       )
     }
   ];
-  
+
   const renderChartItem = useCallback(({ item }: { item: typeof chartConfigs[0] }) => {
     return (
       <ChartCard>
@@ -262,13 +277,13 @@ const HomeScreen = () => {
 
   return (
     <ProtectedRoute>
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.normalBackground }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <Container>
             <IconContainer>
               <Image
                 source={images.logo}
-                style={{ width: 200, height: 150 }}
+                style={{ width: 150, height: 100 }}
                 resizeMode="contain"
               />
             </IconContainer>
@@ -327,20 +342,6 @@ const HomeScreen = () => {
 
             <TotalText>R$11.300,85</TotalText>
             <TotalSubText>Total Gasto</TotalSubText>
-
-            <Modal
-              transparent
-              animationType="fade"
-              visible={modalVisible}
-              onRequestClose={() => setModalVisible(false)}
-            >
-              <Alert
-                isVisible={modalVisible}
-                onConfirm={() => setModalVisible(false)}
-                title={selectedItem?.text || 'Detalhes'}
-                message={`Valor: R$${selectedItem?.value?.toFixed(2) || '0.00'}`}
-              />
-            </Modal>
           </Container>
         </ScrollView>
       </SafeAreaView>

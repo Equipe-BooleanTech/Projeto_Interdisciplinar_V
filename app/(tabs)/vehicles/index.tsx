@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import {
@@ -12,7 +12,7 @@ import {
   VehicleName,
 } from './styles';
 import { router } from 'expo-router';
-import { useRedirect } from '@/src/hooks';
+import { useRedirect, useStorage } from '@/src/hooks';
 import { get } from '@/src/services';
 import { Toast } from 'toastify-react-native';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
@@ -22,6 +22,7 @@ const VehicleScreen = () => {
   const [vehicles, setVehicles] = React.useState([]);
 
   const { checkAuthentication, redirect } = useRedirect();
+  const { getItem } = useStorage();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -35,15 +36,25 @@ const VehicleScreen = () => {
     checkAuth();
   }, [checkAuthentication, redirect]);
 
+  const getUserId = useCallback(async () => {
+    try {
+      const userId = await getItem('userId');
+      return userId;
+    } catch (error) {
+      console.error('Error fetching user ID:', error);
+      return null;
+    }
+  }, []);
+
   // ------------------------------------------------------
   // Fetch user vehicles from the API
   // ------------------------------------------------------
-
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        const response = await get('/vehicle/listall-vehicle');
-        setVehicles(response.content);
+        const userId = await getUserId();
+        const response = await get(`/users/find-by-id/${userId}`);
+        setVehicles(response.vehicles);
       } catch (error) {
         Toast.error('Erro ao carregar veículos');
       }
