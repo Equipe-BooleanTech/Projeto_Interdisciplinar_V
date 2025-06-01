@@ -70,6 +70,18 @@ export const body1 = styled.Text`
   text-transform: none;
 `;
 
+export const body1_underline = styled.Text`
+  font-size: 16px;
+  font-weight: normal;
+  color: #000;
+  text-align: left;
+  line-height: 24px;
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration: underline
+`;
+
+
 export const body2 = styled.Text`
   font-size: 14px;
   font-weight: normal;
@@ -98,6 +110,7 @@ export const TypographyStyles = {
   h5,
   h6,
   body1,
+  body1_underline,
   body2,
   caption,
 };

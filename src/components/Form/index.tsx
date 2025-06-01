@@ -1,4 +1,4 @@
-import { Picker, PickerIOS } from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
 import TextField from '../TextField/TextField';
 import Root from './Root';
 import { Modal, Platform, Switch, TouchableOpacity } from 'react-native';
@@ -7,8 +7,9 @@ import { View } from 'react-native';
 import React, { useState } from 'react';
 import MaskInput, { MaskArray } from 'react-native-mask-input';
 import { StyledLabel, StyledPicker } from '../TextField/TextField.styles';
-import { ButtonText, ErrorText, Label, ModalContainer, ModalHeader, PickerContainer, SelectContainer, SelectTrigger, SelectValue, StyledMaskedInput, WebPicker } from './styles/Field.styles';
+import { AndroidPicker, ButtonText, Label, ModalContainer, ModalHeader, PickerContainer, SelectContainer, SelectTrigger, SelectValue, StyledMaskedInput } from './styles/Field.styles';
 import { StyledErrorText } from '../TextField/TextField.styles';
+import { theme } from '@/theme';
 
 const SelectField = ({
   label,
@@ -63,7 +64,10 @@ const SelectField = ({
               <StyledPicker
                 selectedValue={tempValue}
                 onValueChange={handleTempChange}
-                itemStyle={{ fontSize: 16 }}
+                itemStyle={{
+                  fontSize: 16,
+                  color: theme.colors.text
+                }}
               >
                 {options.map((option) => (
                   <Picker.Item
@@ -80,27 +84,34 @@ const SelectField = ({
     );
   }
 
-  // For web and Android
+  // For Android
   return (
     <SelectContainer>
       {label && <Label>{label}</Label>}
-      <WebPicker
+      <AndroidPicker
         selectedValue={selectedValue}
         onValueChange={onValueChange}
         {...rest}
       >
-        <Picker.Item label={placeholder} value="" enabled={false} />
+        <Picker.Item
+          label={placeholder}
+          value=""
+          color="#999"
+        />
         {options.map((option) => (
           <Picker.Item
             key={option.value}
             label={option.label}
             value={option.value}
+            color={theme.colors.text}
           />
         ))}
-      </WebPicker>
+      </AndroidPicker>
+      {error && <ErrorText>{error}</ErrorText>}
     </SelectContainer>
   );
 };
+
 
 
 export const Form = {
@@ -134,9 +145,9 @@ interface SelectProps {
   placeholder?: string;
   selectedValue: string | number;
   onValueChange: (value: string | number, index: number) => void;
-  options: SelectOption[]; 
+  options: SelectOption[];
   error?: string;
-  [key: string]: any; 
+  [key: string]: any;
 }
 
 type SelectFieldProps = BaseFieldProps & {
@@ -207,7 +218,7 @@ export const FormHelpers = {
                         placeholder={field.componentProps?.placeholder || "Selecione uma opção..."}
                         {...field.componentProps}
                       />
-                      );
+                    );
                   case 'switch':
                     return (
                       <Form.Field.Switch

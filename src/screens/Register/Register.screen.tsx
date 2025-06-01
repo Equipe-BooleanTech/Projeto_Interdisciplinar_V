@@ -79,12 +79,12 @@ const RegisterScreen = () => {
         <LoginTextContainer>
           <Typography variant="body1">
             Já possui uma conta?{' '}
-            <TouchableOpacity onPress={() => router.push('/Auth/Login')}>
-              <Typography variant="body1" color="#454F2C">
-                Faça login
-              </Typography>
-            </TouchableOpacity>
           </Typography>
+          <TouchableOpacity onPress={() => router.push('/Auth/Login')}>
+            <Typography variant="body1_underline" color="#454F2C" fontWeight="bold">
+              Faça login
+            </Typography>
+          </TouchableOpacity>
         </LoginTextContainer>
         {FormHelpers.createFormFields({
           control,
@@ -159,7 +159,7 @@ const RegisterScreen = () => {
                 validate: validations.date,
               },
               componentProps: {
-                placeholder: 'DD/MM/AAAA',
+                placeholder: 'Digite sua data de nascimento...',
                 onChangeText: (text) => {
                   setValue('birthdate', text);
                 },
@@ -181,7 +181,7 @@ const RegisterScreen = () => {
                 validate: validations.phone,
               },
               componentProps: {
-                placeholder: '(XX) XXXXX-XXXX',
+                placeholder: 'Digite seu telefone...',
                 keyboardType: 'phone-pad',
                 onChangeText: (text) => {
                   setValue('phone', text);
@@ -210,7 +210,7 @@ const RegisterScreen = () => {
                 },
               },
               componentProps: {
-                placeholder: '********',
+                placeholder: 'Digite sua senha...',
                 label: 'Senha',
                 secureTextEntry: true,
                 onChangeText: (text) => {

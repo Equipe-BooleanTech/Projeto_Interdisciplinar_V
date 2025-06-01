@@ -1,7 +1,6 @@
 import { theme } from '@/theme';
 import styled from 'styled-components/native';
 import { TextFieldProps } from './TextField.interface';
-import { Picker } from 'react-native-ui-lib';
 import { PickerIOS, Picker as WebPicker } from '@react-native-picker/picker';
 
 export const StyledTextFieldContainer = styled.View<Partial<TextFieldProps>>`

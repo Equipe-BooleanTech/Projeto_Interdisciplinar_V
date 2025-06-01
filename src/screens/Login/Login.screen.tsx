@@ -80,15 +80,15 @@ const LoginScreen = () => {
   return (
     <Form.Root controlled>
       <Typography variant="h1">Faça o Login</Typography>
-      <LoginTextContainer>
+            <LoginTextContainer>
         <Typography variant="body1">
-          Não possui uma conta?{' '}
-          <TouchableOpacity onPress={() => router.push('/Auth/Register')}>
-            <Typography variant="body1" color="#454F2C">
-              Cadastre-se
-            </Typography>
-          </TouchableOpacity>
+          Ainda não tem uma conta?
         </Typography>
+        <TouchableOpacity onPress={() => router.push('/Auth/Register')}>
+          <Typography variant="body1_underline" color="#454F2C" fontWeight="bold">
+            Crie uma!
+          </Typography>
+        </TouchableOpacity>
       </LoginTextContainer>
       {FormHelpers.createFormFields({
         control,
@@ -189,7 +189,7 @@ const LoginScreen = () => {
         hasIcon
         icon={{
           size: 24,
-          component: 'https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg',
+          component: 'https://cdn-icons-png.flaticon.com/512/2991/2991148.png',
         }}
       >
         Continuar com o Google

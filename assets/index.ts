@@ -13,6 +13,7 @@ import MapIcon from './images/map.svg';
 import ScrewdriverIcon from './images/screwdriver.svg';
 import GroupIcon from './images/group.svg';
 import SampleCar from './images/sample-car.png';
+import Logo from './images/logo.png';
 
 const images = {
   car: carIcon,
@@ -26,6 +27,7 @@ const images = {
   ScrewdriverIcon: ScrewdriverIcon,
   GroupIcon: GroupIcon,
   SampleCar: SampleCar,
+  logo: Logo
 };
 
 export default images;

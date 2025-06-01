@@ -12,4 +12,5 @@ export const LoginTextContainer = styled.View`
   align-items: center;
   width: 100%;
   margin-bottom: 24px;
+  gap: 4px;
 `;

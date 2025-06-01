@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { ScrollView } from 'react-native';
+import { Image, ScrollView } from 'react-native';
 import images from '../../../assets';
 import { Container, IconContainer } from './styles';
-import { Image } from '@/src/components';
 import { Register } from '@/src/screens';
 import { theme } from '@/theme';
 
@@ -12,7 +11,10 @@ const RegisterScreen = () => {
     <ScrollView style={{ flex: 1, backgroundColor: theme.colors.normalBackground }}>
       <Container>
         <IconContainer>
-          <Image svg={images.car} imgWidth={100} imgHeight={100} />
+          <Image
+            source={images.logo}
+            style={{ width: 200, height: 150 }}
+          />
         </IconContainer>
       </Container>
       <Register />

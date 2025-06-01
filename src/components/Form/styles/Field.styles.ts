@@ -1,26 +1,17 @@
-import MaskInput from 'react-native-mask-input';
-import { Picker } from '@react-native-picker/picker';
-import styled from 'styled-components/native';
-import { theme } from '@/theme';
-
- export const StyledMaskedInput = styled(MaskInput)`
-  width: 100%;
-  height: 50px;
-  border-radius: 8px;
-  padding: 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-`;
+import { theme } from "@/theme";
+import { Picker } from "@react-native-picker/picker";
+import styled from "styled-components/native";
 
 export const SelectContainer = styled.View`
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
+  display: flex;
 `;
 
 export const Label = styled.Text`
   font-size: 14px;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   color: ${theme.colors.text};
 `;
 
@@ -28,7 +19,7 @@ export const SelectTrigger = styled.TouchableOpacity`
   width: 100%;
   height: 50px;
   border-radius: 8px;
-  padding: 0 10px;
+  padding: 0 16px;
   background-color: #f0f0f0;
   border: 1px solid #ccc;
   justify-content: center;
@@ -36,7 +27,8 @@ export const SelectTrigger = styled.TouchableOpacity`
 
 export const SelectValue = styled.Text`
   font-size: 16px;
-  color: ${props => props.placeholder ? '#999' : '#000'};
+  color: ${theme.colors.text};
+  font-weight: 400;
 `;
 
 export const ModalContainer = styled.View`
@@ -56,26 +48,27 @@ export const ModalHeader = styled.View`
   flex-direction: row;
   justify-content: space-between;
   margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom-width: 1px;
 `;
 
 export const ButtonText = styled.Text`
-  color: ${theme.colors.primary};
+  color: ${theme.colors.green};
   font-size: 16px;
   font-weight: ${props => props.bold ? '700' : '400'};
 `;
 
 export const StyledPicker = styled(Picker)`
   width: 100%;
-  height: 180px;
-  background-color: white;
+  height: 200px;
 `;
 
-export const WebPicker = styled(Picker)`
+export const AndroidPicker = styled(Picker)`
   width: 100%;
   height: 50px;
+  background-color: #f8f8f8;
   border-radius: 8px;
-  padding: 0;
-  background-color: #f0f0f0;
+  padding: 0 10px;
   border: 1px solid #ccc;
 `;
 
