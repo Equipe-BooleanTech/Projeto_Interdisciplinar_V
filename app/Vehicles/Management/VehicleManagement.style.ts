@@ -127,5 +127,6 @@ export const ButtonContainer = styled.View`
   width: 100%;
   max-width: 400px;
   flex-wrap: wrap;
-  
+  background-color: ${theme.colors.normalBackground};
+  padding-bottom: 16px;
 `;

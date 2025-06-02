@@ -58,3 +58,70 @@ export const masks = {
   phone: formatPhone,
   date: formatDate,
 };
+
+
+// maskUtils.ts
+export const maskHandler = (text: string, pattern: string): string => {
+  if (!pattern) return text;
+
+  switch (pattern) {
+    case 'phone':
+      return phoneMask(text);
+    case 'credit-card':
+      return creditCardMask(text);
+    case 'date':
+      return dateMask(text);
+    default:
+      return customPatternMask(text, pattern);
+  }
+};
+
+const phoneMask = (text: string): string => {
+  // Format: (XX) XXXXX-XXXX
+  const cleaned = text.replace(/\D/g, '');
+  const match = cleaned.match(/^(\d{0,2})(\d{0,5})(\d{0,4})$/);
+  if (!match) return text;
+
+  return `(${match[1]}) ${match[2]}${match[3] ? `-${match[3]}` : ''}`;
+};
+
+const creditCardMask = (text: string): string => {
+  // Format: XXXX XXXX XXXX XXXX
+  const cleaned = text.replace(/\D/g, '');
+  const match = cleaned.match(/^(\d{0,4})(\d{0,4})(\d{0,4})(\d{0,4})$/);
+  if (!match) return text;
+
+  return `${match[1]}${match[2] ? ` ${match[2]}` : ''}${match[3] ? ` ${match[3]}` : ''}${match[4] ? ` ${match[4]}` : ''
+    }`;
+};
+
+const dateMask = (text: string): string => {
+  // Format: MM/DD/YYYY
+  const cleaned = text.replace(/\D/g, '');
+  const match = cleaned.match(/^(\d{0,2})(\d{0,2})(\d{0,4})$/);
+  if (!match) return text;
+
+  return `${match[1]}${match[2] ? `/${match[2]}` : ''}${match[3] ? `/${match[3]}` : ''}`;
+};
+
+const customPatternMask = (text: string, pattern: string): string => {
+  // Handle custom patterns like '##-##-####'
+  const patternChars = pattern.replace(/\D/g, '');
+  const textChars = text.replace(/\D/g, '');
+
+  let maskedText = '';
+  let textIndex = 0;
+
+  for (let i = 0; i < pattern.length; i++) {
+    if (textIndex >= textChars.length) break;
+
+    if (pattern[i] === '#') {
+      maskedText += textChars[textIndex];
+      textIndex++;
+    } else {
+      maskedText += pattern[i];
+    }
+  }
+
+  return maskedText;
+};

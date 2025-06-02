@@ -7,9 +7,11 @@ import { login } from '@/src/services/auth';
 import { router } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 import { LoginTextContainer, OrText } from './Login.styles';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const LoginScreen = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [modal, setModal] = useState<{
     visible: boolean;
     message: string;
@@ -80,7 +82,7 @@ const LoginScreen = () => {
   return (
     <Form.Root controlled>
       <Typography variant="h1">Faça o Login</Typography>
-            <LoginTextContainer>
+      <LoginTextContainer>
         <Typography variant="body1">
           Ainda não tem uma conta?
         </Typography>
@@ -90,6 +92,7 @@ const LoginScreen = () => {
           </Typography>
         </TouchableOpacity>
       </LoginTextContainer>
+
       {FormHelpers.createFormFields({
         control,
         fields: [
@@ -100,20 +103,19 @@ const LoginScreen = () => {
               required: 'Email é obrigatório',
               validate: validations.email,
             },
-            componentProps: {
-              placeholder: 'Digite seu email...',
-              label: 'Email',
-              keyboardType: 'email-address',
-              onChangeText: (text) => {
-                setValue('email', text);
-              },
-            },
+            label: 'Email',
+            placeholder: 'Digite seu email...',
             errorMessage: errors.email?.message,
+            componentProps: {
+              onChangeText: (text: string) => setValue('email', text),
+              keyboardType: 'email-address',
+              leftIcon: <MaterialIcons name="email" size={20} color="#666" />,
+              autoCapitalize: 'none',
+            },
           },
           {
             name: 'password',
             type: 'textfield',
-            fieldType: 'password',
             rules: {
               required: 'Senha é obrigatória',
               minLength: {
@@ -127,18 +129,27 @@ const LoginScreen = () => {
                 },
               },
             },
-            componentProps: {
-              placeholder: 'Digite sua senha...',
-              label: 'Senha',
-              onChangeText: (text) => {
-                setValue('password', text);
-              },
-              secureTextEntry: true,
-            },
+            label: 'Senha',
+            placeholder: 'Digite sua senha...',
             errorMessage: errors.password?.message,
+            componentProps: {
+              onChangeText: (text: string) => setValue('password', text),
+              secureTextEntry: !showPassword,
+              leftIcon: <MaterialIcons name="lock" size={20} color="#666" />,
+              rightIcon: (
+                <MaterialIcons
+                  name={showPassword ? "visibility-off" : "visibility"}
+                  size={20}
+                  color="#666"
+                />
+              ),
+              onRightIconPress: () => setShowPassword(!showPassword),
+              autoCapitalize: 'none',
+            },
           },
         ],
       })}
+
       <Button
         variant="primary"
         onPress={handleSubmit(onSubmit)}
@@ -164,6 +175,7 @@ const LoginScreen = () => {
           cancelText="Cancelar"
         />
       )}
+
       <OrText>OU</OrText>
 
       <Button

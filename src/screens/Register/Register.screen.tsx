@@ -7,9 +7,11 @@ import { register } from '@/src/services/auth';
 import { router } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 import { LoginTextContainer } from './Register.styles';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const RegisterScreen = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [modal, setModal] = useState<{
     visible: boolean;
     message: string;
@@ -95,26 +97,24 @@ const RegisterScreen = () => {
               rules: {
                 required: 'Nome é obrigatório',
               },
-              componentProps: {
-                placeholder: 'Digite seu nome...',
-                label: 'Nome',
-                onChangeText: (text: string) => {
-                  setValue('name', text);
-                },
-              },
+              label: 'Nome',
+              placeholder: 'Digite seu nome...',
               errorMessage: errors.name?.message,
+              componentProps: {
+                onChangeText: (text: string) => setValue('name', text),
+                leftIcon: <MaterialIcons name="person" size={20} color="#666" />,
+              },
             },
             {
               name: 'lastname',
               type: 'textfield',
-              componentProps: {
-                placeholder: 'Digite seu sobrenome...',
-                label: 'Sobrenome',
-                onChangeText: (text: string) => {
-                  setValue('lastname', text);
-                },
-              },
+              label: 'Sobrenome',
+              placeholder: 'Digite seu sobrenome...',
               errorMessage: errors.lastname?.message,
+              componentProps: {
+                onChangeText: (text: string) => setValue('lastname', text),
+                leftIcon: <MaterialIcons name="person-outline" size={20} color="#666" />,
+              },
             },
             {
               name: 'email',
@@ -123,15 +123,15 @@ const RegisterScreen = () => {
                 required: 'Email é obrigatório',
                 validate: validations.email,
               },
-              componentProps: {
-                placeholder: 'Digite seu email...',
-                label: 'Email',
-                keyboardType: 'email-address',
-                onChangeText: (text) => {
-                  setValue('email', text);
-                },
-              },
+              label: 'Email',
+              placeholder: 'Digite seu email...',
               errorMessage: errors.email?.message,
+              componentProps: {
+                onChangeText: (text: string) => setValue('email', text),
+                keyboardType: 'email-address',
+                leftIcon: <MaterialIcons name="email" size={20} color="#666" />,
+                autoCapitalize: 'none',
+              },
             },
             {
               name: 'username',
@@ -140,58 +140,49 @@ const RegisterScreen = () => {
                 required: 'Nome de usuário é obrigatório',
                 validate: validations.username,
               },
-              componentProps: {
-                placeholder: 'Digite seu nome de usuário...',
-                label: 'Nome de Usuário',
-                onChangeText: (text) => {
-                  setValue('username', text);
-                },
-              },
+              label: 'Nome de Usuário',
+              placeholder: 'Digite seu nome de usuário...',
               errorMessage: errors.username?.message,
+              componentProps: {
+                onChangeText: (text: string) => setValue('username', text),
+                leftIcon: <MaterialIcons name="alternate-email" size={20} color="#666" />,
+                autoCapitalize: 'none',
+              },
             },
             {
               name: 'birthdate',
-              type: 'maskedtextfield',
-              label: 'Data de Nascimento',
-              mask: masks.date,
+              type: 'textfield',
               rules: {
                 required: 'Data de nascimento é obrigatória',
                 validate: validations.date,
               },
-              componentProps: {
-                placeholder: 'Digite sua data de nascimento...',
-                onChangeText: (text) => {
-                  setValue('birthdate', text);
-                },
-                onBlur: (text) => {
-                  const isValid = validations.date(text.nativeEvent.text);
-                  return isValid || 'Data de nascimento inválida';
-                },
-                keyboardType: 'number-pad',
-              },
+              label: 'Data de Nascimento',
+              placeholder: 'DD/MM/AAAA',
+              mask: 'date',
               errorMessage: errors.birthdate?.message,
+              componentProps: {
+                onChangeText: (text: string) => setValue('birthdate', text),
+                keyboardType: 'number-pad',
+                leftIcon: <MaterialIcons name="cake" size={20} color="#666" />,
+                maxLength: 10,
+              },
             },
             {
               name: 'phone',
-              label: 'Telefone',
-              type: 'maskedtextfield',
-              mask: masks.phone,
+              type: 'textfield',
               rules: {
                 required: 'Telefone é obrigatório',
                 validate: validations.phone,
               },
-              componentProps: {
-                placeholder: 'Digite seu telefone...',
-                keyboardType: 'phone-pad',
-                onChangeText: (text) => {
-                  setValue('phone', text);
-                },
-                onBlur: (text) => {
-                  const isValid = validations.phone(text.nativeEvent.text);
-                  return isValid || 'Número de telefone inválido';
-                },
-              },
+              label: 'Telefone',
+              placeholder: '(00) 00000-0000',
+              mask: 'phone',
               errorMessage: errors.phone?.message,
+              componentProps: {
+                onChangeText: (text: string) => setValue('phone', text),
+                keyboardType: 'phone-pad',
+                leftIcon: <MaterialIcons name="phone" size={20} color="#666" />,
+              },
             },
             {
               name: 'password',
@@ -209,15 +200,23 @@ const RegisterScreen = () => {
                   },
                 },
               },
-              componentProps: {
-                placeholder: 'Digite sua senha...',
-                label: 'Senha',
-                secureTextEntry: true,
-                onChangeText: (text) => {
-                  setValue('password', text);
-                },
-              },
+              label: 'Senha',
+              placeholder: 'Digite sua senha...',
               errorMessage: errors.password?.message,
+              componentProps: {
+                onChangeText: (text: string) => setValue('password', text),
+                secureTextEntry: !showPassword,
+                leftIcon: <MaterialIcons name="lock" size={20} color="#666" />,
+                rightIcon: (
+                  <MaterialIcons
+                    name={showPassword ? "visibility-off" : "visibility"}
+                    size={20}
+                    color="#666"
+                  />
+                ),
+                onRightIconPress: () => setShowPassword(!showPassword),
+                autoCapitalize: 'none',
+              },
             },
           ],
         })}

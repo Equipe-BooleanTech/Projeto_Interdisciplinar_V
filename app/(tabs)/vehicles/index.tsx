@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { use, useCallback, useEffect } from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import {
@@ -22,7 +22,7 @@ const VehicleScreen = () => {
   const [vehicles, setVehicles] = React.useState([]);
 
   const { checkAuthentication, redirect } = useRedirect();
-  const { getItem } = useStorage();
+  const { getItem, setItem } = useStorage();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -62,6 +62,12 @@ const VehicleScreen = () => {
     fetchVehicles();
   }, []);
 
+  const handleVehiclePress = useCallback((vehiclePlate) => {
+    setItem('vehiclePlate', vehiclePlate);
+    router.push('/Vehicles/Management/VehicleManagement');
+  }
+, []);
+
   return (
     <ProtectedRoute>
       <Header
@@ -74,7 +80,7 @@ const VehicleScreen = () => {
         <Title>Meus Veículos</Title>
         <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
           {vehicles.map((vehicle) => (
-            <Card key={vehicle.plate} onPress={() => router.push(`/Vehicles/Management/VehicleManagement`)}>
+            <Card key={vehicle.plate} onPress={() => handleVehiclePress(vehicle.plate)}>
               <VehicleImage
                 source={{
                   uri: 'https://www.shutterstock.com/image-vector/car-vectorcar-monochrome-iconcoupe-iconcar-600nw-2318254387.jpg',

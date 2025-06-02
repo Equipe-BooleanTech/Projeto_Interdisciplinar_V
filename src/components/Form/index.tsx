@@ -1,11 +1,9 @@
-import TextField from '../TextField/TextField';
+import AdvancedTextInput from '@/components/TextField/TextField';
 import Root from './Root';
 import { Switch } from 'react-native';
 import { Controller, Control, RegisterOptions } from 'react-hook-form';
 import { View, Text, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
-import MaskInput, { MaskArray } from 'react-native-mask-input';
-import { StyledMaskInput } from './styles/Field.styles';
 import { HelperText } from 'react-native-paper';
 import { theme } from '@/theme';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -13,18 +11,20 @@ import { Dropdown } from 'react-native-element-dropdown';
 const SelectField = ({
   options,
   placeholder = "Selecione uma opção...",
+  defaultValue,
   ...rest
 }) => {
-
   const styles = StyleSheet.create({
     dropdown: {
-      fontSize: 16,
-      padding: 12,
-      height: 50,
-      borderRadius: 4,
-      borderWidth: 1,
-      borderColor: '#333',
       width: '100%',
+      marginVertical: 8,
+      height: 50,
+      backgroundColor: 'white',
+      borderRadius: 8, // Matches input border radius
+      paddingHorizontal: 12,
+      borderWidth: 1,
+      borderColor: '#ccc', // Matches input border color
+      fontSize: 16, // Matches input font size
     },
     icon: {
       marginRight: 5,
@@ -34,24 +34,33 @@ const SelectField = ({
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
+      borderBottomWidth: 1,
+      borderBottomColor: '#f0f0f0', // Added for better item separation
     },
     textItem: {
       flex: 1,
       fontSize: 16,
+      color: '#333', // Matches input text color
     },
     placeholderStyle: {
       fontSize: 16,
+      color: '#999', // Matches input placeholder color
     },
     selectedTextStyle: {
       fontSize: 16,
+      color: '#333', // Matches input text color
     },
     iconStyle: {
       width: 20,
       height: 20,
+      tintColor: '#666', // Matches icon colors
     },
-    inputSearchStyle: {
-      height: 40,
-      fontSize: 16,
+    // Added these to match error states
+    error: {
+      borderColor: '#ff3333', // Error border color
+    },
+    focused: {
+      borderColor: '#454F2C', // Focus/highlight color (from your theme)
     },
   });
   const [value, setValue] = useState(null);
@@ -75,7 +84,6 @@ const SelectField = ({
         style={styles.dropdown}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
         iconStyle={styles.iconStyle}
         data={options}
         search
@@ -84,7 +92,7 @@ const SelectField = ({
         valueField="value"
         placeholder="Selecione uma opção..."
         searchPlaceholder="Search..."
-        value={value}
+        value={value || rest.selectedValue}
         onChange={item => {
           setValue(item.value);
           rest.onValueChange(item.value, item.index);
@@ -97,7 +105,7 @@ const SelectField = ({
 
 export const Form = {
   Field: {
-    TextField: TextField,
+    TextField: AdvancedTextInput,
     Select: SelectField,
     Switch: Switch,
   },
@@ -109,12 +117,18 @@ type BaseFieldProps = {
   name: string;
   rules?: RegisterOptions;
   errorMessage?: string;
+  defaultValue?: any;
 };
 
 type TextFieldProps = BaseFieldProps & {
   type: 'textfield';
-  componentProps?: React.ComponentProps<typeof TextField>;
+  componentProps?: React.ComponentProps<typeof AdvancedTextInput>;
   fieldType?: 'text' | 'password' | 'email' | 'number';
+  label?: string;
+  placeholder?: string;
+  mask?: 'phone' | 'credit-card' | 'date' | string;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
 };
 
 interface SelectProps {
@@ -134,16 +148,6 @@ type SelectFieldProps = BaseFieldProps & {
   componentProps?: Partial<SelectProps>;
 };
 
-type MaskedTextFieldProps = BaseFieldProps & {
-  type: 'maskedtextfield';
-  componentProps?: React.ComponentProps<typeof MaskInput>;
-  mask: (value?: string | undefined) => MaskArray | (string | RegExp)[];
-  label: string;
-  errorMessage?: string;
-  rules?: RegisterOptions;
-  placeholder?: string;
-};
-
 type SwitchFieldProps = BaseFieldProps & {
   type: 'switch';
   componentProps?: React.ComponentProps<typeof Switch>;
@@ -153,7 +157,7 @@ type SwitchFieldProps = BaseFieldProps & {
   placeholder?: string;
 };
 
-type FieldConfig = TextFieldProps | SelectFieldProps | SwitchFieldProps | MaskedTextFieldProps;
+type FieldConfig = TextFieldProps | SelectFieldProps | SwitchFieldProps;
 
 export const FormHelpers = {
   createFormFields: ({
@@ -162,6 +166,7 @@ export const FormHelpers = {
   }: {
     control: Control<any>;
     fields: FieldConfig[];
+    defaultValues?: Record<string, any>;
   }) => {
     return (
       <View style={{ width: '100%', gap: 8 }}>
@@ -175,17 +180,28 @@ export const FormHelpers = {
                   case 'textfield':
                     return (
                       <Form.Field.TextField
-                        onChange={onChange}
-                        onChangeText={onChange}
-                        onBlur={() => onBlur && onBlur()}
+                        onChangeText={(text) => {
+                          onChange(text);
+                          if (field.componentProps?.onChangeText) {
+                            field.componentProps.onChangeText(text);
+                          }
+                        }}
+                        onBlur={() => {
+                          onBlur();
+                          if (field.componentProps?.onBlur) {
+                            field.componentProps.onBlur();
+                          }
+                        }}
                         value={value}
-                        helperText={field.errorMessage}
-                        label={field.name}
-                        error={!!control._formState.errors[field.name]}
-                        placeholder={field.componentProps?.placeholder}
-                        secureTextEntry={field.componentProps?.secureTextEntry}
+                        errorMessage={field.errorMessage}
+                        label={field.label}
+                        isValid={!control._formState.errors[field.name]}
+                        placeholder={field.placeholder}
+                        secureTextEntry={field.fieldType === 'password'}
+                        mask={field.mask}
+                        leftIcon={field.componentProps?.leftIcon}
+                        rightIcon={field.componentProps?.rightIcon}
                         {...field.componentProps}
-
                       />
                     );
                   case 'select':
@@ -207,26 +223,6 @@ export const FormHelpers = {
                         onValueChange={onChange}
                         {...field.componentProps}
                       />
-                    );
-                  case 'maskedtextfield':
-                    return (
-                      <>
-                        {field.label && (
-                          <HelperText type={field.errorMessage ? 'error' : 'info'} visible={!!field.label}
-                            style={{ fontSize: 16, color: theme.colors.primary }}>
-                            {field.label}
-                          </HelperText>
-                        )}
-                        <StyledMaskInput
-                          mask={field.mask}
-                          value={value}
-                          label={field.label}
-                          onChangeText={onChange}
-                          placeholder={field.placeholder}
-                          secureTextEntry={field.componentProps?.secureTextEntry}
-                          {...field.componentProps}
-                        />
-                      </>
                     );
                   default:
                     return <></>;
