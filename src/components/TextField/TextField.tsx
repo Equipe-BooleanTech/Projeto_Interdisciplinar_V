@@ -1,4 +1,3 @@
-// AdvancedTextInput.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   ActivityIndicator,
@@ -54,7 +53,6 @@ const AdvancedTextInput: React.FC<CustomTextInputProps> = ({
   value,
   ...rest
 }) => {
-  const [inputValue, setInputValue] = useState(value || '');
   const [isValid, setIsValid] = useState(true);
   const [isTouched, setIsTouched] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -77,16 +75,15 @@ const AdvancedTextInput: React.FC<CustomTextInputProps> = ({
     if (!validateOnChange || !isTouched) return;
 
     const timer = setTimeout(() => {
-      setIsValid(validateInput(inputValue));
+      setIsValid(validateInput(value || ''));
     }, debounceTime);
 
     return () => clearTimeout(timer);
-  }, [inputValue, validateOnChange, isTouched, validateInput, debounceTime]);
+  }, [value, validateOnChange, isTouched, validateInput, debounceTime]);
 
   // Handle text change
   const handleChangeText = (text: string) => {
     const maskedText = handleMasking(text);
-    setInputValue(maskedText);
 
     if (onChangeText) {
       onChangeText(maskedText);
@@ -140,7 +137,7 @@ const AdvancedTextInput: React.FC<CustomTextInputProps> = ({
 
         <StyledTextInput
           {...rest}
-          value={inputValue}
+          value={value || ''}
           onChangeText={handleChangeText}
           placeholderTextColor={placeholderTextColor}
           style={[

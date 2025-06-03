@@ -59,7 +59,7 @@ const GasStationMap = () => {
             />
             <SafeAreaView style={{ flex: 1 }}>
                 <Button variant='primary' onPress={() => {
-                    router.push('/gas-stations/register');
+                    router.push('/GasStations/Register');
                 }
                 } style={{ margin: 10 }}>
                     Novo Posto de Gasolina
