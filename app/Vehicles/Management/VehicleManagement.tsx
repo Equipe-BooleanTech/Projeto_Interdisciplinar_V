@@ -99,7 +99,7 @@ const VehicleManagement = () => {
     }, []);
 
     const onAddFueling = () => {
-        router.push('/Vehicles/Fuelings/Register');
+        router.push('/Fuelings/Register/');
     };
 
     const onEditVehicle = () => {

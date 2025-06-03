@@ -62,8 +62,9 @@ const VehicleScreen = () => {
     fetchVehicles();
   }, []);
 
-  const handleVehiclePress = useCallback((vehiclePlate) => {
+  const handleVehiclePress = useCallback((vehiclePlate, vehicleId) => {
     setItem('vehiclePlate', vehiclePlate);
+    setItem('vehicleId', vehicleId);
     router.push('/Vehicles/Management/VehicleManagement');
   }
 , []);
@@ -80,7 +81,7 @@ const VehicleScreen = () => {
         <Title>Meus Veículos</Title>
         <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
           {vehicles.map((vehicle) => (
-            <Card key={vehicle.plate} onPress={() => handleVehiclePress(vehicle.plate)}>
+            <Card key={vehicle.plate} onPress={() => handleVehiclePress(vehicle.plate, vehicle.uuid)}>
               <VehicleImage
                 source={{
                   uri: 'https://www.shutterstock.com/image-vector/car-vectorcar-monochrome-iconcoupe-iconcar-600nw-2318254387.jpg',
