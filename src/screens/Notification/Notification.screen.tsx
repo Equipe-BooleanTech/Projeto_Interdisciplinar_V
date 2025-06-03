@@ -16,7 +16,7 @@ import {
     EmptyState,
     EmptyStateText,
 } from './Notification.styles';
-import { theme } from '@/theme';
+import { theme } from '@/src/theme/theme';
 import { Header as MobileHeader } from '@/src/components';
 import { router } from 'expo-router';
 

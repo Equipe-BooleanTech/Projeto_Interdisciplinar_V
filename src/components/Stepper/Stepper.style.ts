@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { StepperProps } from './Stepper.interface';
-import { theme } from '@/theme';
+import { theme } from '@/src/theme/theme';
 
 export const StyledStepper = styled.View`
   flex-direction: row;

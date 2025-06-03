@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAuthenticated(true);
         return true;
       } catch (error: any) {
-        if (error.response && (error.response.status >= 400 && error.response.status < 500)) {
+        if (error.response && (error.response.status === 401)) {
           // Token is invalid
           await removeToken();
           setIsAuthenticated(false);

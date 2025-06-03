@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-// Import the correct interfaces from screens
+import { useCallback, useEffect, useState } from "react";
 import { VehicleManagement as VehicleManagementScreen } from "@/src/screens";
 import React from "react";
 import { FuelRefillDTO, FuelRefillSummaryDTO, FuelType } from "./VehicleManagement.interface";
 import { Alert, Button, Header } from "@/src/components";
 import { router } from "expo-router";
-import { SearchInput } from "react-native-ui-lib";
 import { ButtonContainer } from "./VehicleManagement.style";
-// Remove the local interface import
-// import { FuelRefillDTO } from "./VehicleManagement.interface";
+import { Dropdown } from "react-native-element-dropdown";
+import { Ionicons } from "@expo/vector-icons";
+import { useStorage } from "@/src/hooks";
+
 
 const VehicleManagement = () => {
     const [modal, setModal] = useState<{
@@ -21,6 +21,7 @@ const VehicleManagement = () => {
         title: '',
     });
     const [searchQuery, setSearchQuery] = useState('');
+    const { getItem, setItem } = useStorage();
     const [isLoading, setIsLoading] = useState(false);
     // Use the correct interface FuelRefillSummaryDTO
     const [fuelingRecords, setFuelingRecords] = useState<FuelRefillSummaryDTO>({
@@ -91,8 +92,23 @@ const VehicleManagement = () => {
     // Define missing functions and variables
     const [stationNames, setStationNames] = useState<Record<string, string>>({});
 
+    const getVehiclePlate = useCallback(async () => {
+        const vehiclePlate = await getItem('vehiclePlate');
+        console.log('Vehicle Plate:', vehiclePlate);
+        return vehiclePlate;
+    }, []);
+
     const onAddFueling = () => {
-        // Implementation here
+        router.push('/Fuelings/Register/');
+    };
+
+    const onEditVehicle = () => {
+        const vehiclePlate = getVehiclePlate();
+        router.push('/Vehicles/Update', {
+            params: {
+                id: vehiclePlate,
+            },
+        });
     };
 
     const onSearch = (query: string) => {
@@ -121,14 +137,30 @@ const VehicleManagement = () => {
 
     return (
         <>
-            <Header 
-                title="Gestão de Veículo" 
+            <Header
+                title="Gestão de Veículo"
                 onBackPress={() => { router.back() }}
             />
             <ButtonContainer>
-                <Button onPress={onAddFueling} variant="primary">
-                    Novo Abastecimento
-                </Button>
+                <Dropdown
+                    style={{ width: '90%' }}
+                    data={[
+                        { label: 'Novo Abastecimento', value: 'new', onPress: onAddFueling, leftIcon: 'plus' },
+                        { label: 'Editar Dados do Veículo', value: 'edit', onPress: onEditVehicle, leftIcon: 'edit' },
+                    ]}
+                    labelField="label"
+                    valueField="value"
+                    placeholder=" "
+                    search={false}
+                    onChange={(item) => {
+                        if (item.onPress) {
+                            item.onPress();
+                        }
+                    }
+                    }
+                    renderRightIcon={() => <></>}
+                    renderLeftIcon={() => <Ionicons name="menu" size={24} color="black" />}
+                />
             </ButtonContainer>
             <VehicleManagementScreen
                 fuelingRecords={fuelingRecords}

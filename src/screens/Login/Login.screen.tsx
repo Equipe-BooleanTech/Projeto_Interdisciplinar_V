@@ -7,9 +7,11 @@ import { login } from '@/src/services/auth';
 import { router } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 import { LoginTextContainer, OrText } from './Login.styles';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const LoginScreen = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [modal, setModal] = useState<{
     visible: boolean;
     message: string;
@@ -82,14 +84,15 @@ const LoginScreen = () => {
       <Typography variant="h1">Faça o Login</Typography>
       <LoginTextContainer>
         <Typography variant="body1">
-          Não possui uma conta?{' '}
-          <TouchableOpacity onPress={() => router.push('/Auth/Register')}>
-            <Typography variant="body1" color="#454F2C">
-              Cadastre-se
-            </Typography>
-          </TouchableOpacity>
+          Ainda não tem uma conta?
         </Typography>
+        <TouchableOpacity onPress={() => router.push('/Auth/Register')}>
+          <Typography variant="body1_underline" color="#454F2C" fontWeight="bold">
+            Crie uma!
+          </Typography>
+        </TouchableOpacity>
       </LoginTextContainer>
+
       {FormHelpers.createFormFields({
         control,
         fields: [
@@ -100,15 +103,15 @@ const LoginScreen = () => {
               required: 'Email é obrigatório',
               validate: validations.email,
             },
-            componentProps: {
-              placeholder: 'Digite seu email...',
-              label: 'Email',
-              keyboardType: 'email-address',
-              onChangeText: (text) => {
-                setValue('email', text);
-              },
-            },
+            label: 'Email',
+            placeholder: 'Digite seu email...',
             errorMessage: errors.email?.message,
+            componentProps: {
+              onChangeText: (text: string) => setValue('email', text),
+              keyboardType: 'email-address',
+              leftIcon: <MaterialIcons name="email" size={20} color="#666" />,
+              autoCapitalize: 'none',
+            },
           },
           {
             name: 'password',
@@ -126,18 +129,27 @@ const LoginScreen = () => {
                 },
               },
             },
-            componentProps: {
-              placeholder: 'Digite sua senha...',
-              label: 'Senha',
-              secureTextEntry: true,
-              onChangeText: (text) => {
-                setValue('password', text);
-              },
-            },
+            label: 'Senha',
+            placeholder: 'Digite sua senha...',
             errorMessage: errors.password?.message,
+            componentProps: {
+              onChangeText: (text: string) => setValue('password', text),
+              secureTextEntry: !showPassword,
+              leftIcon: <MaterialIcons name="lock" size={20} color="#666" />,
+              rightIcon: (
+                <MaterialIcons
+                  name={showPassword ? "visibility-off" : "visibility"}
+                  size={20}
+                  color="#666"
+                />
+              ),
+              onRightIconPress: () => setShowPassword(!showPassword),
+              autoCapitalize: 'none',
+            },
           },
         ],
       })}
+
       <Button
         variant="primary"
         onPress={handleSubmit(onSubmit)}
@@ -163,6 +175,7 @@ const LoginScreen = () => {
           cancelText="Cancelar"
         />
       )}
+
       <OrText>OU</OrText>
 
       <Button
@@ -189,7 +202,7 @@ const LoginScreen = () => {
         hasIcon
         icon={{
           size: 24,
-          component: 'https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg',
+          component: 'https://cdn-icons-png.flaticon.com/512/2991/2991148.png',
         }}
       >
         Continuar com o Google

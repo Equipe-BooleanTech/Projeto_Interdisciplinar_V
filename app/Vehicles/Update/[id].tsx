@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Text, ScrollView, SafeAreaView, ActivityIndicator } from 'react-native';
 import { styles } from './_layout';
-import { router, useLocalSearchParams } from 'expo-router';
-import { Alert as CustomAlert, Button, Form } from '@/src/components';
+import { router } from 'expo-router';
+import { Alert as CustomAlert, Button, Form, Header } from '@/src/components';
 import { FormHelpers } from '@/src/components/Form';
 import { useForm } from 'react-hook-form';
 import { updateVehicle } from '@/src/services/vehicleService';
 import { useRedirect, useStorage } from '@/src/hooks';
-import { IconButton } from '@/app/(tabs)/vehicles/styles';
-import { Feather } from '@expo/vector-icons';
-import { IconContainer } from '@/app/Auth/Login/styles';
-import { get } from '@/src/services';
+import {  MaterialIcons } from '@expo/vector-icons';
+import { get, put  } from '@/src/services';
 import { VehicleManufacturer, VehicleModel } from '@/src/@types';
 import { Toast } from 'toastify-react-native'
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
+import { theme } from '@/theme';
+import { Modal } from 'react-native-paper';
 
 export type SelectData = {
   label: string;
@@ -35,13 +35,11 @@ const VehicleUpdateScreen = () => {
 
   const [vehicleManufacturers, setVehicleManufacturers] = useState<SelectData[]>([]);
   const [vehicleModels, setVehicleModels] = useState<SelectData[]>([]);
-
   const [vehicleManufacturer, setVehicleManufacturer] = useState<VehicleManufacturer | null>(null);
   const [vehicleModel, setVehicleModel] = useState<VehicleModel | null>(null);
 
-  const { getItem } = useStorage();
+  const { getItem, setItem } = useStorage();
   const { checkAuthentication, redirect } = useRedirect();
-  const { id } = useLocalSearchParams();
 
   const {
     control,
@@ -50,61 +48,77 @@ const VehicleUpdateScreen = () => {
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      plate: '',
-      model: '',
-      color: '',
-      manufacturer: '',
-      type: '',
-      description: '',
-      year: '',
-      km: '',
-      fuelType: '',
-      fuelCapacity: '',
-      fuelConsumption: '',
-      userId: getItem('userId')
-    },
     mode: 'onBlur',
   });
 
-  // Authentication and fetch vehicle data
+  const getUserID = useCallback(async () => {
+    try {
+      const userId = await getItem('userId');
+      return userId || '';
+    } catch (error) {
+      console.error('Error fetching user ID:', error);
+      return '';
+    }
+  }, [getItem]);
+
+  const getPlateId = useCallback(async () => {
+    try {
+      const plateId = await getItem('vehiclePlate');
+      return plateId || '';
+    } catch (error) {
+      console.error('Error fetching vehicle plate ID:', error);
+      return '';
+    }
+  }, [getItem]);
+
   useEffect(() => {
     const fetchVehicleData = async () => {
       try {
         setIsLoading(true);
-        // Fetch the vehicle data based on the ID
-        const vehicleData = await getVehicleById(id as string);
+        const plateId = await getPlateId();
+        const vehicleData = await get<{ plateId: string }, any>(`/vehicle/findbyplate/${plateId}`);
 
-        // Pre-populate form with existing data
-        if (vehicleData) {
-          Object.keys(vehicleData).forEach(key => {
-            if (vehicleData[key] !== null && vehicleData[key] !== undefined) {
-              // Convert numbers to strings for form fields
-              const value = typeof vehicleData[key] === 'number'
-                ? vehicleData[key].toString()
-                : vehicleData[key];
-              setValue(key, value);
-            }
-          });
+        if (!vehicleData) {
+          Toast.error('Veículo não encontrado');
+          router.push('/(tabs)/vehicles');
+          return;
+        }
 
-          // Set manufacturer if available
-          if (vehicleData.manufacturer) {
-            const manufacturerObj = {
-              codigo: '',
-              nome: vehicleData.manufacturer,
-            };
-            setVehicleManufacturer(manufacturerObj);
+        // Set all basic form values first
+        Object.keys(vehicleData).forEach(key => {
+          if (vehicleData[key] !== null && vehicleData[key] !== undefined) {
+            const value = typeof vehicleData[key] === 'number'
+              ? String(vehicleData[key])
+              : vehicleData[key];
+            setValue(key, value);
+          }
+        });
 
-            // Try to find the manufacturer code in manufacturers list
-            const foundManufacturer = vehicleManufacturers.find(
-              m => m.label.toLowerCase() === vehicleData.manufacturer.toLowerCase()
-            );
+        // Wait for manufacturers to load if needed
+        if (vehicleManufacturers.length === 0) {
+          await new Promise(resolve => setTimeout(resolve, 500)); // Small delay
+        }
 
-            if (foundManufacturer) {
-              manufacturerObj.codigo = foundManufacturer.value;
-            }
+        // Set manufacturer if available
+        if (vehicleData.manufacturer) {
+          const foundManufacturer = vehicleManufacturers.find(
+            m => m.label.toLowerCase() === vehicleData.manufacturer.toLowerCase()
+          );
+
+          if (foundManufacturer) {
+            setVehicleManufacturer({
+              codigo: foundManufacturer.value,
+              nome: foundManufacturer.label,
+            });
+            setValue('manufacturer', foundManufacturer.label);
           }
         }
+
+        // Store the UUID for submission
+        if (vehicleData.uuid) {
+          setValue('uuid', vehicleData.uuid);
+        }
+
       } catch (error) {
         console.error('Error fetching vehicle data:', error);
         Toast.error('Erro ao carregar dados do veículo');
@@ -113,36 +127,63 @@ const VehicleUpdateScreen = () => {
       }
     };
     fetchVehicleData();
-  }, [id, setValue, vehicleManufacturers]);
+  }, [setValue, vehicleManufacturers]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (formData: any) => {
     setIsSubmitting(true);
     try {
+      // Create a clean data object - don't use control._formValues
       const vehicleData = {
-        ...data,
-        year: parseInt(data.year, 10),
-        km: parseFloat(data.km),
-        fuelCapacity: data.fuelCapacity ? parseFloat(data.fuelCapacity) : 0,
-        fuelConsumption: data.fuelConsumption ? parseFloat(data.fuelConsumption) : 0,
+        uuid: formData.uuid,
+        plate: formData.plate,
+        manufacturer: vehicleManufacturer?.nome || formData.manufacturer,
+        model: vehicleModel?.nome || formData.model,
+        year: parseInt(formData.year, 10),
+        color: formData.color,
+        km: parseFloat(formData.km),
+        fuelType: formData.fuelType,
+        fuelCapacity: formData.fuelCapacity ? parseFloat(formData.fuelCapacity) : 0,
+        fuelConsumption: formData.fuelConsumption ? parseFloat(formData.fuelConsumption) : 0,
+        description: formData.description
       };
 
-      // Update vehicle instead of creating
-      await updateVehicle(id as string, vehicleData);
-      Toast.success('Veículo atualizado com sucesso!');
+      console.log('Clean vehicle data for submission:', vehicleData);
 
+      // Add debugging for the API call
+      const result = await updateVehicle(vehicleData.uuid, vehicleData).then((response) => {
+        setModal({
+          visible: true,
+          message: response.message || 'Veículo atualizado com sucesso!',
+          title: 'Sucesso',
+        });
+        return response;
+      }).catch((error) => {
+        console.error('API error:', error);
+        setModal({
+          visible: true,
+          message: error?.response?.data?.message || 'Erro ao atualizar veículo',
+          title: 'Erro',
+        });
+        throw error; // Re-throw to handle in the catch block below
+      });
+
+      setModal({
+        visible: true,
+        message: 'Veículo atualizado com sucesso!',
+        title: 'Sucesso',
+      });
       setIsSubmitting(false);
       router.push('/(tabs)/vehicles');
-      return vehicleData;
     } catch (error: any) {
-      Toast.error('Ocorreu um erro ao atualizar veículo. Verifique os dados e tente novamente.');
-      setIsSubmitting(false);
       console.error('Error updating vehicle:', error);
+      setIsSubmitting(false);
+      setModal({
+        visible: true,
+        message: error?.response?.data?.message || 'Erro ao atualizar veículo',
+        title: 'Erro',
+      });
     }
   };
-
-  // ------------------------------------------------------
-  // Fetch vehicle brands based on FIPE API
-  // ------------------------------------------------------
 
   useEffect(() => {
     const fetchManufacturers = async () => {
@@ -165,16 +206,11 @@ const VehicleUpdateScreen = () => {
     fetchManufacturers();
   }, []);
 
-  // ------------------------------------------------------
-  // Fetch vehicle models based on FIPE API
-  // ------------------------------------------------------
-
   useEffect(() => {
     const fetchModels = async () => {
       if (vehicleManufacturer) {
         try {
           const response = await get<null, VehicleModel[]>(`/fipe/marcas/${vehicleManufacturer.codigo}/modelos`);
-          // Check the actual response structure and extract models properly
           let modelsList = [];
 
           if (Array.isArray(response)) {
@@ -192,7 +228,6 @@ const VehicleUpdateScreen = () => {
           }));
           setVehicleModels(models);
 
-          // If we already have a model value, try to find and select it
           const currentModel = control._formValues.model;
           if (currentModel) {
             const foundModel = models.find(m =>
@@ -217,18 +252,17 @@ const VehicleUpdateScreen = () => {
 
   return (
     <ProtectedRoute>
+      <Header
+        title="Editar Veículo"
+        onBackPress={() => { router.back() }}
+      />
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
         <ScrollView contentContainerStyle={styles.container}>
-          <IconContainer>
-            <IconButton onPress={() => router.back()}>
-              <Feather name="arrow-left" size={24} color="#fff" />
-            </IconButton>
-          </IconContainer>
           <Form.Root controlled>
             <Text style={styles.title}>Atualizar Veículo</Text>
 
             {isLoading ? (
-              <ActivityIndicator size="large" color="#0000ff" style={{ marginVertical: 20 }} />
+              <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginVertical: 20 }} />
             ) : (
               FormHelpers.createFormFields({
                 control,
@@ -239,14 +273,13 @@ const VehicleUpdateScreen = () => {
                     rules: {
                       required: 'Placa é obrigatória',
                     },
-                    componentProps: {
-                      placeholder: 'Digite a placa...',
-                      label: 'Placa',
-                      onChangeText: (text: string) => {
-                        setValue('plate', text);
-                      },
-                    },
+                    label: 'Placa',
+                    placeholder: 'Digite a placa...',
                     errorMessage: errors.plate?.message,
+                    componentProps: {
+                      onChangeText: (text: string) => setValue('plate', text),
+                      leftIcon: <MaterialIcons name="directions-car" size={20} color="#666" />,
+                    },
                   },
                   {
                     name: 'manufacturer',
@@ -262,17 +295,18 @@ const VehicleUpdateScreen = () => {
                       },
                       ...vehicleManufacturers
                     ],
-                    errorMessage: errors.model?.message,
                     componentProps: {
-                      onValueChange: (itemValue: unknown) => {
-                        const valueStr = String(itemValue);
-                        const selected = vehicleManufacturers.find(m => m.value === valueStr);
+                      value: vehicleManufacturer?.codigo || '',
+                      onValueChange: (itemValue: string) => {
+                        const selected = vehicleManufacturers.find(m => m.value === itemValue);
                         if (selected) {
                           setVehicleManufacturer({
                             codigo: selected.value,
                             nome: selected.label,
                           });
-                          setValue('manufacturer', selected.label);
+                          setValue('manufacturer', selected.label, { shouldValidate: true });
+                          setVehicleModels([]); // Reset models when manufacturer changes
+                          setValue('model', '', { shouldValidate: true }); // Reset model value
                         }
                       }
                     }
@@ -286,25 +320,24 @@ const VehicleUpdateScreen = () => {
                     },
                     options: [
                       {
-                        label: 'Selecione o modelo...',
+                        label: vehicleModels.length === 0 ? 'Selecione o fabricante primeiro' : 'Selecione o modelo...',
                         value: '',
                       },
                       ...vehicleModels
                     ],
                     componentProps: {
-                      onValueChange: (itemValue: unknown) => {
-                        const valueStr = String(itemValue);
-                        const selected = vehicleModels.find(m => m.value === valueStr);
+                      value: vehicleModel?.codigo || '',
+                      onValueChange: (itemValue: string) => {
+                        const selected = vehicleModels.find(m => m.value === itemValue);
                         if (selected) {
                           setVehicleModel({
                             codigo: selected.value,
                             nome: selected.label,
                           });
-                          setValue('model', selected.label);
+                          setValue('model', selected.label, { shouldValidate: true });
                         }
                       }
-                    },
-                    errorMessage: errors.model?.message,
+                    }
                   },
                   {
                     name: 'year',
@@ -316,27 +349,26 @@ const VehicleUpdateScreen = () => {
                         message: 'Ano deve ter 4 dígitos',
                       },
                     },
-                    componentProps: {
-                      placeholder: 'Digite o ano...',
-                      label: 'Ano',
-                      keyboardType: 'numeric',
-                      onChangeText: (text: string) => {
-                        setValue('year', text);
-                      },
-                    },
+                    label: 'Ano',
+                    placeholder: 'Digite o ano...',
                     errorMessage: errors.year?.message,
+                    componentProps: {
+                      onChangeText: (text: string) => setValue('year', text),
+                      keyboardType: 'numeric',
+                      leftIcon: <MaterialIcons name="calendar-today" size={20} color="#666" />,
+                      maxLength: 4,
+                    },
                   },
                   {
                     name: 'color',
                     type: 'textfield',
-                    componentProps: {
-                      placeholder: 'Digite a cor...',
-                      label: 'Cor',
-                      onChangeText: (text: string) => {
-                        setValue('color', text);
-                      },
-                    },
+                    label: 'Cor',
+                    placeholder: 'Digite a cor...',
                     errorMessage: errors.color?.message,
+                    componentProps: {
+                      onChangeText: (text: string) => setValue('color', text),
+                      leftIcon: <MaterialIcons name="palette" size={20} color="#666" />,
+                    },
                   },
                   {
                     name: 'km',
@@ -344,20 +376,22 @@ const VehicleUpdateScreen = () => {
                     rules: {
                       required: 'Quilometragem é obrigatória',
                     },
-                    componentProps: {
-                      placeholder: 'Digite a quilometragem...',
-                      label: 'Quilometragem Atual',
-                      keyboardType: 'numeric',
-                      onChangeText: (text: string) => {
-                        setValue('km', text);
-                      },
-                    },
+                    label: 'Quilometragem Atual',
+                    placeholder: 'Digite a quilometragem...',
                     errorMessage: errors.km?.message,
+                    componentProps: {
+                      onChangeText: (text: string) => setValue('km', text),
+                      keyboardType: 'numeric',
+                      leftIcon: <MaterialIcons name="speed" size={20} color="#666" />,
+                    },
                   },
                   {
                     name: 'fuelType',
-                    label: 'Tipo de Combustível',
                     type: 'select',
+                    label: 'Tipo de Combustível',
+                    rules: {
+                      required: 'Tipo de combustível é obrigatório',
+                    },
                     options: [
                       { label: 'Gasolina', value: 'GASOLINE' },
                       { label: 'Gasolina Premium', value: 'GASOLINE_PREMIUM' },
@@ -366,52 +400,47 @@ const VehicleUpdateScreen = () => {
                       { label: 'Elétrico', value: 'ELECTRIC' },
                       { label: 'Gnv', value: 'GNV' },
                     ],
-                    rules: {
-                      required: 'Tipo de combustível é obrigatório',
-                    },
+                    errorMessage: errors.fuelType?.message,
                     componentProps: {
                       placeholder: 'Selecione o tipo de combustível...',
                     },
-                    errorMessage: errors.fuelType?.message,
                   },
                   {
                     name: 'fuelCapacity',
                     type: 'textfield',
-                    componentProps: {
-                      placeholder: 'Digite a capacidade do tanque...',
-                      label: 'Capacidade do Tanque (L)',
-                      keyboardType: 'numeric',
-                      onChangeText: (text: string) => {
-                        setValue('fuelCapacity', text);
-                      },
-                    },
+                    label: 'Capacidade do Tanque (L)',
+                    placeholder: 'Digite a capacidade do tanque...',
                     errorMessage: errors.fuelCapacity?.message,
+                    componentProps: {
+                      onChangeText: (text: string) => setValue('fuelCapacity', text),
+                      keyboardType: 'numeric',
+                      leftIcon: <MaterialIcons name="local-gas-station" size={20} color="#666" />,
+                    },
                   },
                   {
                     name: 'fuelConsumption',
                     type: 'textfield',
-                    componentProps: {
-                      placeholder: 'Digite o consumo médio...',
-                      label: 'Consumo Médio (km/L)',
-                      keyboardType: 'numeric',
-                      onChangeText: (text: string) => {
-                        setValue('fuelConsumption', text);
-                      },
-                    },
+                    label: 'Consumo Médio (km/L)',
+                    placeholder: 'Digite o consumo médio...',
                     errorMessage: errors.fuelConsumption?.message,
+                    componentProps: {
+                      onChangeText: (text: string) => setValue('fuelConsumption', text),
+                      keyboardType: 'numeric',
+                      leftIcon: <MaterialIcons name="local-gas-station" size={20} color="#666" />,
+                    },
                   },
                   {
                     name: 'description',
                     type: 'textfield',
-                    componentProps: {
-                      placeholder: 'Digite uma descrição...',
-                      label: 'Descrição',
-                      multiline: true,
-                      onChangeText: (text: string) => {
-                        setValue('description', text);
-                      },
-                    },
+                    label: 'Descrição',
+                    placeholder: 'Digite uma descrição...',
                     errorMessage: errors.description?.message,
+                    componentProps: {
+                      onChangeText: (text: string) => setValue('description', text),
+                      multiline: true,
+                      leftIcon: <MaterialIcons name="description" size={20} color="#666" />,
+                      numberOfLines: 3,
+                    },
                   },
                 ],
               })

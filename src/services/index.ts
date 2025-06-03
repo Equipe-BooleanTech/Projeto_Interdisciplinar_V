@@ -4,3 +4,4 @@
 export * from './API';
 export * from './interfaces';
 export * from './common';
+export * from './gas-station';

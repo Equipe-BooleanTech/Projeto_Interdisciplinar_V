@@ -1,40 +1,147 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
-  View,
   Text,
-  TouchableOpacity,
-  Modal,
-  Pressable,
-  SafeAreaView,
+  Dimensions,
   ScrollView,
+  SafeAreaView,
+  Image,
+  View,
 } from 'react-native';
+import { PieChart, BarChart, LineChart, RadarChart } from 'react-native-gifted-charts';
+import styled from 'styled-components/native';
+import { Ionicons } from '@expo/vector-icons';
+import Carousel from 'react-native-snap-carousel';
 import images from '@/assets';
-import { styles } from './_layout';
-import { Chart, Image } from '@/src/components';
-import { useRedirect } from '@/src/hooks';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
+import { theme } from '@/theme';
 
-const dummyData = [
-  { value: 2500, color: '#6A994E', text: 'Gasto 1' },
-  { value: 1500, color: '#BC4749', text: 'Gasto 2' },
-  { value: 2000, color: '#F2E8CF', text: 'Gasto 3' },
-  { value: 1300, color: '#A98467', text: 'Gasto 4' },
-  { value: 1000, color: '#F4A261', text: 'Gasto 5' },
-];
+const { width: screenWidth } = Dimensions.get('window');
+
+const Container = styled.View`
+  flex: 1;
+  background-color: #DFDDD1;
+  align-items: center;
+  padding-bottom: 80px;
+`;
+
+const IconContainer = styled.View`
+  margin-top: 20px;
+  margin-bottom: 10px;
+`;
+
+const HeaderMonth = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+`;
+
+const MonthText = styled.Text`
+  width: 120px;
+  font-size: 18px;
+  margin-horizontal: 16px;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+`;
+
+const ArrowButton = styled.TouchableOpacity`
+  padding-horizontal: 20px;
+`;
+
+const TitleText = styled.Text`
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  padding-top: 20px;
+  color: #333;
+`;
+
+const FilterRow = styled.View`
+  width: 90%;
+  padding-vertical: 8px;
+  margin: 20px;
+  flex-direction: row;
+  justify-content: center;
+  background-color: #f5f5f5;
+  border-radius: 20px;
+`;
+
+const FilterButton = styled.TouchableOpacity<{ active?: boolean }>`
+  width: 45%;
+  align-items: center;
+  padding-vertical: 12px;
+  border-radius: 15px;
+  margin-horizontal: 5px;
+  background-color: ${({ active }) => (active ? '#fff' : 'transparent')};
+`;
+
+const FilterButtonText = styled.Text<{ active?: boolean }>`
+  font-weight: bold;
+  color: ${({ active }) => (active ? '#454F2C' : '#888')};
+`;
+
+const TotalText = styled.Text`
+  text-align: center;
+  font-size: 18px;
+  margin-top: 8px;
+  font-weight: bold;
+  color: #454F2C;
+`;
+
+const TotalSubText = styled.Text`
+  text-align: center;
+  font-size: 14px;
+  margin-top: 8px;
+  color: #888;
+`;
+
+const CarouselContainer = styled.View`
+  width: ${screenWidth * 0.9}px;
+  align-items: center;
+  padding-vertical: 20px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ChartCard = styled.View`
+  border-radius: 12px;
+  elevation: 3;
+  padding: 16px;
+  background-color: #fff;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  align-items: center;
+`;
+
+const ChartTitle = styled.Text`
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333;
+  text-align: center;
+`;
+
+const IndicatorContainer = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 15px;
+`;
+
+const Indicator = styled.View<{ active?: boolean }>`
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  margin-horizontal: 4px;
+  background-color: ${({ active }) => (active ? '#454F2C' : '#AAA')};
+`;
 
 const months = [
-  'Janeiro',
-  'Fevereiro',
-  'Março',
-  'Abril',
-  'Maio',
-  'Junho',
-  'Julho',
-  'Agosto',
-  'Setembro',
-  'Outubro',
-  'Novembro',
-  'Dezembro',
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ];
 
 const HomeScreen = () => {
@@ -42,6 +149,8 @@ const HomeScreen = () => {
   const [selectedItem, setSelectedItem] = useState<{ text: string; value: number } | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<'semanal' | 'mensal'>('semanal');
   const [currentMonthIndex, setCurrentMonthIndex] = useState(new Date().getMonth());
+  const [activeChartIndex, setActiveChartIndex] = useState(0);
+  const carouselRef = useRef<any>(null);
 
   const handlePrevMonth = () => {
     setCurrentMonthIndex((prev) => (prev === 0 ? 11 : prev - 1));
@@ -51,96 +160,193 @@ const HomeScreen = () => {
     setCurrentMonthIndex((prev) => (prev === 11 ? 0 : prev + 1));
   };
 
-  const { checkAuthentication, redirect } = useRedirect();
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const isAuth = await checkAuthentication();
-      if (!isAuth) {
-        redirect();
-      }
-    };
-    checkAuth();
+  const handleChartPress = useCallback((chartItem: any) => {
+    setSelectedItem(chartItem);
+    setModalVisible(true);
   }, []);
+
+
+  const chartConfigs = [
+    {
+      title: 'Gastos por Categoria',
+      component: (props: any) => (
+        <>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
+            <View style={{ flexDirection: 'column', width: '100%' }}>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 5 }}>
+                {[
+                  { color: '#6A994E', label: 'Combustível', value: 2500 },
+                  { color: '#BC4749', label: 'Manutenção', value: 1500 },
+                  { color: '#F2E8CF', label: 'Seguro', value: 2000 },
+                  { color: '#A98467', label: 'Impostos', value: 1300 },
+                  { color: '#F4A261', label: 'Peças', value: 1000 },
+                ].map((item, index) => (
+                  <View key={index} style={{ flexDirection: 'row', alignItems: 'center', width: '45%', marginBottom: 8 }}>
+                    <View style={{ width: 12, height: 12, backgroundColor: item.color, borderRadius: 6, marginRight: 8 }} />
+                    <Text style={{ fontSize: 12 }}>{item.label}: R${item.value.toFixed(2)}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          </View>
+          <PieChart
+            data={[
+              { value: 2500, color: '#6A994E' },
+              { value: 1500, color: '#BC4749' },
+              { value: 2000, color: '#F2E8CF' },
+              { value: 1300, color: '#A98467' },
+              { value: 1000, color: '#F4A261' },
+            ]}
+            donut
+            showText
+            textColor="black"
+            radius={120}
+            innerRadius={80}
+            innerCircleColor="#EEEDEB"
+            centerLabelComponent={() => (
+              <Text style={{ fontSize: 16, color: '#5a5c69' }}>Total</Text>
+            )}
+          />
+        </>
+      )
+    },
+    {
+      title: 'Gastos Mensais',
+      component: (props: any) => (
+        <>
+          <BarChart
+            data={[
+              { value: 2500, label: 'Sem. 1', frontColor: '#6A994E' },
+              { value: 1500, label: 'Sem. 2', frontColor: '#BC4749' },
+              { value: 2000, label: 'Sem. 3', frontColor: '#F2E8CF' },
+              { value: 1800, label: 'Sem. 4', frontColor: '#A98467' },
+            ]}
+            barWidth={35}
+            spacing={18}
+            yAxisThickness={0}
+            xAxisThickness={0}
+            noOfSections={5}
+            showReferenceLine1
+            referenceLine1Position={2000}
+            referenceLine1Config={{ color: 'gray', dashWidth: 2, dashGap: 3 }}
+            onPress={(item: any) => props.onPress(item)}
+          />
+        </>
+      )
+    },
+    {
+      title: 'Tendência de Gastos',
+      component: (props: any) => (
+        <LineChart
+          data={[
+            { value: 2000, label: 'Mar' },
+            { value: 1800, label: 'Abr' },
+            { value: 2200, label: 'Mai' },
+            { value: 1200, label: 'Jun' },
+          ]}
+          areaChart
+          color="#6A994E"
+          startFillColor="rgba(106, 153, 78, 0.8)"
+          endFillColor="rgba(238, 237, 235, 0.1)"
+          curved
+          onPress={(item: any) => props.onPress(item)}
+        />
+      )
+    },
+    {
+      title: 'Análise de Despesas',
+      component: (props: any) => (
+        <RadarChart
+          data={[2500, 1500, 2000, 1800, 2200]}
+          labels={['Seguro', 'Manutenção', 'Combustível', 'Impostos', 'Peças']}
+        />
+      )
+    }
+  ];
+
+  const renderChartItem = useCallback(({ item }: { item: typeof chartConfigs[0] }) => {
+    return (
+      <ChartCard>
+        <ChartTitle>{item.title}</ChartTitle>
+        <item.component
+          onPress={handleChartPress}
+        />
+      </ChartCard>
+    );
+  }, [handleChartPress]);
 
   return (
     <ProtectedRoute>
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.normalBackground }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <View style={styles.container}>
-            <View style={styles.iconContainer}>
-              <Image svg={images.car} imgWidth={100} imgHeight={100} viewBox="0 0 100 100" />
-            </View>
-            <View style={styles.headerMonth}>
-              <TouchableOpacity onPress={handlePrevMonth}>
-                <Text style={styles.arrowLeft}>{'<'}</Text>
-              </TouchableOpacity>
+          <Container>
+            <IconContainer>
+              <Image
+                source={images.logo}
+                style={{ width: 150, height: 100 }}
+                resizeMode="contain"
+              />
+            </IconContainer>
 
-              <Text style={styles.monthText}>{months[currentMonthIndex]}</Text>
+            <HeaderMonth>
+              <ArrowButton onPress={handlePrevMonth}>
+                <Ionicons name="chevron-back" size={24} color="#454F2C" />
+              </ArrowButton>
 
-              <TouchableOpacity onPress={handleNextMonth}>
-                <Text style={styles.arrowRight}>{'>'}</Text>
-              </TouchableOpacity>
-            </View>
+              <MonthText>{months[currentMonthIndex]}</MonthText>
 
-            <Text style={styles.titleText}>Despesas Totais:</Text>
+              <ArrowButton onPress={handleNextMonth}>
+                <Ionicons name="chevron-forward" size={24} color="#454F2C" />
+              </ArrowButton>
+            </HeaderMonth>
 
-            <View style={styles.filterRow}>
+            <TitleText>Despesas Totais:</TitleText>
+
+            <FilterRow>
               {['semanal', 'mensal'].map((filtro) => (
-                <TouchableOpacity
+                <FilterButton
                   key={filtro}
                   onPress={() => setSelectedFilter(filtro as 'semanal' | 'mensal')}
-                  style={[
-                    styles.filterButton,
-                    selectedFilter === filtro && styles.filterButtonActive,
-                  ]}
+                  active={selectedFilter === filtro}
                 >
-                  <Text>{filtro.charAt(0).toUpperCase() + filtro.slice(1)}</Text>
-                </TouchableOpacity>
+                  <FilterButtonText active={selectedFilter === filtro}>
+                    {filtro.charAt(0).toUpperCase() + filtro.slice(1)}
+                  </FilterButtonText>
+                </FilterButton>
               ))}
-            </View>
+            </FilterRow>
 
-            <Text style={styles.totalText}>R$14.500,89</Text>
-            <Text style={styles.totalSubText}>Total Estimado</Text>
+            <TotalText>R$14.500,89</TotalText>
+            <TotalSubText>Total Estimado</TotalSubText>
 
-            <View style={styles.chartContainer}>
-              <Chart
-                type="pie"
-                data={dummyData}
-                donut
-                textColor="black"
-                innerCircleColor="#eee"
-                innerRadius={80}
-                radius={100}
-                onPress={(item: any) => {
-                  setSelectedItem(item);
-                  setModalVisible(true);
-                }}
+            <CarouselContainer>
+              <Carousel
+                ref={carouselRef}
+                data={chartConfigs}
+                renderItem={renderChartItem}
+                vertical={false}
+                layoutCardOffset={9}
+                layout="default"
+                sliderWidth={screenWidth}
+                itemWidth={screenWidth * 0.9}
+                onSnapToItem={(index) => setActiveChartIndex(index)}
+                inactiveSlideScale={1}
+                inactiveSlideOpacity={1}
               />
-            </View>
+              <IndicatorContainer>
+                {chartConfigs.map((_, index) => (
+                  <Indicator key={index} active={index === activeChartIndex} />
+                ))}
+              </IndicatorContainer>
+            </CarouselContainer>
 
-            <Text style={styles.totalText}>R$11.300,85</Text>
-            <Text style={styles.totalSubText}>Total Gasto</Text>
-
-            <Modal
-              transparent
-              animationType="fade"
-              visible={modalVisible}
-              onRequestClose={() => setModalVisible(false)}
-            >
-              <View style={styles.modalOverlay}>
-                <Pressable style={styles.modalBackground} onPress={() => setModalVisible(false)} />
-                <View style={styles.modalBox}>
-                  <Text style={styles.modalTitle}>{selectedItem?.text}</Text>
-                  <Text style={styles.modalValue}>R${selectedItem?.value.toFixed(2)}</Text>
-                </View>
-              </View>
-            </Modal>
-          </View>
+            <TotalText>R$11.300,85</TotalText>
+            <TotalSubText>Total Gasto</TotalSubText>
+          </Container>
         </ScrollView>
       </SafeAreaView>
     </ProtectedRoute>
   );
 };
 
-export default HomeScreen;
+export default React.memo(HomeScreen);

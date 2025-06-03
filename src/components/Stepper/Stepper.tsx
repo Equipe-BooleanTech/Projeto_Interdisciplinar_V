@@ -1,3 +1,4 @@
+import React from 'react';
 import { StepperProps } from './Stepper.interface';
 import { Step, StyledStepper } from './Stepper.style';
 

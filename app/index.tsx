@@ -75,9 +75,9 @@ export default function Index() {
         redirect();
       }
     };
-
+  
     checkFirstLaunch();
-  }, [isFirstLaunch, redirect]);
+  }, []);
 
   return (
     <Introduction

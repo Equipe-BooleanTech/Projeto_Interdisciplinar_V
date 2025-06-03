@@ -1,6 +1,5 @@
 import styled from 'styled-components/native';
-import { theme } from '@/theme';
-import { TouchableOpacity } from 'react-native-ui-lib';
+import { theme } from '@/src/theme/theme';
 
 interface ButtonProps {
   variant: 'primary' | 'secondary' | 'social' | 'danger';
@@ -13,7 +12,7 @@ interface ButtonProps {
   full?: boolean;
 }
 
-export const StyledButton = styled(TouchableOpacity)<{
+export const StyledButton = styled.TouchableOpacity<{
   variant: 'primary' | 'secondary' | 'social' | 'danger';
   disabled?: boolean;
   color?: string;

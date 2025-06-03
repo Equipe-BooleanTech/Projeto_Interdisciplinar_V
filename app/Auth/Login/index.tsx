@@ -1,19 +1,19 @@
 import React from 'react';
 
-import { ScrollView } from 'react-native';
+import { ScrollView, Image } from 'react-native';
 import images from '../../../assets';
-import { Container, IconContainer } from './styles';
-import { Image } from '@/src/components';
+import { Container } from './styles';
 import { Login } from '@/src/screens';
-import { theme } from '@/theme';
+import { theme } from '@/src/theme/theme';
 
 const LoginScreen = () => {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: theme.colors.normalBackground }}>
       <Container>
-        <IconContainer>
-          <Image svg={images.car} imgWidth={100} imgHeight={100} />
-        </IconContainer>
+        <Image
+          source={images.logo}
+          style={{ width: 200, height: 150 }}
+        />
       </Container>
       <Login />
     </ScrollView>

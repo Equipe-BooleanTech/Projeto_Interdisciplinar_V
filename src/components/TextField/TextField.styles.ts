@@ -1,148 +1,54 @@
-import { theme } from '@/theme';
+// TextInputStyles.ts
 import styled from 'styled-components/native';
-import { TextFieldProps } from './TextField.interface';
-import { Picker } from 'react-native-ui-lib';
-import { PickerIOS, Picker as WebPicker } from '@react-native-picker/picker';
+import { TextInput } from 'react-native';
 
-export const StyledTextFieldContainer = styled.View<Partial<TextFieldProps>>`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+export const InputContainer = styled.View`
+  margin-bottom: 15px;
   width: 100%;
-  border-radius: 8px;
-  background-color: ${(props: Partial<TextFieldProps>) =>
-    props.disabled ? theme.colors.card : '#ffffff'};
-  opacity: ${(props: Partial<TextFieldProps>) => (props.disabled ? 0.5 : 1)};
-
-  ${(props: Partial<TextFieldProps>) =>
-    props.type === 'phone' &&
-    `
-    flex-direction: row;
-    align-items: center;
-    padding: 0;
-  `}
 `;
 
-export const StyledLabel = styled.Text<Partial<TextFieldProps>>`
+export const Label = styled.Text`
   font-size: 14px;
-  color: ${(props: Partial<TextFieldProps>) =>
-    props.error?.type === 'error' ? theme.colors.danger : theme.colors.green};
-  margin-top: 4px;
-  margin-bottom: 4px;
-  font-weight: 600;
-  marginend: 'auto';
+  color: #333;
+  margin-bottom: 5px;
 `;
 
-export const StyledTextInput = styled.TextInput<Partial<TextFieldProps>>`
-  width: 100%;
-  height: 50px;
-  border-radius: 8px;
-  padding: 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-`;
-
-export const StyledPhoneInput = styled.TextInput<Partial<TextFieldProps>>`
-  font-size: 16px;
-  color: ${theme.colors.stroke};
-  padding: 12px;
-  outline-color: ${(props: Partial<TextFieldProps>) =>
-    props.error?.type === 'error' ? theme.colors.danger : theme.colors.green};
-  border-radius: 8px;
-  background-color: ${(props: Partial<TextFieldProps>) =>
-    props.disabled ? theme.colors.card : '#ffffff'};
-  opacity: ${(props: Partial<TextFieldProps>) => (props.disabled ? 0.5 : 1)};
-  border: 1px solid #999;
-  width: 100%;
-  &::placeholder {
-    color: #fff;
-  }
-`;
-
-export const StyledErrorText = styled.Text`
-  font-size: 12px;
-  color: ${theme.colors.danger};
-`;
-export const StyledHelperText = styled.Text<{ variant: 'error' | 'warning' | 'info' | 'success' }>`
-  font-size: 12px;
-  color: ${theme.colors.danger};
-  font-weight: 600;
-`;
-
-export const StyledPhoneContainer = styled.View`
-  border-left-width: 1px;
-  border-left-color: #999;
+export const InputWrapper = styled.View`
   flex-direction: row;
+  align-items: center;
+  border-width: 1px;
+  border-color: #ccc;
   border-radius: 8px;
   background-color: #fff;
-  padding: 0;
-  width: 100%;
+  padding-horizontal: 10px;
 `;
 
-export const StyledPicker = styled(PickerIOS)`
-  width: 100%;
+export const StyledTextInput = styled(TextInput)`
+  flex: 1;
   height: 50px;
-  border-radius: 8px;
-  padding: 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  color: #000;
-  option {
-    color: #000;
-  }
-  option:disabled {
-    color: #999;
-  }
-  option:checked {
-    background-color: #f0f0f0;
-    color: #000;
-  }
-  option:focus {
-    background-color: #f0f0f0;
-    color: #000;
-  }
-  option:hover {
-    background-color: #f0f0f0;
-    color: #000;
-  }
-  option:active {
-    background-color: #f0f0f0;
-    color: #000;
-  }
-
-  z-index: 100;
-  position: relative;
+  color: #333;
+  font-size: 16px;
+  padding-vertical: 0;
 `;
 
-export const StyledPickerWeb = styled(WebPicker)`
-  width: 100%;
-  height: 50px;
-  border-radius: 8px;
+export const IconContainer = styled.TouchableOpacity`
   padding: 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  color: #000;
-  option {
-    color: #000;
-  }
-  option:disabled {
-    color: #999;
-  }
-  option:checked {
-    background-color: #f0f0f0;
-    color: #000;
-  }
-  option:focus {
-    background-color: #f0f0f0;
-    color: #000;
-  }
-  option:hover {
-    background-color: #f0f0f0;
-    color: #000;
-  }
-  option:active {
-    background-color: #f0f0f0;
-    color: #000;
-  }
-`
+  justify-content: center;
+  align-items: center;
+`;
 
+export const ErrorText = styled.Text`
+  font-size: 12px;
+  color: #ff3333;
+  margin-top: 5px;
+`;
+
+export const DisabledOverlay = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+`;

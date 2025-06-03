@@ -1,15 +1,12 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, ScrollView, SafeAreaView } from 'react-native';
 import { styles } from './_layout';
 import { router } from 'expo-router';
-import { Alert as CustomAlert, Button, Form } from '@/src/components';
+import { Alert as CustomAlert, Button, Form, Header } from '@/src/components';
 import { FormHelpers } from '@/src/components/Form';
 import { useForm } from 'react-hook-form';
 import { createVehicle } from '@/src/services/vehicleService';
-import { useRedirect, useStorage } from '@/src/hooks';
-import { IconButton } from '@/app/(tabs)/vehicles/styles';
-import { Feather } from '@expo/vector-icons';
-import { IconContainer } from '@/app/Auth/Login/styles';
+import { useStorage } from '@/src/hooks';
 import { get } from '@/src/services';
 import { VehicleManufacturer, VehicleModel } from '@/src/@types';
 import { Toast } from 'toastify-react-native'
@@ -19,6 +16,7 @@ export type SelectData = {
   label: string;
   value: string;
   code?: string;
+  search?: string;
 };
 
 const VehicleRegisterScreen = () => {
@@ -81,9 +79,33 @@ const VehicleRegisterScreen = () => {
         fuelConsumption: data.fuelConsumption ? parseFloat(data.fuelConsumption) : 0,
       };
 
-      const userId = getItem('userId');
-
-      await createVehicle(vehicleData, userId as string);
+      const userId = await getItem('userId');
+      console.log('User ID:', userId);
+      if (!userId) {
+        setIsSubmitting(false);
+        Toast.error('Usuário não encontrado. Por favor, faça login novamente.');
+        setModal({
+          visible: true,
+          message: 'Usuário não encontrado. Por favor, faça login novamente.',
+          title: 'Erro',
+        });
+        return;
+      }
+      console.log('Vehicle Data:', vehicleData);
+      
+      await createVehicle(vehicleData, userId).then(() => {
+        reset();
+      }).catch((error) => {
+        console.error('Error creating vehicle:', error);
+        Toast.error('Ocorreu um erro ao cadastrar veículo. Verifique os dados e tente novamente.');
+        setModal({
+          visible: true,
+          message: error?.message || 'Ocorreu um erro ao cadastrar veículo. Tente novamente.',
+          title: 'Erro',
+        });
+        setIsSubmitting(false);
+        return;
+      });
       Toast.success('Veículo cadastrado com sucesso!');
       setModal({
         visible: true,
@@ -165,15 +187,16 @@ const VehicleRegisterScreen = () => {
 
   return (
     <ProtectedRoute>
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <>
+        <Header
+          title="Cadastro de Veículo"
+          onBackPress={() => router.back()}
+          showBackButton
+        />
         <ScrollView contentContainerStyle={styles.container}>
-          <IconContainer>
-            <IconButton onPress={() => router.push("/(tabs)/vehicles")}>
-              <Feather name="arrow-left" size={24} color="#fff" />
-            </IconButton>
-          </IconContainer>
           <Form.Root controlled>
             <Text style={styles.title}>Cadastro de Veículo</Text>
+            <Text style={styles.subtitle}>Preencha os dados do veículo para continuar.</Text>
 
             {FormHelpers.createFormFields({
               control,
@@ -379,7 +402,7 @@ const VehicleRegisterScreen = () => {
           )}
 
         </ScrollView>
-      </SafeAreaView>
+      </>
     </ProtectedRoute>
   );
 };

@@ -7,8 +7,9 @@ import {
 
 // Define a base props type with common props
 type BaseProps = {
-  type: 'bar' | 'pie' | 'radar' | 'line';
+  type: 'bar' | 'pie' | 'radar' | 'line'; 
   data: any[];
+  onPress?: (item: any) => void;
 };
 
 // Create conditional props types based on chart type
