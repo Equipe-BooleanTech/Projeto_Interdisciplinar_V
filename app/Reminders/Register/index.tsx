@@ -59,11 +59,9 @@ const ReminderCreateScreen = () => {
     };
 
     const reminderTypeOptions = [
+        { label: 'Geral', value: 'GENERAL' },
         { label: 'Manutenção', value: 'MAINTENANCE' },
-        { label: 'Documento', value: 'DOCUMENT' },
-        { label: 'Seguro', value: 'INSURANCE' },
-        { label: 'Licenciamento', value: 'LICENSING' },
-        { label: 'Outro', value: 'OTHER' },
+        { label: 'Imposto / Seguro', value: 'TAX' }
     ];
 
     return (

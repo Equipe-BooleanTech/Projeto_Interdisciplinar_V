@@ -1,9 +1,7 @@
 export enum ReminderType {
+    GENERAL = 'Geral',
     MAINTENANCE = 'Manutenção',
-    INSPECTION = 'Inspeção',
-    DOCUMENT = 'Documentação',
-    INSURANCE = 'Seguro',
-    OTHER = 'Outro'
+    TAX = 'Imposto / Seguro',
 }
 
 export enum ReminderStatus {
