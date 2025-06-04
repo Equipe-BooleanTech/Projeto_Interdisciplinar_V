@@ -23,6 +23,7 @@ import { ButtonContainer } from '@/src/components/Alert/Alert.styles';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Dropdown } from 'react-native-element-dropdown';
+import { Button } from '@/src/components';
 
 const MaintainanceManagement: React.FC<MaintainanceProps> = ({
     maintainanceRecords,
@@ -108,6 +109,13 @@ const MaintainanceManagement: React.FC<MaintainanceProps> = ({
             ) : maintainanceRecords.length === 0 ? (
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <CardTitle>Nenhuma manutenção registrada</CardTitle>
+                        <CardSubtitle>Você ainda não possui manutenções registradas.</CardSubtitle>
+                        <Button
+                            onPress={() => router.push('/Maintainances/Register')}
+                            style={{ marginTop: 20 }}
+                        >
+                            Adicionar Manutenção
+                        </Button>
                     </View>
                 ) :
                     <>
