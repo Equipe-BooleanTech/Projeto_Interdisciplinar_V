@@ -8,7 +8,7 @@ import { theme } from '@/src/theme/theme';
 
 const RegisterScreen = () => {
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: theme.colors.normalBackground }}>
+    <ScrollView style={{ flex: 1, backgroundColor: theme.colors.normalBackground, padding: 16 }}>
       <Container>
         <IconContainer>
           <Image

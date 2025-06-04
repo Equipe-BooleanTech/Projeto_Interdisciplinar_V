@@ -175,7 +175,7 @@ const AccountScreen: React.FC = () => {
                 </StatItem>
                 <StatDivider />
                 <StatItem>
-                  <StatValue>8</StatValue>
+                  <StatValue>0</StatValue>
                   <StatLabel>Manutenções Pendentes</StatLabel>
                 </StatItem>
               </StatsContainer>
