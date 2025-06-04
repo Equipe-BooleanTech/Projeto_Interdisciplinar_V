@@ -11,8 +11,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Toast } from 'toastify-react-native';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 import { theme } from '@/theme';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { listVehicles } from '@/src/services/vehicleService';
 import { createFuelRefill } from '@/src/services/fuelRefil';
 
 type Vehicle = {
@@ -43,7 +41,6 @@ const FuelRefillFormScreen = () => {
     title: '',
   });
   const [gasStations, setGasStations] = useState<{ label: string; value: string }[]>([]);
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [refillDate, setRefillDate] = useState(new Date());
 
   const { getItem } = useStorage();
@@ -64,7 +61,7 @@ const FuelRefillFormScreen = () => {
       kmAtRefill: '',
       isCompleteTank: false,
       fuelType: '',
-      refillDate: new Date(),
+      refillDate: '',
     },
     mode: 'onBlur',
   });
@@ -105,60 +102,101 @@ const FuelRefillFormScreen = () => {
     fetchData();
   }, []);
 
-  const onSubmit = async (data: any) => {
+   const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
+      // Authentication checks
       const userId = await getItem('userId');
       const vehicleId = await getItem('vehicleId');
+      
       if (!vehicleId) {
         Toast.error('Veículo não selecionado. Por favor, selecione um veículo.');
+        setIsSubmitting(false);
         return;
       }
+      
       if (!userId) {
         Toast.error('Usuário não autenticado');
+        setIsSubmitting(false);
         return;
       }
-
+  
+      // Parse the date string from DD/MM/YYYY to ISO format
+      let formattedDate;
+      if (data.refillDate) {
+        const [day, month, year] = data.refillDate.split('/');
+        if (day && month && year) {
+          const dateObj = new Date(`${year}-${month}-${day}T12:00:00`);
+          
+          if (isNaN(dateObj.getTime())) {
+            throw new Error('Data de abastecimento inválida');
+          }
+          
+          formattedDate = dateObj.toISOString();
+        } else {
+          throw new Error('Formato de data inválido (DD/MM/AAAA)');
+        }
+      } else {
+        throw new Error('Data de abastecimento é obrigatória');
+      }
+  
+      // Format and validate data
       const refillData = {
-        ...data,
         liters: parseFloat(data.liters),
         pricePerLiter: parseFloat(data.pricePerLiter),
         totalCost: parseFloat(data.totalCost),
         kmAtRefill: parseFloat(data.kmAtRefill),
         isCompleteTank: Boolean(data.isCompleteTank),
-        refillDate: data.refillDate.toISOString(),
+        fuelType: data.fuelType as FuelType,
+        refillDate: formattedDate,
         userId,
         vehicleId,
-        fuelType: data.fuelType as FuelType,
-        stationId: data.stationId,
       };
-
-      console.log('Refill Data:', refillData);
-      console.log('Vehicle ID:', vehicleId);
-      console.log('Station ID:', data.stationId);
+  
+      console.log('Submitting fuel refill:', {
+        refillData,
+        vehicleId,
+        stationId: data.stationId
+      });
+  
+      // Submit data
       const response = await createFuelRefill(refillData, vehicleId, data.stationId);
+      
       if (!response) {
         throw new Error('Erro ao registrar abastecimento');
       }
-
-
+  
+      // Success
       setModal({
         visible: true,
         title: 'Sucesso',
         message: 'Abastecimento registrado com sucesso!',
       });
-
+  
+      // Reset form
+      control._reset();
+  
     } catch (error: any) {
+      console.error('Error submitting fuel refill:', error);
+      
+      // Determine appropriate error message
+      let errorMessage = 'Erro ao registrar abastecimento';
+      
+      if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      
       setModal({
         visible: true,
         title: 'Erro',
-        message: error?.response?.data?.message || 'Erro ao registrar abastecimento',
+        message: errorMessage,
       });
     } finally {
       setIsSubmitting(false);
     }
   };
-
   const fuelTypeOptions = [
     { label: 'Gasolina', value: FuelType.GASOLINE },
     { label: 'Etanol', value: FuelType.ETHANOL },
@@ -166,15 +204,6 @@ const FuelRefillFormScreen = () => {
     { label: 'Elétrico', value: FuelType.ELECTRIC },
     { label: 'GNV', value: FuelType.GNV },
   ];
-
-  const onDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      setRefillDate(selectedDate);
-      setValue('refillDate', selectedDate);
-    }
-  };
-
 
 
   if (isLoading) {
@@ -294,28 +323,25 @@ const FuelRefillFormScreen = () => {
                 {
                   name: 'refillDate',
                   type: 'textfield',
-                  rules: { required: 'Data é obrigatória' },
+                  rules: {
+                    required: 'Data é obrigatória',
+                    pattern: {
+                      value: /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/,
+                      message: 'Formato inválido (DD/MM/AAAA)'
+                    }
+                  },
                   label: 'Data do Abastecimento',
-                  value: refillDate.toLocaleDateString('pt-BR'),
+                  placeholder: 'DD/MM/AAAA',
                   errorMessage: errors.refillDate?.message,
                   componentProps: {
                     leftIcon: <MaterialIcons name="calendar-today" size={20} color="#666" />,
-                    onFocus: () => setShowDatePicker(true),
-                    showSoftInputOnFocus: false,
+                    keyboardType: 'numeric',
+                    mask: 'date',
+                    maxLength: 10,
                   },
                 },
               ],
             })}
-
-            {showDatePicker && (
-              <DateTimePicker
-                value={refillDate}
-                mode="date"
-                display="default"
-                onChange={onDateChange}
-                maximumDate={new Date()}
-              />
-            )}
 
             <Button
               variant="primary"

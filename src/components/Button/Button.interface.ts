@@ -3,7 +3,7 @@ import { TouchableOpacityProps } from 'react-native';
 import { SvgProps } from 'react-native-svg';
 
 export interface ButtonProps extends TouchableOpacityProps {
-  variant: 'primary' | 'secondary' | 'social' | 'danger';
+  variant?: 'primary' | 'secondary' | 'social' | 'danger';
   disabled?: boolean;
   color?: string;
   onPress?: () => void;

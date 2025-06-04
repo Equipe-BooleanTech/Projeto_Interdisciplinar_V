@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { HelperText } from 'react-native-paper';
 import { theme } from '@/theme';
 import { Dropdown } from 'react-native-element-dropdown';
+import { Label } from '../TextField/TextField.styles';
 
 const SelectField = ({
   options,
@@ -218,11 +219,14 @@ export const FormHelpers = {
                     );
                   case 'switch':
                     return (
-                      <Form.Field.Switch
-                        value={value}
-                        onValueChange={onChange}
-                        {...field.componentProps}
-                      />
+                      <>
+                        <Label>{field.label}</Label>
+                        <Form.Field.Switch
+                          value={value}
+                          onValueChange={onChange}
+                          {...field.componentProps}
+                        />
+                      </>
                     );
                   default:
                     return <></>;

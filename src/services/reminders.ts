@@ -1,0 +1,79 @@
+import { api } from "./API"
+
+/**
+ * Get all reminders for a vehicle
+ */
+export const listReminders = async (vehicleId: string) => {
+    const response = await api.get(`/vehicle/${vehicleId}/reminders/list-all-reminders`);
+    return response.data;
+}
+
+/**
+ * Get a specific reminder by ID
+ */
+export const getReminder = async (vehicleId: string, reminderId: string) => {
+    const response = await api.get(`/vehicle/${vehicleId}/reminders/find-by-id-reminder/${reminderId}`);
+    return response.data;
+}
+
+/**
+ * Create a new reminder for a vehicle
+ */
+export const createReminder = async (vehicleId: string, userId: string, reminderData: any) => {
+    const response = await api.post(`/vehicle/${vehicleId}/reminders/create-reminder/${userId}`, reminderData);
+    return response.data;
+}
+
+/**
+ * Update an existing reminder
+ */
+export const updateReminder = async (vehicleId: string, reminderId: string, reminderData: any) => {
+    const response = await api.put(`/vehicle/${vehicleId}/reminders/update-reminder${reminderId}`, reminderData);
+    return response.data;
+}
+
+/**
+ * Delete a specific reminder
+ */
+export const deleteReminder = async (vehicleId: string, reminderId: string) => {
+    const response = await api.delete(`/vehicle/${vehicleId}/reminders/delete-reminder${reminderId}`);
+    return response.data;
+}
+
+export const getRemindersByDateRange = async (
+  vehicleId: string, 
+  startDate: string, 
+  endDate: string,
+  page: number = 0,
+  size: number = 10
+) => {
+    const response = await api.get(`/vehicle/${vehicleId}/reminders/date-range`, {
+        params: { 
+            start: startDate, 
+            end: endDate,
+            page,
+            size
+        }
+    });
+    return response.data;
+}
+
+/**
+ * Check for pending reminders
+ */
+export const checkPendingReminders = async (vehicleId: string) => {
+    const response = await api.get(`/vehicle/${vehicleId}/reminders/check-pending`);
+    return response.data;
+}
+
+export const getAllReminders = async (vehicleId: string) => {
+    const response = await api.get(`/vehicle/${vehicleId}/reminders/list-all-reminders`,
+        {
+            params: {
+                page: 0,
+                size: 1000
+            }
+        }
+    );
+    return response.data;
+}

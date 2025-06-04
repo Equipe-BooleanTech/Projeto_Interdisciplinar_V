@@ -145,8 +145,10 @@ const VehicleManagement = () => {
                 <Dropdown
                     style={{ width: '90%' }}
                     data={[
-                        { label: 'Novo Abastecimento', value: 'new', onPress: onAddFueling, leftIcon: 'plus' },
                         { label: 'Editar Dados do Veículo', value: 'edit', onPress: onEditVehicle, leftIcon: 'edit' },
+                        { label: 'Novo Abastecimento', value: 'new', onPress: onAddFueling, leftIcon: 'plus' },
+                        { label: 'Consultar Lembretes', value: 'reminders', onPress: () => router.push('/Reminders/Management/RemindersManagement'), leftIcon: 'bell' },
+                        { label: 'Consultar Manutenções', value: 'maintenance', onPress: () => router.push('/Maintainances/Management/MaintainanceManagement'), leftIcon: 'wrench' },
                     ]}
                     labelField="label"
                     valueField="value"

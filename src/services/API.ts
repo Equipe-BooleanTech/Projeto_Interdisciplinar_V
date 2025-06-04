@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-let BASE_URL = 'http://quick-lemons-clap.loca.lt/api'; // Always change this to your actual API base URL
+let BASE_URL = 'https://kind-lizards-ring.loca.lt/api'; // Always change this to your actual API base URL
 
 export const getToken = async () => {
   if (Platform.OS === 'web') {
