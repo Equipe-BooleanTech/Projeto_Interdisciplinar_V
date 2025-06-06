@@ -21,20 +21,20 @@ export const EmptyState = styled.View`
 
 export const EmptyStateText = styled.Text`
   font-family: ${theme.font.family.rubik};
-  font-size: ${theme.font.size.pb};
+  font-size: ${theme.font.size.h4};
   color: ${theme.colors.stroke};
   margin-top: 16px;
   text-align: center;
   opacity: 0.7;
 `;
 
-export const FuelingCard = styled.View`
+export const FuelingCard = styled.View<{ fuelType: string }>`
   background-color: ${theme.colors.card};
   border-radius: ${theme.border.button.md};
   padding: 16px;
   margin: 8px 16px;
   border-left-width: 6px;
-  border-left-color: ${theme.colors.primary};
+  border-left-color: ${({ theme }) => theme.colors.primary};
   elevation: 2;
 `;
 
@@ -79,46 +79,4 @@ export const DetailValue = styled.Text`
   font-family: ${theme.font.family.rubik};
   font-size: ${theme.font.size.p};
   color: ${theme.colors.stroke};
-`;
-
-export const SummaryContainer = styled.View`
-  background-color: ${theme.colors.card};
-  border-radius: ${theme.border.button.md};
-  padding: 16px;
-  margin: 16px;
-  margin-bottom: 8px;
-  flex-direction: row;
-  justify-content: space-between;
-  elevation: 2;
-`;
-
-export const SummaryItem = styled.View`
-  align-items: center;
-`;
-
-export const SummaryLabel = styled.Text`
-  font-family: ${theme.font.family.rubik};
-  font-size: ${theme.font.size.pb};
-  color: ${theme.colors.stroke};
-  opacity: 0.7;
-  margin-bottom: 4px;
-`;
-
-export const SummaryValue = styled.Text`
-  font-family: ${theme.font.family.rubik};
-  font-size: ${theme.font.size.h3};
-  color: ${theme.colors.stroke};
-  font-weight: ${theme.font.weight.h3};
-`;
-
-export const ButtonContainer = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  padding: 16px;
-  margin: auto;
-  width: 100%;
-  max-width: 400px;
-  flex-wrap: wrap;
-  background-color: ${theme.colors.normalBackground};
-  padding-bottom: 16px;
 `;

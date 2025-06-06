@@ -10,17 +10,17 @@ import { useStorage } from '@/src/hooks';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 import { Header as MobileHeader } from '@/src/components';
 import { get } from '@/src/services';
+import { getMaintainances } from '@/src/services/maintainances';
 
 const AccountScreen: React.FC = () => {
   const [scaleValue] = useState(new Animated.Value(1));
   const { clear } = useStorage();
   const [user, setUser] = useState<User | null>();
+  const [maintenancesCount, setMaintenancesCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const menuItems: AccountMenuItem[] = [
     { id: '1', title: 'Editar Perfil', icon: 'edit', screen: 'Account/Edit' },
-    { id: '2', title: 'Configurações de Notificação', icon: 'notifications' },
-    { id: '4', title: 'Segurança', icon: 'lock' },
   ];
 
   const animateButton = () => {
@@ -118,7 +118,6 @@ const AccountScreen: React.FC = () => {
     };
     fetchUserData();
   }, []);
-
   return (
     <ProtectedRoute>
       {loading ? (
@@ -172,11 +171,6 @@ const AccountScreen: React.FC = () => {
                 <StatItem>
                     <StatValue>{fetchUserVehiclesCount()}</StatValue>
                   <StatLabel>Veículos Cadastrados</StatLabel>
-                </StatItem>
-                <StatDivider />
-                <StatItem>
-                  <StatValue>8</StatValue>
-                  <StatLabel>Manutenções Pendentes</StatLabel>
                 </StatItem>
               </StatsContainer>
 

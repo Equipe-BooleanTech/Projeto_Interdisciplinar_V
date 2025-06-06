@@ -60,7 +60,7 @@ const VehicleScreen = () => {
       }
     }
     fetchVehicles();
-  }, []);
+  }, [getUserId]);
 
   const handleVehiclePress = useCallback((vehiclePlate, vehicleId) => {
     setItem('vehiclePlate', vehiclePlate);
@@ -75,7 +75,7 @@ const VehicleScreen = () => {
         title="Veículos"
         notificationCount={0}
         onBackPress={() => router.back()}
-        onNotificationPress={() => router.push('/Notifications')}
+        onNotificationPress={() => router.push('/notifications')}
       />
       <Container>
         <Title>Meus Veículos</Title>

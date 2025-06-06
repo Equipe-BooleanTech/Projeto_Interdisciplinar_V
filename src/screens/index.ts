@@ -15,3 +15,9 @@ export { default as Notification } from './Notification/Notification.screen';
 
 export * from './VehicleManagement/VehicleManagement';
 export { default as VehicleManagement } from './VehicleManagement/VehicleManagement';
+
+export * from './MaintainanceManagement/MaintananceManagement';
+export { default as MaintainanceManagement } from './MaintainanceManagement/MaintananceManagement';
+
+export * from './ReminderManagement/ReminderManagement';
+export { default as ReminderManagement } from './ReminderManagement/ReminderManagement';

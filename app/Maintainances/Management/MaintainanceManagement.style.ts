@@ -28,13 +28,21 @@ export const EmptyStateText = styled.Text`
   opacity: 0.7;
 `;
 
-export const FuelingCard = styled.View`
+export const FuelingCard = styled.View<{ fuelType: string }>`
   background-color: ${theme.colors.card};
   border-radius: ${theme.border.button.md};
   padding: 16px;
   margin: 8px 16px;
   border-left-width: 6px;
-  border-left-color: ${theme.colors.primary};
+  border-left-color: ${({ theme, fuelType }) => {
+    switch (fuelType) {
+      case 'GASOLINE': return theme.colors.green;
+      case 'DIESEL': return theme.colors.brown;
+      case 'ETHANOL': return theme.colors.warning;
+      case 'FLEX': return theme.colors.success;
+      default: return theme.colors.stroke;
+    }
+  }};
   elevation: 2;
 `;
 

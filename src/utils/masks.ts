@@ -3,6 +3,13 @@ export const formatDate = () => {
   return regex;
 };
 
+export const getNewDate = (date: Date) => {
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+  const year = date.getFullYear().toString();
+  return `${day}/${month}/${year}`;
+}
+
 export const formatPhone = () => {
   const regex = [
     '(',
@@ -46,6 +53,109 @@ export const validateUsername = (text: string) => {
   return usernameRegex.test(text);
 };
 
+
+export const formatNumberMask = (
+  value: string,
+  decimalPlaces: number = 0,
+  allowNegative: boolean = false
+): string => {
+  // Handle negative numbers
+  const isNegative = allowNegative && value.startsWith('-');
+  let cleaned = value.replace(/[^0-9]/g, '');
+
+  // Ensure we don't exceed 10 million (10,000,000)
+  const numericValue = parseFloat(cleaned) / Math.pow(10, decimalPlaces);
+  if (numericValue > 10000000) {
+    cleaned = '10000000';
+  }
+
+  // Handle decimal part
+  let integerPart = cleaned;
+  let decimalPart = '';
+
+  if (decimalPlaces > 0) {
+    integerPart = cleaned.slice(0, -decimalPlaces) || '0';
+    decimalPart = cleaned.slice(-decimalPlaces);
+
+    if (decimalPart.length > decimalPlaces) {
+      decimalPart = decimalPart.slice(0, decimalPlaces);
+    }
+  }
+
+  // Add thousand separators to integer part
+  const formattedInteger = integerPart
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  // Combine parts
+  let result = formattedInteger;
+  if (decimalPlaces > 0 && decimalPart) {
+    result += `.${decimalPart}`;
+  }
+
+  if (isNegative) {
+    result = `-${result}`;
+  }
+
+  return result;
+};
+
+/**
+ * Removes formatting from a formatted number string
+ * @param value Formatted number string (e.g., "1,234,567.89")
+ * @returns Plain numeric string (e.g., "1234567.89")
+ */
+export const removeNumberMask = (value: string): string => {
+  return value.replace(/,/g, '');
+};
+
+/**
+ * Validates if the number is within the 0-10,000,000 range
+ * @param value Numeric string to validate
+ * @param decimalPlaces Number of decimal places to consider
+ * @returns Boolean indicating validity
+ */
+export const validateNumberMask = (
+  value: string,
+  decimalPlaces: number = 0
+): boolean => {
+  const numericValue = parseFloat(removeNumberMask(value));
+  const maxValue = 10000000;
+  const minValue = 0;
+
+  // Check if it's a valid number
+  if (isNaN(numericValue)) return false;
+
+  // Check range
+  if (numericValue < minValue) return false;
+  if (numericValue > maxValue) return false;
+
+  // Check decimal places
+  if (decimalPlaces > 0) {
+    const decimalPart = value.split('.')[1] || '';
+    if (decimalPart.length > decimalPlaces) return false;
+  }
+
+  return true;
+};
+
+// Predefined number formats
+export const numberFormats = {
+  integer: {
+    format: (value: string) => formatNumberMask(value, 0),
+    validate: (value: string) => validateNumberMask(value, 0),
+  },
+  currency: {
+    format: (value: string) => formatNumberMask(value, 2),
+    validate: (value: string) => validateNumberMask(value, 2),
+  },
+  decimal: {
+    format: (value: string, decimalPlaces: number = 2) =>
+      formatNumberMask(value, decimalPlaces),
+    validate: (value: string, decimalPlaces: number = 2) =>
+      validateNumberMask(value, decimalPlaces),
+  },
+};
+
 export const validations = {
   email: validateEmail,
   phone: validatePhone,
@@ -57,8 +167,9 @@ export const validations = {
 export const masks = {
   phone: formatPhone,
   date: formatDate,
+  number: formatNumberMask,
+  currency: (value: string) => formatNumberMask(value, 2),
 };
-
 
 // maskUtils.ts
 export const maskHandler = (text: string, pattern: string): string => {
@@ -71,6 +182,8 @@ export const maskHandler = (text: string, pattern: string): string => {
       return creditCardMask(text);
     case 'date':
       return dateMask(text);
+    case 'number': 
+      return formatNumberMask(text);
     default:
       return customPatternMask(text, pattern);
   }
