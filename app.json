@@ -23,6 +23,16 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#DFDDD1"
       },
+      "permissions": [
+        "VIBRATE",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "CAMERA",
+        "RECORD_AUDIO",
+        "FOREGROUND_SERVICE"
+      ],
       "usesCleartextTraffic": true,
       "package": "com.anonymous.PI_V"
     },

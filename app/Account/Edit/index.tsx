@@ -5,14 +5,15 @@ import { MaterialIcons, Feather } from '@expo/vector-icons';
 import { User } from '@/src/@types';
 import { router, useLocalSearchParams } from 'expo-router';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
-import { useForm, Controller } from 'react-hook-form';
-import { Button, Form } from '@/src/components';
+import { useForm } from 'react-hook-form';
+import { Button, Form, Header, Typography } from '@/src/components';
 import { FormHelpers } from '@/src/components/Form';
 import { Toast } from 'toastify-react-native';
 import { theme } from '@/theme';
 import { useStorage } from '@/src/hooks';
-import { get, put, remove } from '@/src/services';
+import { get, remove } from '@/src/services';
 import { deleteUser, updateUser } from '@/src/services/users';
+import { validations } from '@/src/utils';
 
 const EditProfileScreen: React.FC = () => {
   const params = useLocalSearchParams();
@@ -43,10 +44,10 @@ const EditProfileScreen: React.FC = () => {
         const userId = params.id || (await getItem('userId'));
         if (!userId) throw new Error('User ID not found');
 
-        const user = await get(`/users/find-by-id/${userId}`);
+        const user = await get(`/users/list-by-id/${userId}`);
         console.log('User data fetched:', user);
-        setUserData(user);
-        reset(user);
+        setUserData(user as User);
+        reset(user as User);
       } catch (error) {
         console.error('Error fetching user data:', error);
         Toast.error('Erro ao carregar dados do usuário');
@@ -57,6 +58,7 @@ const EditProfileScreen: React.FC = () => {
 
     fetchUserData();
   }, []);
+
   const onSubmit = async (data: User) => {
     if (!userData?.id) return;
 
@@ -71,8 +73,8 @@ const EditProfileScreen: React.FC = () => {
         {
           text: 'OK',
           onPress: () => {
-            remove('userId'); // Clear user ID from storage
-            router.replace('/Auth/Login'); // Redirect to login
+            remove('userId');
+            router.replace('/Auth/Login');
           },
         },
       ]);
@@ -95,28 +97,16 @@ const EditProfileScreen: React.FC = () => {
   return (
     <ProtectedRoute>
       <Container>
+        <Header
+          title="Editar Perfil"
+          onBackPress={() => router.back()}
+        />
         <StatusBar barStyle="dark-content" />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1 }}
         >
           <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
-            <Header>
-              <BackButton onPress={() => router.back()}>
-                <Feather name="chevron-left" size={28} color="#454F2C" />
-              </BackButton>
-              <HeaderTitle>Editar Perfil</HeaderTitle>
-              <SaveButton
-                onPress={handleSubmit(onSubmit)}
-                disabled={!isDirty || isSubmitting}
-              >
-                {isSubmitting ? (
-                  <ActivityIndicator size="small" color="#454F2C" />
-                ) : (
-                  <SaveButtonText disabled={!isDirty}>Salvar</SaveButtonText>
-                )}
-              </SaveButton>
-            </Header>
 
             <AvatarSection>
               <AvatarContainer>
@@ -127,13 +117,16 @@ const EditProfileScreen: React.FC = () => {
                     <AvatarText>{userData?.name?.charAt(0) || 'U'}</AvatarText>
                   </DefaultAvatar>
                 )}
-                <EditAvatarButton>
-                  <MaterialIcons name="edit" size={20} color="white" />
-                </EditAvatarButton>
               </AvatarContainer>
             </AvatarSection>
 
             <FormContainer>
+              <Typography variant="h1" style={{ textAlign: 'center', marginBottom: 16 }}>
+                Editar Perfil
+              </Typography>
+              <Typography variant="body1" style={{ textAlign: 'center', marginBottom: 24 }}>
+                Atualize suas informações pessoais abaixo.
+              </Typography>
               <Form.Root controlled>
                 {FormHelpers.createFormFields({
                   control,
@@ -167,7 +160,7 @@ const EditProfileScreen: React.FC = () => {
                       },
                       label: 'Sobrenome',
                       placeholder: 'Digite seu sobrenome...',
-                      errorMessage: errors.lastName?.message,
+                      errorMessage: errors.lastname?.message,
                       componentProps: {
                         leftIcon: <MaterialIcons name="person-outline" size={20} color="#666" />,
                       },
@@ -214,20 +207,29 @@ const EditProfileScreen: React.FC = () => {
                       type: 'textfield',
                       rules: {
                         required: 'Telefone é obrigatório',
+                        validate: validations.phone,
+
                       },
                       label: 'Telefone',
                       placeholder: 'Digite seu telefone...',
                       errorMessage: errors.phone?.message,
+                      mask: 'phone',
                       componentProps: {
                         leftIcon: <Feather name="phone" size={20} color="#666" />,
                         keyboardType: 'phone-pad',
-                        maxLength: 11,
+
                       },
                     },
                   ],
                 })}
               </Form.Root>
-
+              <Button
+                onPress={handleSubmit(onSubmit)}
+                variant="primary"
+                disabled={!isDirty || isSubmitting}
+              >
+                {isSubmitting ? <ActivityIndicator size="small" color="#fff" /> : 'Salvar Alterações'}
+              </Button>
               <DeleteAccountButton onPress={() => {
                 Alert.alert(
                   'Excluir Conta',
@@ -263,38 +265,9 @@ const EditProfileScreen: React.FC = () => {
 
 // Styled components remain the same as in your original code
 const Container = styled(SafeAreaView)`
+  height: 100%;
   flex: 1;
   background-color: #f8f9fa;
-`;
-
-const Header = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  border-bottom-width: 1px;
-  border-bottom-color: #eee;
-`;
-
-const BackButton = styled.TouchableOpacity`
-  padding: 8px;
-`;
-
-const HeaderTitle = styled.Text`
-  font-size: 20px;
-  font-weight: 600;
-  color: #333;
-`;
-
-const SaveButton = styled.TouchableOpacity<{ disabled: boolean }>`
-  padding: 8px 16px;
-  opacity: ${props => props.disabled ? 0.5 : 1};
-`;
-
-const SaveButtonText = styled.Text<{ disabled: boolean }>`
-  color: #454F2C;
-  font-size: 16px;
-  font-weight: 600;
 `;
 
 const AvatarSection = styled.View`

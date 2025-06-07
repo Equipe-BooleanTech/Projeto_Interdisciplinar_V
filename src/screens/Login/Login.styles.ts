@@ -80,6 +80,14 @@ export const Input = styled.TextInput`
   margin-bottom: 15px;
 `;
 
+export const ForgotPassword = styled.TouchableOpacity`
+  align-self: flex-end;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  color: #454f2c;
+  font-size: 14px;
+  `;
+
 export const CheckboxContainer = styled.View`
   flex-direction: row;
   align-items: center;

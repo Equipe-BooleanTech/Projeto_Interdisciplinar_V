@@ -73,23 +73,21 @@ export default function Index() {
     const checkFirstLaunch = async () => {
       try {
         const isFirst = await isFirstLaunch();
-        // Only proceed if component is still mounted
         if (isMounted && !isFirst) {
           redirect();
         }
       } catch (error) {
         console.error("Error checking first launch status:", error);
-        // Optional: Implement fallback behavior or error reporting
       }
     };
 
     checkFirstLaunch();
 
-    // Cleanup function to prevent memory leaks and race conditions
     return () => {
       isMounted = false;
     };
-  }, []); // Empty dependency array as this only needs to run once on mount
+  }, []);
+  
   return (
     <Introduction
       step={step}

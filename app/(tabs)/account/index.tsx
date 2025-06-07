@@ -10,10 +10,10 @@ import { useStorage } from '@/src/hooks';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 import { Header as MobileHeader } from '@/src/components';
 import { get } from '@/src/services';
-import { getMaintainances } from '@/src/services/maintainances';
 
 const AccountScreen: React.FC = () => {
   const [scaleValue] = useState(new Animated.Value(1));
+  const [userID, setUserID] = useState<string | null>(null);
   const { clear } = useStorage();
   const [user, setUser] = useState<User | null>();
   const [maintenancesCount, setMaintenancesCount] = useState(0);
@@ -89,6 +89,7 @@ const AccountScreen: React.FC = () => {
       router.replace('/Auth/Login');
       return null;
     }
+    setUserID(userId);
     return userId;
   };
 
@@ -105,7 +106,7 @@ const AccountScreen: React.FC = () => {
       const userId = await getUserId();
       if (!userId) return;
       try {
-        const userData = await get<{ userId: string }, User>(`/users/find-by-id/${userId}`);
+        const userData = await get<{ userId: string }, User>(`/users/list-by-id/${userId}`);
         if (userData) {
           setUser(userData);
         }
@@ -117,7 +118,7 @@ const AccountScreen: React.FC = () => {
       }
     };
     fetchUserData();
-  }, []);
+  }, [userID]);
   return (
     <ProtectedRoute>
       {loading ? (
@@ -138,7 +139,7 @@ const AccountScreen: React.FC = () => {
               }
             }}
             onNotificationPress={() => router.push('/notifications')}
-            notificationCount={5}
+            notificationCount={0}
           />
           <Container>
             <StatusBar barStyle="dark-content" />
@@ -169,8 +170,13 @@ const AccountScreen: React.FC = () => {
 
               <StatsContainer>
                 <StatItem>
-                    <StatValue>{fetchUserVehiclesCount()}</StatValue>
-                  <StatLabel>Veículos Cadastrados</StatLabel>
+                  <StatValue>{fetchUserVehiclesCount()}</StatValue>
+                  <StatLabel>Veículos</StatLabel>
+                </StatItem>
+                <StatDivider />
+                <StatItem>
+                  <StatValue>{maintenancesCount}</StatValue>
+                  <StatLabel>Manutenções</StatLabel>
                 </StatItem>
               </StatsContainer>
 
