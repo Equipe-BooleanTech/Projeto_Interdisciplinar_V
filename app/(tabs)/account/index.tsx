@@ -10,11 +10,11 @@ import { useStorage } from '@/src/hooks';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 import { Header as MobileHeader } from '@/src/components';
 import { get } from '@/src/services';
+import { logout } from '@/src/services/auth';
 
 const AccountScreen: React.FC = () => {
   const [scaleValue] = useState(new Animated.Value(1));
   const [userID, setUserID] = useState<string | null>(null);
-  const { clear } = useStorage();
   const [user, setUser] = useState<User | null>();
   const [maintenancesCount, setMaintenancesCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -197,7 +197,7 @@ const AccountScreen: React.FC = () => {
               </MenuContainer>
 
               <SignOutButton onPress={() => {
-                clear()
+                logout()
                 router.replace('/Auth/Login');
               }}>
                 <SignOutButtonText>Sair</SignOutButtonText>
@@ -276,12 +276,6 @@ const UserName = styled.Text`
 const UserEmail = styled.Text`
   font-size: 14px;
   color: #666;
-  margin-top: 4px;
-`;
-
-const JoinDate = styled.Text`
-  font-size: 12px;
-  color: #999;
   margin-top: 4px;
 `;
 

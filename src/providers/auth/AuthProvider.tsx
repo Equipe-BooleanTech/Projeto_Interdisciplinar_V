@@ -1,4 +1,5 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+/* eslint-disable no-undef */
+import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
 import { api, getToken, remove, removeToken, setToken } from '../../services';
 import { useRouter } from 'expo-router';
 import { useStorage } from '@/src/hooks';
@@ -21,7 +22,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [failedAuthAttempts, setFailedAuthAttempts] = useState<number>(0);
   const router = useRouter();
-  const { getItem, setItem } = useStorage();
+  const { getItem } = useStorage();
+
+  const authCheckIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const checkAuthentication = async (): Promise<boolean> => {
     try {
@@ -35,12 +38,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       try {
-        const response = await api.get(`/users/get-token/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+        const response = await api.get('/users/validate-token', {
+          params: { token }
         });
-        
+
         if (response.data) {
           console.log('Authentication successful');
           setFailedAuthAttempts(0);
@@ -140,6 +141,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     initAuth();
+
+    authCheckIntervalRef.current = setInterval(async () => {
+      console.log('Running scheduled authentication check...');
+      await checkAuthentication();
+    }, 60000);
+
+    return () => {
+      if (authCheckIntervalRef.current) {
+        clearInterval(authCheckIntervalRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {

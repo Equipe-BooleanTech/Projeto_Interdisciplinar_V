@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, ScrollView, SafeAreaView } from 'react-native';
+import { Text, ScrollView, ActivityIndicator } from 'react-native';
 import { styles } from './_layout';
 import { router } from 'expo-router';
 import { Alert as CustomAlert, Button, Form, Header } from '@/src/components';
@@ -11,6 +11,8 @@ import { get } from '@/src/services';
 import { VehicleManufacturer, VehicleModel } from '@/src/@types';
 import { Toast } from 'toastify-react-native'
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
+import { MaterialIcons } from '@expo/vector-icons';
+import { theme } from '@/theme';
 
 export type SelectData = {
   label: string;
@@ -30,7 +32,7 @@ const VehicleRegisterScreen = () => {
     message: '',
     title: '',
   });
-
+  const [isLoading, setIsLoading] = useState(false);
   const [vehicleManufacturers, setVehicleManufacturers] = useState<SelectData[]>([]);
   const [vehicleModels, setVehicleModels] = useState<SelectData[]>([]);
 
@@ -65,7 +67,6 @@ const VehicleRegisterScreen = () => {
     mode: 'onBlur',
   });
 
-
   const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
@@ -76,6 +77,7 @@ const VehicleRegisterScreen = () => {
         year: parseInt(data.year, 10),
         km: parseFloat(data.km),
         fuelCapacity: data.fuelCapacity ? parseFloat(data.fuelCapacity) : 0,
+        odometer: parseFloat(data.km),
         fuelConsumption: data.fuelConsumption ? parseFloat(data.fuelConsumption) : 0,
       };
 
@@ -197,189 +199,186 @@ const VehicleRegisterScreen = () => {
           <Form.Root controlled>
             <Text style={styles.title}>Cadastro de Veículo</Text>
             <Text style={styles.subtitle}>Preencha os dados do veículo para continuar.</Text>
-
-            {FormHelpers.createFormFields({
-              control,
-              fields: [
-                {
-                  name: 'plate',
-                  type: 'textfield',
-                  rules: {
-                    required: 'Placa é obrigatória',
-                  },
-                  componentProps: {
-                    placeholder: 'Digite a placa...',
-                    label: 'Placa',
-                    onChangeText: (text: string) => {
-                      setValue('plate', text);
-                    },
-                  },
-                  errorMessage: errors.plate?.message,
-                },
-                {
-                  name: 'manufacturer',
-                  type: 'select',
-                  label: 'Fabricante',
-                  rules: {
-                    required: 'Fabricante é obrigatório',
-                  },
-                  options: [
-                    ...vehicleManufacturers
-                  ],
-                  errorMessage: errors.model?.message,
-                  componentProps: {
-                    onValueChange: (itemValue: unknown) => {
-                      const valueStr = String(itemValue) || '';
-                      const selected = vehicleManufacturers.find(m => m.value === valueStr);
-                      if (selected) {
-                        setVehicleManufacturer({
-                          codigo: selected.value,
-                          nome: selected.label,
-                        });
-                        // Store the CODE in the form value, not the label
-                        setValue('manufacturer', selected.value);
-                        // Store the label in a separate field if needed for display/submission
-                        setValue('manufacturerName', selected.label);
-                      }
-                    }
-                  }
-                },
-                {
-                  name: 'model',
-                  type: 'select',
-                  label: 'Modelo',
-                  rules: {
-                    required: 'Modelo é obrigatório',
-                  },
-                  options: [
-                    ...vehicleModels
-                  ],
-                  componentProps: {
-                    onValueChange: (itemValue: unknown) => {
-                      const valueStr = String(itemValue) || '';
-                      const selected = vehicleModels.find(m => m.value === valueStr);
-                      if (selected) {
-                        setVehicleModel({
-                          codigo: selected.value,
-                          nome: selected.label,
-                        });
-                        setValue('model', selected.value);
-                        setValue('modelName', selected.label);
-                      }
-                    }
-                  },
-                  errorMessage: errors.model?.message,
-                },
-                {
-                  name: 'year',
-                  type: 'textfield',
-                  rules: {
-                    required: 'Ano é obrigatório',
-                    pattern: {
-                      value: /^\d{4}$/,
-                      message: 'Ano deve ter 4 dígitos',
-                    },
-                  },
-                  componentProps: {
-                    placeholder: 'Digite o ano...',
-                    label: 'Ano',
-                    keyboardType: 'numeric',
-                    onChangeText: (text: string) => {
-                      setValue('year', text);
-                    },
-                  },
-                  errorMessage: errors.year?.message,
-                },
-                {
-                  name: 'color',
-                  type: 'textfield',
-                  componentProps: {
-                    placeholder: 'Digite a cor...',
-                    label: 'Cor',
-                    onChangeText: (text: string) => {
-                      setValue('color', text);
-                    },
-                  },
-                  errorMessage: errors.color?.message,
-                },
-                {
-                  name: 'km',
-                  type: 'textfield',
-                  rules: {
-                    required: 'Quilometragem é obrigatória',
-                  },
-                  componentProps: {
-                    placeholder: 'Digite a quilometragem...',
-                    label: 'Quilometragem Atual',
-                    keyboardType: 'numeric',
-                    onChangeText: (text: string) => {
-                      setValue('km', text);
-                    },
-                  },
-                  errorMessage: errors.km?.message,
-                },
-                {
-                  name: 'fuelType',
-                  label: 'Tipo de Combustível',
-                  type: 'select',
-                  options: [
-                    { label: 'Gasolina', value: 'GASOLINE' },
-                    { label: 'Gasolina Premium', value: 'GASOLINE_PREMIUM' },
-                    { label: 'Etanol', value: 'ETHANOL' },
-                    { label: 'Diesel', value: 'DIESEL' },
-                    { label: 'Elétrico', value: 'ELECTRIC' },
-                    { label: 'Gnv', value: 'GNV' },
-                  ],
-                  rules: {
-                    required: 'Tipo de combustível é obrigatório',
-                  },
-                  componentProps: {
-                    placeholder: 'Selecione o tipo de combustível...',
-                  },
-                  errorMessage: errors.fuelType?.message,
-                },
-                {
-                  name: 'fuelCapacity',
-                  type: 'textfield',
-                  componentProps: {
-                    placeholder: 'Digite a capacidade do tanque...',
-                    label: 'Capacidade do Tanque (L)',
-                    keyboardType: 'numeric',
-                    onChangeText: (text: string) => {
-                      setValue('fuelCapacity', text);
-                    },
-                  },
-                  errorMessage: errors.fuelCapacity?.message,
-                },
-                {
-                  name: 'fuelConsumption',
-                  type: 'textfield',
-                  componentProps: {
-                    placeholder: 'Digite o consumo médio...',
-                    label: 'Consumo Médio (km/L)',
-                    keyboardType: 'numeric',
-                    onChangeText: (text: string) => {
-                      setValue('fuelConsumption', text);
-                    },
-                  },
-                  errorMessage: errors.fuelConsumption?.message,
-                },
-                {
-                  name: 'description',
-                  type: 'textfield',
-                  componentProps: {
-                    placeholder: 'Digite uma descrição...',
-                    label: 'Descrição',
-                    multiline: true,
-                    onChangeText: (text: string) => {
-                      setValue('description', text);
-                    },
-                  },
-                  errorMessage: errors.description?.message,
-                },
-              ],
-            })}
-
+             {isLoading ? (
+                          <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginVertical: 20 }} />
+                        ) : (
+                          FormHelpers.createFormFields({
+                            control,
+                            fields: [
+                              {
+                                name: 'plate',
+                                type: 'textfield',
+                                rules: {
+                                  required: 'Placa é obrigatória',
+                                },
+                                label: 'Placa',
+                                mask: 'plate',
+                                placeholder: 'Digite a placa...',
+                                errorMessage: errors.plate?.message,
+                                componentProps: {
+                                  onChangeText: (text: string) => setValue('plate', text),
+                                  leftIcon: <MaterialIcons name="directions-car" size={20} color="#666" />,
+                                },
+                              },
+                              {
+                                name: 'manufacturer',
+                                type: 'select',
+                                label: 'Fabricante',
+                                rules: {
+                                  required: 'Fabricante é obrigatório',
+                                },
+                                options: [
+                                  ...vehicleManufacturers
+                                ],
+                                errorMessage: errors.model?.message,
+                                componentProps: {
+                                  onValueChange: (itemValue: unknown) => {
+                                    const valueStr = String(itemValue) || '';
+                                    const selected = vehicleManufacturers.find(m => m.value === valueStr);
+                                    if (selected) {
+                                      setVehicleManufacturer({
+                                        codigo: selected.value,
+                                        nome: selected.label,
+                                      });
+                                      setValue('manufacturer', selected.value);
+                                      setValue('manufacturerName', selected.label);
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                name: 'model',
+                                type: 'select',
+                                label: 'Modelo',
+                                rules: {
+                                  required: 'Modelo é obrigatório',
+                                },
+                                options: [
+                                  ...vehicleModels
+                                ],
+                                componentProps: {
+                                  onValueChange: (itemValue: unknown) => {
+                                    const valueStr = String(itemValue) || '';
+                                    const selected = vehicleModels.find(m => m.value === valueStr);
+                                    if (selected) {
+                                      setVehicleModel({
+                                        codigo: selected.value,
+                                        nome: selected.label,
+                                      });
+                                      setValue('model', selected.value);
+                                      setValue('modelName', selected.label);
+                                    }
+                                  }
+                                },
+                                errorMessage: errors.model?.message,
+                              },
+                              {
+                                name: 'year',
+                                type: 'textfield',
+                                rules: {
+                                  required: 'Ano é obrigatório',
+                                  pattern: {
+                                    value: /^\d{4}$/,
+                                    message: 'Ano deve ter 4 dígitos',
+                                  },
+                                },
+                                label: 'Ano',
+                                placeholder: 'Digite o ano...',
+                                errorMessage: errors.year?.message,
+                                componentProps: {
+                                  onChangeText: (text: string) => setValue('year', text),
+                                  keyboardType: 'numeric',
+                                  leftIcon: <MaterialIcons name="calendar-today" size={20} color="#666" />,
+                                  maxLength: 4,
+                                },
+                              },
+                              {
+                                name: 'color',
+                                type: 'textfield',
+                                label: 'Cor',
+                                placeholder: 'Digite a cor...',
+                                errorMessage: errors.color?.message,
+                                componentProps: {
+                                  onChangeText: (text: string) => setValue('color', text),
+                                  leftIcon: <MaterialIcons name="palette" size={20} color="#666" />,
+                                },
+                              },
+                              {
+                                name: 'km',
+                                type: 'textfield',
+                                rules: {
+                                  required: 'Quilometragem é obrigatória',
+                                },
+                                mask: 'number',
+                                label: 'Quilometragem Atual',
+                                placeholder: 'Digite a quilometragem...',
+                                errorMessage: errors.km?.message,
+                                componentProps: {
+                                  onChangeText: (text: string) => setValue('km', text),
+                                  keyboardType: 'numeric',
+                                  leftIcon: <MaterialIcons name="speed" size={20} color="#666" />,
+                                },
+                              },
+                              {
+                                name: 'fuelType',
+                                type: 'select',
+                                label: 'Tipo de Combustível',
+                                rules: {
+                                  required: 'Tipo de combustível é obrigatório',
+                                },
+                                options: [
+                                  { label: 'Gasolina', value: 'GASOLINE' },
+                                  { label: 'Gasolina Premium', value: 'GASOLINE_PREMIUM' },
+                                  { label: 'Etanol', value: 'ETHANOL' },
+                                  { label: 'Diesel', value: 'DIESEL' },
+                                  { label: 'Elétrico', value: 'ELECTRIC' },
+                                  { label: 'Gnv', value: 'GNV' },
+                                ],
+                                errorMessage: errors.fuelType?.message,
+                                componentProps: {
+                                  placeholder: 'Selecione o tipo de combustível...',
+                                },
+                              },
+                              {
+                                name: 'fuelCapacity',
+                                type: 'textfield',
+                                label: 'Capacidade do Tanque (L)',
+                                placeholder: 'Digite a capacidade do tanque...',
+                                errorMessage: errors.fuelCapacity?.message,
+                                componentProps: {
+                                  onChangeText: (text: string) => setValue('fuelCapacity', text),
+                                  keyboardType: 'numeric',
+                                  leftIcon: <MaterialIcons name="local-gas-station" size={20} color="#666" />,
+                                },
+                              },
+                              {
+                                name: 'fuelConsumption',
+                                type: 'textfield',
+                                label: 'Consumo Médio (km/L)',
+                                placeholder: 'Digite o consumo médio...',
+                                errorMessage: errors.fuelConsumption?.message,
+                                componentProps: {
+                                  onChangeText: (text: string) => setValue('fuelConsumption', text),
+                                  keyboardType: 'numeric',
+                                  leftIcon: <MaterialIcons name="local-gas-station" size={20} color="#666" />,
+                                },
+                              },
+                              {
+                                name: 'description',
+                                type: 'textfield',
+                                label: 'Descrição',
+                                placeholder: 'Digite uma descrição...',
+                                errorMessage: errors.description?.message,
+                                componentProps: {
+                                  onChangeText: (text: string) => setValue('description', text),
+                                  multiline: true,
+                                  leftIcon: <MaterialIcons name="description" size={20} color="#666" />,
+                                  numberOfLines: 3,
+                                },
+                              },
+                            ],
+                          })
+                        )}
             <Button variant="primary" onPress={handleSubmit(onSubmit)} full disabled={isSubmitting}>
               {isSubmitting ? 'Cadastrando...' : 'Cadastrar Veículo'}
             </Button>
