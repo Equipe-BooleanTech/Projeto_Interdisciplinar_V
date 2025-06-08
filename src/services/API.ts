@@ -3,29 +3,29 @@ import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-let BASE_URL = 'https://young-moose-glow.loca.lt/api'; // Always change this to your actual API base URL
+let BASE_URL = 'http://172.31.240.1:8080/api'; 
 
 export const getToken = async () => {
   if (Platform.OS === 'web') {
-    return Promise.resolve(localStorage.getItem('token')); // Make web return a Promise too
+    return Promise.resolve(localStorage.getItem('token')); 
   }
-  return AsyncStorage.getItem('token'); // For React Native, use AsyncStorage
+  return AsyncStorage.getItem('token'); 
 }
 
 export const setToken = async (token) => {
   if (Platform.OS === 'web') {
-    localStorage.setItem('token', token); // For web, use localStorage
-    return Promise.resolve(); // localStorage is synchronous
+    localStorage.setItem('token', token);
+    return Promise.resolve(); 
   }
-  return AsyncStorage.setItem('token', token); // For React Native, use AsyncStorage
+  return AsyncStorage.setItem('token', token);
 }
 
 export const removeToken = async () => {
   if (Platform.OS === 'web') {
-    localStorage.removeItem('token'); // For web, use localStorage
-    return Promise.resolve(); // Consistently return a Promise
+    localStorage.removeItem('token');
+    return Promise.resolve();
   }
-  return AsyncStorage.removeItem('token'); // For React Native, use AsyncStorage
+  return AsyncStorage.removeItem('token');
 }
 
 export const api = axios.create({
@@ -36,10 +36,10 @@ export const api = axios.create({
   withCredentials: true,
 });
 
-// Request interceptor
+
 api.interceptors.request.use(
   async (config) => {
-    const token = await getToken(); // This will work correctly now
+    const token = await getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -50,16 +50,16 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle authentication issues
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    // Check if error has a response and status code is in the 401-403 range (auth issues)
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+
+    if (error.response && (error.response.status === 401)) {
       await removeToken();
     }
 
-    // Always reject the promise to handle the error at the call site
+
     return Promise.reject(error);
   }
 );

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Alert, Button, Form, Typography } from '@/src/components';
 import { useForm } from 'react-hook-form';
 import { FormHelpers } from '@/src/components/Form';
-import { masks, validatePassword, validations } from '@/src/utils';
+import { validatePassword, validations } from '@/src/utils';
 import { register } from '@/src/services/auth';
 import { router } from 'expo-router';
 import { TouchableOpacity } from 'react-native';

@@ -1,19 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Text, ScrollView, SafeAreaView, ActivityIndicator } from 'react-native';
+import { Text, ScrollView, SafeAreaView, ActivityIndicator, Alert } from 'react-native';
 import { styles } from './_layout';
 import { router } from 'expo-router';
 import { Alert as CustomAlert, Button, Form, Header } from '@/src/components';
 import { FormHelpers } from '@/src/components/Form';
 import { useForm } from 'react-hook-form';
-import { updateVehicle } from '@/src/services/vehicleService';
-import { useRedirect, useStorage } from '@/src/hooks';
+import { findVehicleByPlate, updateVehicle } from '@/src/services/vehicleService';
+import { useStorage } from '@/src/hooks';
 import {  MaterialIcons } from '@expo/vector-icons';
-import { get, put  } from '@/src/services';
+import { get } from '@/src/services';
 import { VehicleManufacturer, VehicleModel } from '@/src/@types';
 import { Toast } from 'toastify-react-native'
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 import { theme } from '@/theme';
-import { Modal } from 'react-native-paper';
 
 export type SelectData = {
   label: string;
@@ -38,8 +37,7 @@ const VehicleUpdateScreen = () => {
   const [vehicleManufacturer, setVehicleManufacturer] = useState<VehicleManufacturer | null>(null);
   const [vehicleModel, setVehicleModel] = useState<VehicleModel | null>(null);
 
-  const { getItem, setItem } = useStorage();
-  const { checkAuthentication, redirect } = useRedirect();
+  const { getItem } = useStorage();
 
   const {
     control,
@@ -50,16 +48,6 @@ const VehicleUpdateScreen = () => {
   } = useForm({
     mode: 'onBlur',
   });
-
-  const getUserID = useCallback(async () => {
-    try {
-      const userId = await getItem('userId');
-      return userId || '';
-    } catch (error) {
-      console.error('Error fetching user ID:', error);
-      return '';
-    }
-  }, [getItem]);
 
   const getPlateId = useCallback(async () => {
     try {
@@ -76,7 +64,7 @@ const VehicleUpdateScreen = () => {
       try {
         setIsLoading(true);
         const plateId = await getPlateId();
-        const vehicleData = await get<{ plateId: string }, any>(`/vehicle/findbyplate/${plateId}`);
+        const vehicleData = await findVehicleByPlate(plateId);
 
         if (!vehicleData) {
           Toast.error('Veículo não encontrado');
@@ -84,7 +72,6 @@ const VehicleUpdateScreen = () => {
           return;
         }
 
-        // Set all basic form values first
         Object.keys(vehicleData).forEach(key => {
           if (vehicleData[key] !== null && vehicleData[key] !== undefined) {
             const value = typeof vehicleData[key] === 'number'
@@ -94,12 +81,10 @@ const VehicleUpdateScreen = () => {
           }
         });
 
-        // Wait for manufacturers to load if needed
         if (vehicleManufacturers.length === 0) {
-          await new Promise(resolve => setTimeout(resolve, 500)); // Small delay
+          await new Promise(resolve => setTimeout(resolve, 500));
         }
 
-        // Set manufacturer if available
         if (vehicleData.manufacturer) {
           const foundManufacturer = vehicleManufacturers.find(
             m => m.label.toLowerCase() === vehicleData.manufacturer.toLowerCase()
@@ -114,9 +99,8 @@ const VehicleUpdateScreen = () => {
           }
         }
 
-        // Store the UUID for submission
-        if (vehicleData.uuid) {
-          setValue('uuid', vehicleData.uuid);
+        if (vehicleData.id) {
+          setValue('uuid', vehicleData.id);
         }
 
       } catch (error) {
@@ -132,45 +116,34 @@ const VehicleUpdateScreen = () => {
   const onSubmit = async (formData: any) => {
     setIsSubmitting(true);
     try {
-      // Create a clean data object - don't use control._formValues
       const vehicleData = {
-        uuid: formData.uuid,
+        id: formData.id,
         plate: formData.plate,
         manufacturer: vehicleManufacturer?.nome || formData.manufacturer,
         model: vehicleModel?.nome || formData.model,
         year: parseInt(formData.year, 10),
         color: formData.color,
-        km: parseFloat(formData.km),
+        km: Number(formData.km),
         fuelType: formData.fuelType,
         fuelCapacity: formData.fuelCapacity ? parseFloat(formData.fuelCapacity) : 0,
         fuelConsumption: formData.fuelConsumption ? parseFloat(formData.fuelConsumption) : 0,
+        odometer: formData.km ? Number(formData.km) : 0,
         description: formData.description
       };
 
-      console.log('Clean vehicle data for submission:', vehicleData);
-
-      // Add debugging for the API call
-      const result = await updateVehicle(vehicleData.uuid, vehicleData).then((response) => {
-        setModal({
-          visible: true,
-          message: response.message || 'Veículo atualizado com sucesso!',
-          title: 'Sucesso',
-        });
-        return response;
+      const result = await updateVehicle(vehicleData.id, vehicleData).then((response) => {
+        Alert.alert('Sucesso', 'Veículo atualizado com sucesso!', [
+          {
+            text: 'OK',
+            onPress: () => {
+              reset();
+              router.back();
+            },
+          },
+        ]);
       }).catch((error) => {
         console.error('API error:', error);
-        setModal({
-          visible: true,
-          message: error?.response?.data?.message || 'Erro ao atualizar veículo',
-          title: 'Erro',
-        });
-        throw error; // Re-throw to handle in the catch block below
-      });
-
-      setModal({
-        visible: true,
-        message: 'Veículo atualizado com sucesso!',
-        title: 'Sucesso',
+        throw error;
       });
       setIsSubmitting(false);
       router.push('/(tabs)/vehicles');
@@ -274,6 +247,7 @@ const VehicleUpdateScreen = () => {
                       required: 'Placa é obrigatória',
                     },
                     label: 'Placa',
+                    mask: 'plate',
                     placeholder: 'Digite a placa...',
                     errorMessage: errors.plate?.message,
                     componentProps: {
@@ -297,6 +271,7 @@ const VehicleUpdateScreen = () => {
                     ],
                     componentProps: {
                       value: vehicleManufacturer?.codigo || '',
+                      selectedValue: vehicleManufacturer?.codigo || '',
                       onValueChange: (itemValue: string) => {
                         const selected = vehicleManufacturers.find(m => m.value === itemValue);
                         if (selected) {
@@ -305,8 +280,8 @@ const VehicleUpdateScreen = () => {
                             nome: selected.label,
                           });
                           setValue('manufacturer', selected.label, { shouldValidate: true });
-                          setVehicleModels([]); // Reset models when manufacturer changes
-                          setValue('model', '', { shouldValidate: true }); // Reset model value
+                          setVehicleModels([]); 
+                          setValue('model', '', { shouldValidate: true });
                         }
                       }
                     }
@@ -327,6 +302,7 @@ const VehicleUpdateScreen = () => {
                     ],
                     componentProps: {
                       value: vehicleModel?.codigo || '',
+                      selectedValue: vehicleModel?.codigo || '',
                       onValueChange: (itemValue: string) => {
                         const selected = vehicleModels.find(m => m.value === itemValue);
                         if (selected) {
@@ -376,6 +352,7 @@ const VehicleUpdateScreen = () => {
                     rules: {
                       required: 'Quilometragem é obrigatória',
                     },
+                    mask: 'number',
                     label: 'Quilometragem Atual',
                     placeholder: 'Digite a quilometragem...',
                     errorMessage: errors.km?.message,
@@ -439,7 +416,7 @@ const VehicleUpdateScreen = () => {
                       onChangeText: (text: string) => setValue('description', text),
                       multiline: true,
                       leftIcon: <MaterialIcons name="description" size={20} color="#666" />,
-                      numberOfLines: 3,
+                      numberOfLines: 5,
                     },
                   },
                 ],
@@ -455,22 +432,6 @@ const VehicleUpdateScreen = () => {
               {isSubmitting ? 'Atualizando...' : 'Atualizar Veículo'}
             </Button>
           </Form.Root>
-
-          {modal.visible && (
-            <CustomAlert
-              isVisible={modal.visible}
-              title={modal.title}
-              message={modal.message}
-              onConfirm={() => {
-                setModal({ ...modal, visible: false });
-                if (modal.title === 'Sucesso') {
-                  router.push('/(tabs)/vehicles');
-                  reset();
-                }
-              }}
-              confirmText="OK"
-            />
-          )}
         </ScrollView>
       </SafeAreaView>
     </ProtectedRoute>

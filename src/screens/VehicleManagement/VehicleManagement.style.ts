@@ -90,6 +90,7 @@ export const SummaryContainer = styled.View`
 
 export const SummaryItem = styled.View`
   align-items: center;
+  flex: 1;
 `;
 
 export const SummaryLabel = styled.Text`

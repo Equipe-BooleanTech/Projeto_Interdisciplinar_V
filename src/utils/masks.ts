@@ -59,11 +59,10 @@ export const formatNumberMask = (
   decimalPlaces: number = 0,
   allowNegative: boolean = false
 ): string => {
-  // Handle negative numbers
+
   const isNegative = allowNegative && value.startsWith('-');
   let cleaned = value.replace(/[^0-9]/g, '');
 
-  // Ensure we don't exceed 10 million (10,000,000)
   const numericValue = parseFloat(cleaned) / Math.pow(10, decimalPlaces);
   if (numericValue > 10000000) {
     cleaned = '10000000';
@@ -82,11 +81,9 @@ export const formatNumberMask = (
     }
   }
 
-  // Add thousand separators to integer part
   const formattedInteger = integerPart
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-  // Combine parts
   let result = formattedInteger;
   if (decimalPlaces > 0 && decimalPart) {
     result += `.${decimalPart}`;
@@ -138,7 +135,6 @@ export const validateNumberMask = (
   return true;
 };
 
-// Predefined number formats
 export const numberFormats = {
   integer: {
     format: (value: string) => formatNumberMask(value, 0),
@@ -168,10 +164,12 @@ export const masks = {
   phone: formatPhone,
   date: formatDate,
   number: formatNumberMask,
+  plate: (value: string) => plateMask(value),
+  creditCard: (value: string) => creditCardMask(value),
+  custom: (value: string, pattern: string) => customPatternMask(value, pattern),
   currency: (value: string) => formatNumberMask(value, 2),
 };
 
-// maskUtils.ts
 export const maskHandler = (text: string, pattern: string): string => {
   if (!pattern) return text;
 
@@ -184,13 +182,18 @@ export const maskHandler = (text: string, pattern: string): string => {
       return dateMask(text);
     case 'number': 
       return formatNumberMask(text);
+    case 'plate':
+      return plateMask(text);
+    case 'currency':
+      return formatNumberMask(text, 2);
+    case 'custom':
+      return customPatternMask(text, pattern);
     default:
       return customPatternMask(text, pattern);
   }
 };
 
 const phoneMask = (text: string): string => {
-  // Format: (XX) XXXXX-XXXX
   const cleaned = text.replace(/\D/g, '');
   const match = cleaned.match(/^(\d{0,2})(\d{0,5})(\d{0,4})$/);
   if (!match) return text;
@@ -199,7 +202,6 @@ const phoneMask = (text: string): string => {
 };
 
 const creditCardMask = (text: string): string => {
-  // Format: XXXX XXXX XXXX XXXX
   const cleaned = text.replace(/\D/g, '');
   const match = cleaned.match(/^(\d{0,4})(\d{0,4})(\d{0,4})(\d{0,4})$/);
   if (!match) return text;
@@ -208,8 +210,23 @@ const creditCardMask = (text: string): string => {
     }`;
 };
 
+const plateMask = (text: string): string => {
+  const cleaned = text.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  
+  const oldMatch = cleaned.match(/^([A-Z]{0,3})(\d{0,4})$/);
+  if (oldMatch) {
+    return `${oldMatch[1]}${oldMatch[2] ? `-${oldMatch[2]}` : ''}`;
+  }
+  
+  const mercosulMatch = cleaned.match(/^([A-Z]{0,3})(\d{0,1})([A-Z]{0,1})(\d{0,2})$/);
+  if (mercosulMatch) {
+    return `${mercosulMatch[1]}${mercosulMatch[2]}${mercosulMatch[3]}${mercosulMatch[4]}`;
+  }
+  
+  return cleaned.substring(0, 7); // Limit to 7 characters max
+}
+
 const dateMask = (text: string): string => {
-  // Format: MM/DD/YYYY
   const cleaned = text.replace(/\D/g, '');
   const match = cleaned.match(/^(\d{0,2})(\d{0,2})(\d{0,4})$/);
   if (!match) return text;
@@ -218,7 +235,6 @@ const dateMask = (text: string): string => {
 };
 
 const customPatternMask = (text: string, pattern: string): string => {
-  // Handle custom patterns like '##-##-####'
   const patternChars = pattern.replace(/\D/g, '');
   const textChars = text.replace(/\D/g, '');
 

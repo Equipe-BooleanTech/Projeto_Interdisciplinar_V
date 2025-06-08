@@ -5,19 +5,12 @@ import { router } from 'expo-router';
 import { Alert as CustomAlert, Button, Form, Header } from '@/src/components';
 import { FormHelpers } from '@/src/components/Form';
 import { useForm } from 'react-hook-form';
-import { listGasStations, post } from '@/src/services';
+import { listGasStations, createFuelRefill, findVehicleByPlate } from '@/src/services';
 import { useStorage } from '@/src/hooks';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Toast } from 'toastify-react-native';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 import { theme } from '@/theme';
-import { createFuelRefill } from '@/src/services/fuelRefil';
-
-type Vehicle = {
-  id: string;
-  plate: string;
-  model: string;
-};
 
 type GasStation = {
   id: string;
@@ -41,7 +34,6 @@ const FuelRefillFormScreen = () => {
     title: '',
   });
   const [gasStations, setGasStations] = useState<{ label: string; value: string }[]>([]);
-  const [refillDate, setRefillDate] = useState(new Date());
 
   const { getItem } = useStorage();
 
@@ -50,39 +42,35 @@ const FuelRefillFormScreen = () => {
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      vehicleId: '',
-      stationId: '',
-      liters: '',
-      pricePerLiter: '',
-      totalCost: '',
-      kmAtRefill: '',
-      isCompleteTank: false,
-      fuelType: '',
-      refillDate: '',
-    },
     mode: 'onBlur',
   });
 
-  // Calculate total cost when liters or pricePerLiter changes
   const liters = watch('liters');
   const pricePerLiter = watch('pricePerLiter');
 
-  useEffect(() => {
+   useEffect(() => {
     if (liters && pricePerLiter) {
-      const calculatedTotal = parseFloat(liters) * parseFloat(pricePerLiter);
-      setValue('totalCost', calculatedTotal.toFixed(2));
+      try {
+        const litersValue = parseFloat(String(liters).replace(',', '.'));
+        const priceValue = parseFloat(String(pricePerLiter).replace(',', '.'));
+        
+        if (!isNaN(litersValue) && !isNaN(priceValue)) {
+          const calculatedTotal = litersValue * priceValue;
+          setValue('totalCost', calculatedTotal.toFixed(2));
+        }
+      } catch (e) {
+        console.error('Error calculating total cost:', e);
+      }
     }
   }, [liters, pricePerLiter, setValue]);
 
-  // Fetch vehicles and gas stations
   useEffect(() => {
     const fetchData = async () => {
       try {
 
-        // Fetch gas stations (mock API call)
         const stationsResponse = await listGasStations();
         console.log('Gas Stations:', stationsResponse);
         const stationsData = stationsResponse.content.map((s: GasStation) => ({
@@ -102,101 +90,74 @@ const FuelRefillFormScreen = () => {
     fetchData();
   }, []);
 
-   const onSubmit = async (data: any) => {
+    const onSubmit = async (formData: any) => {
     setIsSubmitting(true);
     try {
-      // Authentication checks
       const userId = await getItem('userId');
-      const vehicleId = await getItem('vehicleId');
-      
-      if (!vehicleId) {
-        Toast.error('Veículo não selecionado. Por favor, selecione um veículo.');
-        setIsSubmitting(false);
-        return;
-      }
-      
-      if (!userId) {
-        Toast.error('Usuário não autenticado');
-        setIsSubmitting(false);
+      const vehiclePlate = await getItem('vehiclePlate');
+
+      const vehicle = await findVehicleByPlate(vehiclePlate as string);
+      const vehicleId = vehicle?.id;
+      if (!vehicleId || !userId) {
+        const errorMessage = !vehicleId ? 'Veículo não selecionado' : 'Usuário não autenticado';
+        setModal({
+          visible: true,
+          message: errorMessage,
+          title: 'Erro',
+        });
         return;
       }
   
-      // Parse the date string from DD/MM/YYYY to ISO format
-      let formattedDate;
-      if (data.refillDate) {
-        const [day, month, year] = data.refillDate.split('/');
-        if (day && month && year) {
-          const dateObj = new Date(`${year}-${month}-${day}T12:00:00`);
-          
-          if (isNaN(dateObj.getTime())) {
-            throw new Error('Data de abastecimento inválida');
-          }
-          
-          formattedDate = dateObj.toISOString();
-        } else {
-          throw new Error('Formato de data inválido (DD/MM/AAAA)');
+
+      let refillDate;
+      if (formData.refillDate) {
+        const [day, month, year] = formData.refillDate.split('/');
+        refillDate = new Date(`${year}-${month}-${day}T12:00:00`);
+        
+        if (isNaN(refillDate.getTime())) {
+          setModal({
+            visible: true,
+            message: 'Data de abastecimento inválida',
+            title: 'Erro',
+          });
+          return;
         }
-      } else {
-        throw new Error('Data de abastecimento é obrigatória');
       }
   
-      // Format and validate data
+
       const refillData = {
-        liters: parseFloat(data.liters),
-        pricePerLiter: parseFloat(data.pricePerLiter),
-        totalCost: parseFloat(data.totalCost),
-        kmAtRefill: parseFloat(data.kmAtRefill),
-        isCompleteTank: Boolean(data.isCompleteTank),
-        fuelType: data.fuelType as FuelType,
-        refillDate: formattedDate,
-        userId,
         vehicleId,
+        stationId: formData.stationId,
+        liters: parseFloat(String(formData.liters).replace(',', '.')),
+        pricePerLiter: parseFloat(String(formData.pricePerLiter).replace(',', '.')),
+        totalCost: parseFloat(String(formData.totalCost).replace(',', '.')),
+        kmAtRefill: parseFloat(String(formData.kmAtRefill).replace(',', '.')),
+        isCompleteTank: formData.isCompleteTank,
+        fuelType: formData.fuelType,
+        refillDate: refillDate ? refillDate.toISOString() : new Date().toISOString(),
       };
   
-      console.log('Submitting fuel refill:', {
-        refillData,
-        vehicleId,
-        stationId: data.stationId
-      });
-  
-      // Submit data
-      const response = await createFuelRefill(refillData, vehicleId, data.stationId);
+      const response = await createFuelRefill(refillData, vehicleId, formData.stationId);
       
-      if (!response) {
-        throw new Error('Erro ao registrar abastecimento');
-      }
-  
-      // Success
       setModal({
         visible: true,
-        title: 'Sucesso',
         message: 'Abastecimento registrado com sucesso!',
+        title: 'Sucesso',
       });
   
-      // Reset form
-      control._reset();
-  
+      reset();
     } catch (error: any) {
-      console.error('Error submitting fuel refill:', error);
-      
-      // Determine appropriate error message
-      let errorMessage = 'Erro ao registrar abastecimento';
-      
-      if (error?.message) {
-        errorMessage = error.message;
-      } else if (error?.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
+      console.error('Error creating fuel refill:', error);
       setModal({
         visible: true,
+        message: error?.response?.data?.message || 'Erro ao registrar abastecimento',
         title: 'Erro',
-        message: errorMessage,
       });
     } finally {
       setIsSubmitting(false);
     }
   };
+
   const fuelTypeOptions = [
     { label: 'Gasolina', value: FuelType.GASOLINE },
     { label: 'Etanol', value: FuelType.ETHANOL },
@@ -236,7 +197,6 @@ const FuelRefillFormScreen = () => {
                   rules: { required: 'Posto é obrigatório' },
                   label: 'Posto de Gasolina',
                   options: [
-                    { label: 'Selecione um posto...', value: '' },
                     ...gasStations
                   ],
                   errorMessage: errors.stationId?.message,
@@ -259,8 +219,7 @@ const FuelRefillFormScreen = () => {
                   name: 'liters',
                   type: 'textfield',
                   rules: {
-                    required: 'Litros são obrigatórios',
-                    min: { value: 0.1, message: 'Mínimo 0.1 litro' }
+                    required: 'Litros abastecidos são obrigatórios',
                   },
                   label: 'Litros Abastecidos',
                   placeholder: 'Ex: 42.5',
@@ -278,6 +237,7 @@ const FuelRefillFormScreen = () => {
                     min: { value: 0.01, message: 'Preço inválido' }
                   },
                   label: 'Preço por Litro (R$)',
+                  mask: 'currency',
                   placeholder: 'Ex: 5.75',
                   errorMessage: errors.pricePerLiter?.message,
                   componentProps: {
@@ -290,6 +250,7 @@ const FuelRefillFormScreen = () => {
                   type: 'textfield',
                   label: 'Valor Total (R$)',
                   placeholder: 'Calculado automaticamente',
+                  mask: 'currency',
                   componentProps: {
                     disabled: true,
                     leftIcon: <MaterialIcons name="calculate" size={20} color="#666" />,
@@ -303,8 +264,9 @@ const FuelRefillFormScreen = () => {
                     required: 'Quilometragem é obrigatória',
                     min: { value: 0, message: 'Quilometragem inválida' }
                   },
+                  mask: 'number',
                   label: 'Quilometragem Atual',
-                  placeholder: 'Ex: 12500',
+                  placeholder: 'Ex: 12.500',
                   errorMessage: errors.kmAtRefill?.message,
                   componentProps: {
                     leftIcon: <MaterialIcons name="speed" size={20} color="#666" />,
@@ -323,12 +285,9 @@ const FuelRefillFormScreen = () => {
                 {
                   name: 'refillDate',
                   type: 'textfield',
+                  mask: 'date',
                   rules: {
                     required: 'Data é obrigatória',
-                    pattern: {
-                      value: /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/,
-                      message: 'Formato inválido (DD/MM/AAAA)'
-                    }
                   },
                   label: 'Data do Abastecimento',
                   placeholder: 'DD/MM/AAAA',
@@ -337,7 +296,6 @@ const FuelRefillFormScreen = () => {
                     leftIcon: <MaterialIcons name="calendar-today" size={20} color="#666" />,
                     keyboardType: 'numeric',
                     mask: 'date',
-                    maxLength: 10,
                   },
                 },
               ],
@@ -347,7 +305,7 @@ const FuelRefillFormScreen = () => {
               variant="primary"
               onPress={handleSubmit(onSubmit)}
               full
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoading}
               style={{ marginTop: 20 }}
             >
               {isSubmitting ? (

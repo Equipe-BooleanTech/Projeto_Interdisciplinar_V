@@ -3,11 +3,13 @@ import { Alert, Button, Form, Typography } from '@/src/components';
 import { useForm } from 'react-hook-form';
 import { FormHelpers } from '@/src/components/Form';
 import { validatePassword, validations } from '@/src/utils';
-import { login } from '@/src/services/auth';
+import { login as getNewToken } from '@/src/services/auth';
 import { router } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
-import { LoginTextContainer, OrText } from './Login.styles';
+import { LoginTextContainer, OrText, ForgotPassword } from './Login.styles';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useAuth } from '@/src/providers';
+import { useStorage } from '@/src/hooks';
 
 const LoginScreen = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,6 +26,9 @@ const LoginScreen = () => {
   });
 
   const [isOAuth, setIsOAuth] = useState(false);
+
+  const { setItem } = useStorage();
+  const { login } = useAuth();
 
   const {
     control,
@@ -43,10 +48,20 @@ const LoginScreen = () => {
   const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
-      const res = await login({
+
+      const res = await getNewToken({
         email: data.email,
         password: data.password,
       });
+
+      if (!res || !res.token) {
+        throw new Error("No token received from server");
+      }
+      
+      await setItem('userId', res.id);
+
+
+      await login(res.token);
 
       setModal({
         visible: true,
@@ -55,9 +70,9 @@ const LoginScreen = () => {
       });
 
       setIsSubmitting(false);
-      return res;
     } catch (error: any) {
       console.error('Erro ao autenticar:', error);
+
       const errorMessage =
         error.response?.data?.message ||
         error.response?.data?.error ||
@@ -140,8 +155,7 @@ const LoginScreen = () => {
                 <MaterialIcons
                   name={showPassword ? "visibility-off" : "visibility"}
                   size={20}
-                  color="#666"
-                />
+                  color="#666" />
               ),
               onRightIconPress: () => setShowPassword(!showPassword),
               autoCapitalize: 'none',
@@ -149,14 +163,19 @@ const LoginScreen = () => {
           },
         ],
       })}
-
+      <ForgotPassword
+        onPress={() => {
+          router.push('/Auth/ForgotPassword');
+        }}
+      >
+        <Typography variant="body1_underline">Esqueci minha senha</Typography>
+      </ForgotPassword>
       <Button
         variant="primary"
         onPress={handleSubmit(onSubmit)}
         full
         disabled={isSubmitting}
-        children={isSubmitting ? 'Realizando Login...' : 'Login'}
-      />
+        children={isSubmitting ? 'Realizando Login...' : 'Login'} />
 
       {modal.visible && (
         <Alert
@@ -172,13 +191,9 @@ const LoginScreen = () => {
             reset();
           }}
           confirmText="OK"
-          cancelText="Cancelar"
-        />
+          cancelText="Cancelar" />
       )}
-
-      <OrText>OU</OrText>
-
-      <Button
+      <OrText>OU</OrText><Button
         variant="social"
         onPress={() => {
           setIsOAuth(true);
@@ -206,9 +221,7 @@ const LoginScreen = () => {
         }}
       >
         Continuar com o Google
-      </Button>
-
-      <Button
+      </Button><Button
         variant="social"
         onPress={() => {
           setIsOAuth(true);
@@ -237,7 +250,7 @@ const LoginScreen = () => {
       >
         Continuar com Biometria
       </Button>
-    </Form.Root>
+    </Form.Root >
   );
 };
 
