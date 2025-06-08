@@ -58,6 +58,7 @@ const VehicleScreen = () => {
       try {
         const userId = await getUserId();
         const response = await listVehicles(userId as string);
+        console.log('Fetched vehicles:', response);
         setVehicles(response.content);
       } catch (error) {
         console.error('Error fetching vehicles:', error);
@@ -102,7 +103,7 @@ const VehicleScreen = () => {
         ) : (
           <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
             {vehicles.map((vehicle) => (
-              <Card key={vehicle.plate} onPress={() => handleVehiclePress(vehicle.plate, vehicle.uuid)}>
+              <Card key={vehicle.plate} onPress={() => handleVehiclePress(vehicle.plate, vehicle.id)}>
                 <VehicleImage
                   source={{
                     uri: "https://as2.ftcdn.net/jpg/05/63/90/79/1000_F_563907946_qngWK4eZMqYUEd8g5MGiw1R5Ch1k0h5P.jpg",

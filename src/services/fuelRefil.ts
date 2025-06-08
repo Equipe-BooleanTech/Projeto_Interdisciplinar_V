@@ -17,7 +17,13 @@ export const deleteFuelRefill = async (id: string, vehicleId: string) => {
 };
 
 export const listFuelRefills = async (vehicleId: string) => {
-    const response = await api.get(`/vehicle/fuel-refill/list-all-fuel-refill/${vehicleId}`);
+    const response = await api.get(`/vehicle/fuel-refill/list-all-fuel-refill/${vehicleId}`, {
+        params: {
+            page: 0,
+            size: 100
+        },
+    });
+    console.log('Fuel refills fetched:', response.data);
     return response.data;
 };
 

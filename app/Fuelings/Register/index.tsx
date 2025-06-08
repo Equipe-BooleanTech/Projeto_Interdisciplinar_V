@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, ScrollView, SafeAreaView, ActivityIndicator, View, Alert } from 'react-native';
+import { Text, ScrollView, SafeAreaView, ActivityIndicator, View } from 'react-native';
 import { styles } from './_layout';
 import { router } from 'expo-router';
 import { Alert as CustomAlert, Button, Form, Header } from '@/src/components';

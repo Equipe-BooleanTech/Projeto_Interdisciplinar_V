@@ -14,7 +14,7 @@ export interface FuelRefillDTO {
     totalCost: number;
     kmAtRefill: number;
     fuelType: FuelType;
-    refillDate: string;
+    refillDate: number[];
 }
 
 export interface FuelRefillSummaryDTO {
