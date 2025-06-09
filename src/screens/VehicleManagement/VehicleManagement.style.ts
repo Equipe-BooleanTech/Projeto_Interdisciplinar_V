@@ -48,7 +48,7 @@ export const CardTitle = styled.Text`
 `;
 
 export const CardSubtitle = styled.Text`
-
+  text-align: center;
   font-size: ${theme.font.size.p};
   color: ${theme.colors.stroke};
   margin-bottom: 4px;
