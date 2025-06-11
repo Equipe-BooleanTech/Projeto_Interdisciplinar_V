@@ -26,7 +26,6 @@ const ReminderManagement = () => {
     const [reminderRecords, setReminderRecords] = useState<ReminderDTO[]>([]);
 
     const handleAddReminder = useCallback(() => {
-        // Navigate to the Add Reminder screen with the vehicleId
         router.push(`/Reminders/Register`);
     }, []);
 

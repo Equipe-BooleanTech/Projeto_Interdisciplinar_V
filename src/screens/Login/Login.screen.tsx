@@ -193,63 +193,6 @@ const LoginScreen = () => {
           confirmText="OK"
           cancelText="Cancelar" />
       )}
-      <OrText>OU</OrText><Button
-        variant="social"
-        onPress={() => {
-          setIsOAuth(true);
-          setModal({
-            visible: true,
-            message: 'Login com Google em desenvolvimento',
-            title: 'Aguarde',
-            actions: [
-              {
-                text: 'OK',
-                onPress: () => {
-                  setModal({ ...modal, visible: false });
-                  setIsOAuth(false);
-                },
-              },
-            ],
-          });
-        }}
-        border={{ width: 1, color: '#000' }}
-        full
-        hasIcon
-        icon={{
-          size: 24,
-          component: 'https://cdn-icons-png.flaticon.com/512/2991/2991148.png',
-        }}
-      >
-        Continuar com o Google
-      </Button><Button
-        variant="social"
-        onPress={() => {
-          setIsOAuth(true);
-          setModal({
-            visible: true,
-            message: 'Login com Biometria em desenvolvimento',
-            title: 'Aguarde',
-            actions: [
-              {
-                text: 'OK',
-                onPress: () => {
-                  setModal({ ...modal, visible: false });
-                  setIsOAuth(false);
-                },
-              },
-            ],
-          });
-        }}
-        border={{ width: 1, color: '#000' }}
-        full
-        hasIcon
-        icon={{
-          size: 24,
-          component: 'https://cdn-icons-png.flaticon.com/512/565/565512.png',
-        }}
-      >
-        Continuar com Biometria
-      </Button>
     </Form.Root >
   );
 };

@@ -11,3 +11,4 @@ export * from './users';
 export * from './reminders';
 export * from './fuelRefil';
 export * from './maintainances';
+export * from './dashboard';

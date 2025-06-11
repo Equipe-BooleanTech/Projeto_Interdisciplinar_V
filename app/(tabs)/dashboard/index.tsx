@@ -1,12 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
-import {
-  Text,
-  Dimensions,
-  ScrollView,
-  SafeAreaView,
-  Image,
-  View,
-} from 'react-native';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { Text, Dimensions, ScrollView, SafeAreaView, Image, View, ActivityIndicator } from 'react-native';
 import { PieChart, BarChart, LineChart, RadarChart } from 'react-native-gifted-charts';
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,12 +7,17 @@ import Carousel from 'react-native-snap-carousel';
 import images from '@/assets';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 import { theme } from '@/theme';
+import { getCostsData } from '@/src/services';
+import { listVehicles } from '@/src/services';
+import { useStorage } from '@/src/hooks';
+import { Button } from '@/src/components';
+import { router } from 'expo-router';
 
 const { width: screenWidth } = Dimensions.get('window');
 
 const Container = styled.View`
   flex: 1;
-  background-color: #DFDDD1;
+  background-color: #dfddd1;
   align-items: center;
   padding-bottom: 80px;
 `;
@@ -86,7 +84,7 @@ const TotalText = styled.Text`
   font-size: 18px;
   margin-top: 8px;
   font-weight: bold;
-  color: #454F2C;
+  color: #454f2c;
 `;
 
 const TotalSubText = styled.Text`
@@ -139,17 +137,68 @@ const Indicator = styled.View<{ active?: boolean }>`
   background-color: ${({ active }) => (active ? '#454F2C' : '#AAA')};
 `;
 
+const EmptyStateContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+`;
+
+const EmptyStateText = styled.Text`
+  font-size: 16px;
+  color: #666;
+  text-align: center;
+  margin-top: 20px;
+`;
+
+const ErrorText = styled.Text`
+  font-size: 16px;
+  color: #BC4749;
+  text-align: center;
+  margin-top: 20px;
+`;
+
+const LoadingContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
 const months = [
-  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  'Janeiro',
+  'Fevereiro',
+  'Março',
+  'Abril',
+  'Maio',
+  'Junho',
+  'Julho',
+  'Agosto',
+  'Setembro',
+  'Outubro',
+  'Novembro',
+  'Dezembro',
 ];
+
+type ChartData = {
+  maintenanceCost: number;
+  fuelCost: number;
+  totalCost: number;
+  insuranceCost?: number;
+  taxesCost?: number;
+  partsCost?: number;
+};
 
 const HomeScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<{ text: string; value: number } | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<'semanal' | 'mensal'>('semanal');
+  const [data, setData] = useState<ChartData | null>(null);
+  const [vehicleIds, setVehicleIds] = useState<string[]>([]);
   const [currentMonthIndex, setCurrentMonthIndex] = useState(new Date().getMonth());
   const [activeChartIndex, setActiveChartIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const carouselRef = useRef<any>(null);
 
   const handlePrevMonth = () => {
@@ -165,6 +214,91 @@ const HomeScreen = () => {
     setModalVisible(true);
   }, []);
 
+  const { getItem } = useStorage();
+
+  const fetchUserId = useCallback(async () => {
+    const userId = await getItem('userId');
+    return userId;
+  }, [getItem]);
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const userId = await fetchUserId();
+        if (!userId) {
+          throw new Error('User not authenticated');
+        }
+
+        const vehiclesData = await listVehicles(userId);
+        if (!vehiclesData?.content || vehiclesData.content.length === 0) {
+          setData({
+            maintenanceCost: 0,
+            fuelCost: 0,
+            totalCost: 0,
+            insuranceCost: 0,
+            taxesCost: 0,
+            partsCost: 0
+          });
+          return;
+        }
+
+        const fetchedVehicleIds = vehiclesData.content.map((vehicle) => vehicle.id);
+        setVehicleIds(fetchedVehicleIds);
+
+        let totalMaintenance = 0;
+        let totalFuel = 0;
+        let totalInsurance = 0;
+        let totalTaxes = 0;
+        let totalParts = 0;
+
+        const defaultStartDate = new Date();
+        defaultStartDate.setMonth(currentMonthIndex, 1);
+
+        const defaultEndDate = new Date(defaultStartDate);
+        defaultEndDate.setMonth(currentMonthIndex + 1, 0);
+
+
+        const costResults = await Promise.allSettled(
+          fetchedVehicleIds.map(id => getCostsData(id, defaultStartDate, defaultEndDate))
+        );
+
+        console.log('Cost results:', costResults);
+        costResults.forEach((result) => {
+          if (result.status === 'fulfilled' && result.value) {
+            const costData = result.value; 
+            totalMaintenance += costData.maintenanceCost || 0;
+            totalFuel += costData.fuelCost || 0;
+            totalInsurance += costData.insuranceCost || 0;
+            totalTaxes += costData.taxesCost || 0;
+            totalParts += costData.partsCost || 0;
+          }
+        });
+
+        const totalCost = totalMaintenance + totalFuel + totalInsurance + totalTaxes + totalParts;
+
+        setData({
+          maintenanceCost: totalMaintenance,
+          fuelCost: totalFuel,
+          insuranceCost: totalInsurance,
+          taxesCost: totalTaxes,
+          partsCost: totalParts,
+          totalCost: totalCost
+        });
+
+      } catch (err) {
+        console.error('Error in fetchAllData:', err);
+        setError('Failed to load data. Please try again later.');
+        setData(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, []);
 
   const chartConfigs = [
     {
@@ -173,107 +307,177 @@ const HomeScreen = () => {
         <>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
             <View style={{ flexDirection: 'column', width: '100%' }}>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 5 }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-between',
+                  marginBottom: 5,
+                }}
+              >
                 {[
-                  { color: '#6A994E', label: 'Combustível', value: 2500 },
-                  { color: '#BC4749', label: 'Manutenção', value: 1500 },
-                  { color: '#F2E8CF', label: 'Seguro', value: 2000 },
-                  { color: '#A98467', label: 'Impostos', value: 1300 },
-                  { color: '#F4A261', label: 'Peças', value: 1000 },
-                ].map((item, index) => (
-                  <View key={index} style={{ flexDirection: 'row', alignItems: 'center', width: '45%', marginBottom: 8 }}>
-                    <View style={{ width: 12, height: 12, backgroundColor: item.color, borderRadius: 6, marginRight: 8 }} />
-                    <Text style={{ fontSize: 12 }}>{item.label}: R${item.value.toFixed(2)}</Text>
-                  </View>
-                ))}
+                  { color: '#6A994E', label: 'Combustível', value: data?.fuelCost || 0 },
+                  { color: '#BC4749', label: 'Manutenção', value: data?.maintenanceCost || 0 },
+                  { color: '#F2E8CF', label: 'Seguro', value: data?.insuranceCost || 0 },
+                  { color: '#A98467', label: 'Impostos', value: data?.taxesCost || 0 },
+                  { color: '#F4A261', label: 'Peças', value: data?.partsCost || 0 },
+                ]
+                  .filter(item => item.value > 0)
+                  .map((item, index) => (
+                    <View
+                      key={index}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        width: '45%',
+                        marginBottom: 8,
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: 12,
+                          height: 12,
+                          backgroundColor: item.color,
+                          borderRadius: 6,
+                          marginRight: 8,
+                        }}
+                      />
+                      <Text style={{ fontSize: 12 }}>
+                        {item.label}: R${item.value.toFixed(2)}
+                      </Text>
+                    </View>
+                  ))}
               </View>
             </View>
           </View>
-          <PieChart
-            data={[
-              { value: 2500, color: '#6A994E' },
-              { value: 1500, color: '#BC4749' },
-              { value: 2000, color: '#F2E8CF' },
-              { value: 1300, color: '#A98467' },
-              { value: 1000, color: '#F4A261' },
-            ]}
-            donut
-            showText
-            textColor="black"
-            radius={120}
-            innerRadius={80}
-            innerCircleColor="#EEEDEB"
-            centerLabelComponent={() => (
-              <Text style={{ fontSize: 16, color: '#5a5c69' }}>Total</Text>
-            )}
-          />
+          {data && data.totalCost > 0 ? (
+            <PieChart
+              data={[
+                { value: data.fuelCost, color: '#6A994E' },
+                { value: data.maintenanceCost, color: '#BC4749' },
+                { value: data.insuranceCost || 0, color: '#F2E8CF' },
+                { value: data.taxesCost || 0, color: '#A98467' },
+                { value: data.partsCost || 0, color: '#F4A261' },
+              ].filter(item => item.value > 0)}
+              donut
+              showText
+              textColor="black"
+              radius={120}
+              innerRadius={80}
+              innerCircleColor="#EEEDEB"
+              centerLabelComponent={() => (
+                <View>
+                  <Text style={{ fontSize: 16, color: '#5a5c69' }}>Total</Text>
+                  <Text style={{ fontSize: 14, color: '#5a5c69' }}>R${data.totalCost.toFixed(2)}</Text>
+                </View>
+              )}
+            />
+          ) : (
+            <EmptyStateText>No expense data available</EmptyStateText>
+          )}
         </>
-      )
+      ),
     },
     {
       title: 'Gastos Mensais',
       component: (props: any) => (
         <>
-          <BarChart
-            data={[
-              { value: 2500, label: 'Sem. 1', frontColor: '#6A994E' },
-              { value: 1500, label: 'Sem. 2', frontColor: '#BC4749' },
-              { value: 2000, label: 'Sem. 3', frontColor: '#F2E8CF' },
-              { value: 1800, label: 'Sem. 4', frontColor: '#A98467' },
-            ]}
-            barWidth={35}
-            spacing={18}
-            yAxisThickness={0}
-            xAxisThickness={0}
-            noOfSections={5}
-            showReferenceLine1
-            referenceLine1Position={2000}
-            referenceLine1Config={{ color: 'gray', dashWidth: 2, dashGap: 3 }}
-            onPress={(item: any) => props.onPress(item)}
-          />
+          {data && data.totalCost > 0 ? (
+            <BarChart
+              data={[
+                { value: data.fuelCost, label: 'Combustível', frontColor: '#6A994E' },
+                { value: data.maintenanceCost, label: 'Manutenção', frontColor: '#BC4749' },
+                { value: data.insuranceCost || 0, label: 'Seguro', frontColor: '#F2E8CF' },
+                { value: data.taxesCost || 0, label: 'Impostos', frontColor: '#A98467' },
+              ].filter(item => item.value > 0)}
+              barWidth={35}
+              spacing={18}
+              yAxisThickness={0}
+              xAxisThickness={0}
+              noOfSections={5}
+              showReferenceLine1
+              referenceLine1Position={data ? data.totalCost / 2 : 0}
+              referenceLine1Config={{ color: 'gray', dashWidth: 2, dashGap: 3 }}
+              onPress={(item: any) => props.onPress(item)}
+            />
+          ) : (
+            <EmptyStateText>No monthly data available</EmptyStateText>
+          )}
         </>
-      )
+      ),
     },
     {
       title: 'Tendência de Gastos',
       component: (props: any) => (
-        <LineChart
-          data={[
-            { value: 2000, label: 'Mar' },
-            { value: 1800, label: 'Abr' },
-            { value: 2200, label: 'Mai' },
-            { value: 1200, label: 'Jun' },
-          ]}
-          areaChart
-          color="#6A994E"
-          startFillColor="rgba(106, 153, 78, 0.8)"
-          endFillColor="rgba(238, 237, 235, 0.1)"
-          curved
-          onPress={(item: any) => props.onPress(item)}
-        />
-      )
+        <>
+          {data && data.totalCost > 0 ? (
+            <LineChart
+              data={[
+                { value: data.fuelCost, label: 'Combustível' },
+                { value: data.maintenanceCost, label: 'Manutenção' },
+                { value: data.insuranceCost || 0, label: 'Seguro' },
+                { value: data.taxesCost || 0, label: 'Impostos' },
+              ].filter(item => item.value > 0)}
+              areaChart
+              color="#6A994E"
+              startFillColor="rgba(106, 153, 78, 0.8)"
+              endFillColor="rgba(238, 237, 235, 0.1)"
+              curved
+              onPress={(item: any) => props.onPress(item)}
+            />
+          ) : (
+            <EmptyStateText>No trend data available</EmptyStateText>
+          )}
+        </>
+      ),
     },
-    {
-      title: 'Análise de Despesas',
-      component: (props: any) => (
-        <RadarChart
-          data={[2500, 1500, 2000, 1800, 2200]}
-          labels={['Seguro', 'Manutenção', 'Combustível', 'Impostos', 'Peças']}
-        />
-      )
-    }
   ];
 
-  const renderChartItem = useCallback(({ item }: { item: typeof chartConfigs[0] }) => {
+  const renderChartItem = useCallback(
+    ({ item }: { item: (typeof chartConfigs)[0] }) => {
+      return (
+        <ChartCard>
+          <ChartTitle>{item.title}</ChartTitle>
+          <item.component onPress={handleChartPress} />
+        </ChartCard>
+      );
+    },
+    [handleChartPress]
+  );
+
+  if (isLoading) {
     return (
-      <ChartCard>
-        <ChartTitle>{item.title}</ChartTitle>
-        <item.component
-          onPress={handleChartPress}
-        />
-      </ChartCard>
+      <ProtectedRoute>
+        <LoadingContainer>
+          <ActivityIndicator size="large" color="#454F2C" />
+        </LoadingContainer>
+      </ProtectedRoute>
     );
-  }, [handleChartPress]);
+  }
+
+  if (error) {
+    return (
+      <ProtectedRoute>
+        <EmptyStateContainer>
+          <ErrorText>{error}</ErrorText>
+          <Ionicons name="warning-outline" size={48} color="#BC4749" />
+        </EmptyStateContainer>
+      </ProtectedRoute>
+    );
+  }
+
+  if (!data || data.totalCost === 0) {
+    return (
+      <ProtectedRoute>
+        <EmptyStateContainer>
+          <EmptyStateText>Ainda não há dados de despesas cadastrados! Adicione despesas ao seu veículo para visualizar os gráficos.</EmptyStateText>
+          <Button
+            onPress={() => router.push('/(tabs)/vehicles')}
+          >Ir para veículos</Button>
+        </EmptyStateContainer>
+      </ProtectedRoute>
+    );
+  }
 
   return (
     <ProtectedRoute>
@@ -316,7 +520,7 @@ const HomeScreen = () => {
               ))}
             </FilterRow>
 
-            <TotalText>R$14.500,89</TotalText>
+            <TotalText>R${data.totalCost.toFixed(2)}</TotalText>
             <TotalSubText>Total Estimado</TotalSubText>
 
             <CarouselContainer>
@@ -340,7 +544,7 @@ const HomeScreen = () => {
               </IndicatorContainer>
             </CarouselContainer>
 
-            <TotalText>R$11.300,85</TotalText>
+            <TotalText>R${(data.totalCost).toFixed(2)}</TotalText>
             <TotalSubText>Total Gasto</TotalSubText>
           </Container>
         </ScrollView>

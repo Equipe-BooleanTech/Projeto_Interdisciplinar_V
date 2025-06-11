@@ -1,10 +1,9 @@
-/* eslint-disable no-undef */
 import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
 import { api, getToken, remove, removeToken, setToken } from '../../services';
-import { useRouter } from 'expo-router';
+import { useNavigation, usePathname, useRouter } from 'expo-router';
 import { useStorage } from '@/src/hooks';
 import { Alert } from 'react-native';
-import { Toast } from 'toastify-react-native'; 
+import { Toast } from 'toastify-react-native';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -24,22 +23,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const router = useRouter();
   const { getItem } = useStorage();
 
+  const pathname = usePathname();
+  console.log('Current pathname:', pathname);
   const authCheckIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  const excludedRoutes = [
+    '/Auth/Login',
+    '/Auth/Register',
+    '/',
+  ];
+
   const checkAuthentication = async (): Promise<boolean> => {
+    if (excludedRoutes.includes(pathname)) return false;
     try {
       const token = await getToken();
       const userId = await getItem('userId');
-      
+
       if (!token || !userId) {
         console.log('No token or userId found');
         setIsAuthenticated(false);
         return false;
       }
-      
+
       try {
         const response = await api.get('/users/validate-token', {
-          params: { token }
+          params: { token },
         });
 
         if (response.data) {
@@ -52,17 +60,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } catch (error: any) {
         console.log('Auth error:', error?.response?.status);
-        
+
         if (error.response) {
           if (error.response.status === 403) {
             setIsAuthenticated(true);
             return true;
           }
-          
+
           if (error.response.status === 401) {
             const newAttemptCount = failedAuthAttempts + 1;
             setFailedAuthAttempts(newAttemptCount);
-            
+
             if (newAttemptCount >= 3) {
               await removeToken();
               await remove('userId');
@@ -72,13 +80,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               router.replace('/Auth/Login');
               return false;
             }
-            
+
             console.warn(`Authentication failed (${newAttemptCount}/3 attempts)`);
             setIsAuthenticated(true);
             return true;
           }
         }
-        
+
         console.error('Authentication error:', error);
         setIsAuthenticated(false);
         return false;
@@ -93,15 +101,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (token: string): Promise<void> => {
     try {
       await setToken(token);
-      
+
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
+
       setFailedAuthAttempts(0);
-      
-      await new Promise(resolve => setTimeout(resolve, 300));
+
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       const isAuth = await checkAuthentication();
-      
+
       if (!isAuth) {
         Toast.error('Token de autenticação inválido.');
         setIsAuthenticated(false);
@@ -117,9 +125,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await removeToken();
       await remove('userId');
-      
+
       delete api.defaults.headers.common['Authorization'];
-      
+
       setIsAuthenticated(false);
       setFailedAuthAttempts(0);
       Alert.alert('Logout', 'Você foi desconectado com sucesso.', [
@@ -155,17 +163,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      Alert.alert(
-        'Atenção',
-        'Você não está autenticado. Por favor, faça login.',
-        [
-          {
-            text: 'OK',
-            onPress: () => router.replace('/Auth/Login'),
-          },
-        ],
-      );
+    if (!isLoading && !isAuthenticated && !excludedRoutes.includes(pathname)) {
+      Alert.alert('Atenção', 'Você não está autenticado. Por favor, faça login.', [
+        {
+          text: 'OK',
+          onPress: () => router.replace('/Auth/Login'),
+        },
+      ]);
     }
   }, [isLoading, isAuthenticated]);
 
@@ -177,7 +181,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         logout,
         checkAuthentication,
-        failedAuthAttempts
+        failedAuthAttempts,
       }}
     >
       {children}

@@ -5,6 +5,8 @@ import {
   AddCard,
   Card,
   Container,
+  EmptyStateContainer,
+  EmptyStateText,
   IconButton,
   PlateText,
   Title,
@@ -16,8 +18,7 @@ import { useRedirect, useStorage } from '@/src/hooks';
 import { listVehicles } from '@/src/services';
 import { Toast } from 'toastify-react-native';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
-import { Header } from '@/src/components';
-import { EmptyState } from '@/app/Maintainances/Management/MaintainanceManagement.style';
+import { Button, Header } from '@/src/components';
 import { theme } from '@/theme';
 
 const VehicleScreen = () => {
@@ -93,13 +94,12 @@ const VehicleScreen = () => {
             <ActivityIndicator size="large" color={theme.colors.primary} />
           </Container>
         ) : vehicles.length === 0 ? (
-          <EmptyState
-            icon="car"
-            title="Nenhum veículo encontrado"
-            message="Adicione seu primeiro veículo para começar a monitorar seu consumo"
-            buttonText="Adicionar veículo"
-            onPress={() => router.push('/Vehicles/Register')}
-          />
+            <EmptyStateContainer>
+              <EmptyStateText>Ainda não há dados de veículos cadastrados.</EmptyStateText>
+              <Button
+                onPress={() => router.push('/Vehicles/Register')}
+              >Cadastrar veículo</Button>
+            </EmptyStateContainer>
         ) : (
           <ScrollView contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
             {vehicles.map((vehicle) => (

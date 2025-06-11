@@ -83,3 +83,17 @@ export const AddCard = styled(Card)`
   border: 2px dashed #ccc;
   min-height: 225px;
 `;
+
+export const EmptyStateContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+`;
+
+export const EmptyStateText = styled.Text`
+  font-size: 16px;
+  color: #666;
+  text-align: center;
+  margin-bottom: 20px;
+`;
