@@ -22,6 +22,7 @@ const Header: React.FC<HeaderProps> = ({
     showNotificationButton = true,
     notificationCount = 0,
 }) => {
+
     return (
         <HeaderContainer>
             <LeftContainer>
@@ -42,13 +43,6 @@ const Header: React.FC<HeaderProps> = ({
                 {showNotificationButton && (
                     <IconButton onPress={onNotificationPress}>
                         <Ionicons name="notifications-outline" size={22} color="#333333" />
-                        {notificationCount > 0 && (
-                            <NotificationBadge>
-                                <NotificationText>
-                                    {notificationCount > 9 ? '9+' : notificationCount}
-                                </NotificationText>
-                            </NotificationBadge>
-                        )}
                     </IconButton>
                 )}
             </RightContainer>

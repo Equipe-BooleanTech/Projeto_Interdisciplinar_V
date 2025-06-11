@@ -1,4 +1,3 @@
-export type NotificationType = "message" | "system" | "alert";
 
 export interface NotificationItem {
     id: string;
@@ -6,7 +5,7 @@ export interface NotificationItem {
     message: string;
     time: string;
     isRead: boolean;
-    type: NotificationType;
+    type: string;
 }
 
 export interface NotificationScreenProps {
