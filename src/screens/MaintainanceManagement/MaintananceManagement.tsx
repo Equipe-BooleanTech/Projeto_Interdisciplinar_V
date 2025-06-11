@@ -40,42 +40,26 @@ const MaintainanceManagement: React.FC<MaintainanceProps> = ({
         return (totalCost / records.length).toFixed(2);
     };
 
-    const formatDate = (dateStr: string) => {
-        if (dateStr && dateStr.includes('-')) {
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric'
-            });
-        }
-        
-        if (!dateStr || dateStr.length < 6) return dateStr;
-        
-        const year = dateStr.substring(0, 4);
-        const month = dateStr.substring(4, 6);
-        const day = dateStr.length >= 8 ? dateStr.substring(6, 8) : '01';
-        
-        const date = new Date(`${year}-${month}-${day}`);
-        
-        if (isNaN(date.getTime())) return dateStr;
-        
-        const monthNames = [
-            'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-        ];
-        
-        return `${day} de ${monthNames[date.getMonth()]} de ${year}`;
-    };
+    const dateHandler = (date: number[]) => {
+        // date: "dueDate":[2025,6,12]
+        if (!date || date.length < 3) return 'Data inválida';
+        const [year, month, day] = date;
+        const formattedDate = new Date(year, month - 1, day);
+        return formattedDate.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
+    }
 
     const renderFuelingItem = ({ item }: { item: MaintainanceDTO }) => (
         <FuelingCard>
             <CardHeader>
                 <View>
                     <CardTitle>{item.type}</CardTitle>
-                    <CardSubtitle>{formatDate(item.date)}</CardSubtitle>
+                    <CardSubtitle>{dateHandler(item.date)}</CardSubtitle>
                     {item.nextDueDate && (
-                        <CardSubtitle>Próximo vencimento: {item.nextDueDate}</CardSubtitle>
+                        <CardSubtitle>Próximo vencimento: {dateHandler(item.nextDueDate)}</CardSubtitle>
                     )}
                 </View>
                 <DetailValue>R$ {item.cost.toFixed(2)}</DetailValue>

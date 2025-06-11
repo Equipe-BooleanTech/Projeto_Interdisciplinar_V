@@ -28,7 +28,6 @@ const MaintainanceManagement = () => {
         router.push(`/Maintainances/Register`);
     }, []);
 
-
        useEffect(() => {
         const fetchMaintainanceRecords = async () => {
             setIsLoading(true);
@@ -72,7 +71,7 @@ const MaintainanceManagement = () => {
         };
     
         fetchMaintainanceRecords();
-    }, []); // Remove maintainanceRecords from dependency array
+    }, []); 
     return (
         <>
             <Header
