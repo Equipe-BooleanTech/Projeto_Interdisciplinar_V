@@ -201,12 +201,24 @@ const HomeScreen = () => {
 
   const carouselRef = useRef<any>(null);
 
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
   const handlePrevMonth = () => {
-    setCurrentMonthIndex((prev) => (prev === 0 ? 11 : prev - 1));
+    if (currentMonthIndex === 0) {
+      setCurrentYear(prev => prev - 1);
+      setCurrentMonthIndex(11);
+    } else {
+      setCurrentMonthIndex(prev => prev - 1);
+    }
   };
 
   const handleNextMonth = () => {
-    setCurrentMonthIndex((prev) => (prev === 11 ? 0 : prev + 1));
+    if (currentMonthIndex === 11) {
+      setCurrentYear(prev => prev + 1);
+      setCurrentMonthIndex(0);
+    } else {
+      setCurrentMonthIndex(prev => prev + 1);
+    }
   };
 
   const handleChartPress = useCallback((chartItem: any) => {
@@ -219,7 +231,7 @@ const HomeScreen = () => {
 const fetchUserId = useCallback(async () => {
     const userId = await getItem('userId');
     return userId;
-  }, [getItem]);
+  }, []);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -227,7 +239,7 @@ const fetchUserId = useCallback(async () => {
         setIsLoading(true);
         setError(null);
 
-        const userId = await fetchUserId();
+        const userId = await getItem('userId');
         if (!userId) {
           throw new Error('User not authenticated');
         }
@@ -254,22 +266,68 @@ const fetchUserId = useCallback(async () => {
         let totalTaxes = 0;
         let totalParts = 0;
 
-        const defaultStartDate = new Date();
-        defaultStartDate.setMonth(currentMonthIndex, 1);
+        // Calculate start and end dates based on filter type
+        let startDate = new Date();
+        let endDate = new Date();
 
-        const defaultEndDate = new Date(defaultStartDate);
-        defaultEndDate.setMonth(currentMonthIndex + 1, 0);
+        if (selectedFilter === 'mensal') {
+          // Monthly view - first day to last day of month
+          startDate = new Date(currentYear, currentMonthIndex, 1);
+          endDate = new Date(currentYear, currentMonthIndex + 1, 0);
+        } else {
+          // Weekly view - current day to 7 days ago
+          const today = new Date();
+          const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
 
+          // Calculate start of week (Sunday)
+          startDate = new Date(today);
+          startDate.setDate(today.getDate() - dayOfWeek);
+
+          // Calculate end of week (Saturday)
+          endDate = new Date(startDate);
+          endDate.setDate(startDate.getDate() + 6);
+
+          // If we're looking at a different month than current
+          if (currentMonthIndex !== today.getMonth()) {
+            // Get the first day of the selected month
+            startDate = new Date(currentYear, currentMonthIndex, 1);
+
+            // Find the first Sunday of that month
+            while (startDate.getDay() !== 0) {
+              startDate.setDate(startDate.getDate() + 1);
+            }
+
+            // Set end date to Saturday of that week
+            endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + 6);
+
+            // If we're past week 1, adjust accordingly
+            const weekOffset = Math.floor((today.getDate() - 1) / 7) * 7;
+            if (weekOffset > 0) {
+              startDate.setDate(startDate.getDate() + weekOffset);
+              endDate.setDate(endDate.getDate() + weekOffset);
+            }
+          }
+        }
+
+        // Set time to beginning/end of day
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+
+        console.log(`Fetching ${selectedFilter} data:`, {
+          start: startDate.toISOString(),
+          end: endDate.toISOString()
+        });
 
         const costResults = await Promise.allSettled(
-          fetchedVehicleIds.map(id => getCostsData(id, defaultStartDate, defaultEndDate))
+          fetchedVehicleIds.map(id => getCostsData(id, startDate, endDate))
         );
 
         console.log('Cost results:', costResults);
 
         costResults.forEach((result) => {
           if (result.status === 'fulfilled' && result.value) {
-            const costData = result.value; 
+            const costData = result.value;
             totalMaintenance += costData.maintenanceCost || 0;
             totalFuel += costData.fuelCost || 0;
             totalInsurance += costData.insuranceCost || 0;
@@ -299,7 +357,7 @@ const fetchUserId = useCallback(async () => {
     };
 
     fetchAllData();
-  }, []);
+  }, [currentMonthIndex, currentYear, selectedFilter])
 
   const chartConfigs = [
     {
@@ -374,7 +432,7 @@ const fetchUserId = useCallback(async () => {
               )}
             />
           ) : (
-            <EmptyStateText>No expense data available</EmptyStateText>
+            <EmptyStateText>Não há dados de despesas disponíveis</EmptyStateText>
           )}
         </>
       ),
@@ -471,6 +529,17 @@ const fetchUserId = useCallback(async () => {
     return (
       <ProtectedRoute>
         <EmptyStateContainer>
+          <HeaderMonth>
+            <ArrowButton onPress={handlePrevMonth}>
+              <Ionicons name="chevron-back" size={24} color="#454F2C" />
+            </ArrowButton>
+
+            <MonthText>{months[currentMonthIndex]}</MonthText>
+
+            <ArrowButton onPress={handleNextMonth}>
+              <Ionicons name="chevron-forward" size={24} color="#454F2C" />
+            </ArrowButton>
+          </HeaderMonth>
           <EmptyStateText>Ainda não há dados de despesas cadastrados! Adicione despesas ao seu veículo para visualizar os gráficos.</EmptyStateText>
           <Button
             onPress={() => router.push('/(tabs)/vehicles')}
