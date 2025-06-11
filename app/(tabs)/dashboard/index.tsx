@@ -216,7 +216,7 @@ const HomeScreen = () => {
 
   const { getItem } = useStorage();
 
-  const fetchUserId = useCallback(async () => {
+const fetchUserId = useCallback(async () => {
     const userId = await getItem('userId');
     return userId;
   }, [getItem]);
@@ -266,6 +266,7 @@ const HomeScreen = () => {
         );
 
         console.log('Cost results:', costResults);
+
         costResults.forEach((result) => {
           if (result.status === 'fulfilled' && result.value) {
             const costData = result.value; 
