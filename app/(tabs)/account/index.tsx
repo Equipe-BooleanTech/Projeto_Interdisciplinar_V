@@ -9,7 +9,7 @@ import { User } from '@/src/@types';
 import { useStorage } from '@/src/hooks';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 import { Header as MobileHeader } from '@/src/components';
-import { get } from '@/src/services';
+import { get, getMaintainances, listVehicles } from '@/src/services';
 import { logout } from '@/src/services/auth';
 
 const AccountScreen: React.FC = () => {
@@ -120,96 +120,135 @@ const AccountScreen: React.FC = () => {
     };
     fetchUserData();
   }, [userID]);
-  return (
-    <ProtectedRoute>
-      {loading ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color="#454F2C" />
-        </View>
-      ) : (
-        <>
-          <MobileHeader
-            title="Minha Conta"
-            onBackPress={() => router.back()}
-            onSearchPress={(route: string) => {
-              if (route) {
-                const validRoute = route.startsWith('/') ? route : `/${route}`;
-                router.push(validRoute as never);
-              } else {
-                router.push('/(tabs)/account');
+
+  // -------------------------------------------------
+  // Busca a contagem de manutenções do usuário
+  // -------------------------------------------------
+    useEffect(() => {
+      const fetchMaintenancesCount = async () => {
+        if (!userID) return;
+        
+        try {
+          setMaintenancesCount(0);
+          const vehiclesResponse = await listVehicles(userID);
+          
+          if (vehiclesResponse.content && vehiclesResponse.content.length > 0) {
+            const vehicleIds = vehiclesResponse.content.map((vehicle) => vehicle.id);
+            
+            let totalCount = 0;
+            for (const vehicleId of vehicleIds) {
+              try {
+                const response = await getMaintainances(vehicleId);
+                if (response && response.totalElements) {
+                  totalCount += response.totalElements;
+                }
+              } catch (err) {
+                console.error(`Error fetching maintenance for vehicle ${vehicleId}:`, err);
               }
-            }}
-            onNotificationPress={() => router.push('/notifications')}
-            notificationCount={0}
-          />
-          <Container>
-            <StatusBar barStyle="dark-content" />
-            <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
+            }
+            
+            console.log('Total maintenance count:', totalCount);
+            setMaintenancesCount(totalCount);
+          }
+        } catch (error) {
+          console.error("Error fetching maintenance count:", error);
+          setMaintenancesCount(0);
+        }
+      };
+        
+      fetchMaintenancesCount();
+    }, [userID]);
+  
+return (
+  <ProtectedRoute>
+    {loading ? (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#454F2C" />
+      </View>
+    ) : (
+      <>
+        <MobileHeader
+          title="Minha Conta"
+          onBackPress={() => router.back()}
+          onSearchPress={(route: string) => {
+            if (route) {
+              const validRoute = route.startsWith('/') ? route : `/${route}`;
+              router.push(validRoute as never);
+            } else {
+              router.push('/(tabs)/account');
+            }
+          }}
+          onNotificationPress={() => router.push('/notifications')}
+          notificationCount={0}
+        />
+        <Container>
+          <StatusBar barStyle="dark-content" />
+          <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
 
-              <AvatarContainer>
-                <AvatarWrapper>
-                  {user?.avatar ? (
-                    <Avatar source={{ uri: user?.avatar }} />
-                  ) : (
-                    <DefaultAvatar>
-                      <AvatarText>{user?.name.charAt(0)}</AvatarText>
-                    </DefaultAvatar>
-                  )}
+            <AvatarContainer>
+              <AvatarWrapper>
+                {user?.avatar ? (
+                  <Avatar source={{ uri: user?.avatar }} />
+                ) : (
+                  <DefaultAvatar>
+                    <AvatarText>{user?.name.charAt(0)}</AvatarText>
+                  </DefaultAvatar>
+                )}
 
-                </AvatarWrapper>
+              </AvatarWrapper>
 
-                <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
-                  <ChangeAvatarButton onPress={handleChangeAvatar}>
-                    <MaterialIcons name="photo-camera" size={20} color="white" />
-                    <ChangeAvatarText>Mudar Foto</ChangeAvatarText>
-                  </ChangeAvatarButton>
-                </Animated.View>
+              <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
+                <ChangeAvatarButton onPress={handleChangeAvatar}>
+                  <MaterialIcons name="photo-camera" size={20} color="white" />
+                  <ChangeAvatarText>Mudar Foto</ChangeAvatarText>
+                </ChangeAvatarButton>
+              </Animated.View>
 
-                <UserName>{user?.name}</UserName>
-                <UserEmail>{user?.email}</UserEmail>
-              </AvatarContainer>
+              <UserName>{user?.name}</UserName>
+              <UserEmail>{user?.email}</UserEmail>
+            </AvatarContainer>
 
-              <StatsContainer>
-                <StatItem>
-                  <StatValue>{fetchUserVehiclesCount()}</StatValue>
-                  <StatLabel>Veículos</StatLabel>
-                </StatItem>
-                <StatDivider />
-                <StatItem>
-                  <StatValue>{maintenancesCount}</StatValue>
-                  <StatLabel>Manutenções</StatLabel>
-                </StatItem>
-              </StatsContainer>
+            <StatsContainer>
+              <StatItem>
+                <StatValue>{fetchUserVehiclesCount()}</StatValue>
+                <StatLabel>Veículos</StatLabel>
+              </StatItem>
+              <StatDivider />
+              <StatItem>
+                <StatValue>{maintenancesCount}</StatValue>
+                <StatLabel>Manutenções</StatLabel>
+              </StatItem>
+            </StatsContainer>
 
-              <MenuContainer>
-                {menuItems.map((item) => (
-                  <MenuItem
-                    key={item.id}
-                    onPress={() => item.screen ? router.push(item.screen as any) : null}
-                    activeOpacity={0.7}
-                  >
-                    <MenuItemLeft>
-                      {renderIcon(item.icon)}
-                      <MenuItemText>{item.title}</MenuItemText>
-                    </MenuItemLeft>
-                    <AntDesign name="right" size={18} color="#999" />
-                  </MenuItem>
-                ))}
-              </MenuContainer>
+            <MenuContainer>
+              {menuItems.map((item) => (
+                <MenuItem
+                  key={item.id}
+                  onPress={() => item.screen ? router.push(item.screen as any) : null}
+                  activeOpacity={0.7}
+                >
+                  <MenuItemLeft>
+                    {renderIcon(item.icon)}
+                    <MenuItemText>{item.title}</MenuItemText>
+                  </MenuItemLeft>
+                  <AntDesign name="right" size={18} color="#999" />
+                </MenuItem>
+              ))}
+            </MenuContainer>
 
-              <SignOutButton onPress={() => {
-                logout()
-                router.replace('/Auth/Login');
-              }}>
-                <SignOutButtonText>Sair</SignOutButtonText>
-                <MaterialIcons name="logout" size={20} color="#ff4444" />
-              </SignOutButton>
-            </ScrollView>
-          </Container>
-        </>
-      )}
-    </ProtectedRoute>
-  );
+            <SignOutButton onPress={() => {
+              logout()
+              router.replace('/Auth/Login');
+            }}>
+              <SignOutButtonText>Sair</SignOutButtonText>
+              <MaterialIcons name="logout" size={20} color="#ff4444" />
+            </SignOutButton>
+          </ScrollView>
+        </Container>
+      </>
+    )}
+  </ProtectedRoute>
+);
 }
 
 

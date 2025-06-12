@@ -20,7 +20,6 @@ export const EmptyState = styled.View`
 `;
 
 export const EmptyStateText = styled.Text`
-  font-family: ${theme.font.family.rubik};
   font-size: ${theme.font.size.pb};
   color: ${theme.colors.stroke};
   margin-top: 16px;
@@ -45,14 +44,12 @@ export const CardHeader = styled.View`
 `;
 
 export const CardTitle = styled.Text`
-  font-family: ${theme.font.family.rubik};
   font-size: ${theme.font.size.h3};
   font-weight: ${theme.font.weight.h3};
   color: ${theme.colors.stroke};
 `;
 
 export const CardSubtitle = styled.Text`
-  font-family: ${theme.font.family.rubik};
   font-size: ${theme.font.size.p};
   color: ${theme.colors.stroke};
   margin-bottom: 4px;
@@ -69,14 +66,12 @@ export const CardDetail = styled.View`
 `;
 
 export const DetailLabel = styled.Text`
-  font-family: ${theme.font.family.rubik};
   font-size: ${theme.font.size.pb};
   color: ${theme.colors.stroke};
   opacity: 0.7;
 `;
 
 export const DetailValue = styled.Text`
-  font-family: ${theme.font.family.rubik};
   font-size: ${theme.font.size.p};
   color: ${theme.colors.stroke};
 `;
@@ -97,7 +92,6 @@ export const SummaryItem = styled.View`
 `;
 
 export const SummaryLabel = styled.Text`
-  font-family: ${theme.font.family.rubik};
   font-size: ${theme.font.size.pb};
   color: ${theme.colors.stroke};
   opacity: 0.7;
@@ -105,7 +99,6 @@ export const SummaryLabel = styled.Text`
 `;
 
 export const SummaryValue = styled.Text`
-  font-family: ${theme.font.family.rubik};
   font-size: ${theme.font.size.h3};
   color: ${theme.colors.stroke};
   font-weight: ${theme.font.weight.h3};
