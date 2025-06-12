@@ -21,7 +21,7 @@ const AccountScreen: React.FC = () => {
 
   const menuItems: AccountMenuItem[] = [
     { id: '1', title: 'Editar Perfil', icon: 'edit', screen: 'Account/Edit' },
-    { id: '2', title: 'Notificações', icon: 'notifications', screen: 'Account/Notifications' },
+    { id: '2', title: 'Alterar Senha', icon: 'password', screen: 'Auth/PasswordReset' },
   ];
 
   const animateButton = () => {

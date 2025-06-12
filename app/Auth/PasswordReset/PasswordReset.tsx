@@ -8,10 +8,13 @@ import { useForm } from 'react-hook-form';
 import { MaterialIcons } from '@expo/vector-icons';
 import ProtectedRoute from '@/src/providers/auth/ProtectedRoute';
 import { theme } from '@/theme';
+import { resetPassword } from '@/src/services';
+import { useStorage } from '@/src/hooks';
 
-const ResetPasswordScreen = () => {
+const ChangePasswordScreen = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const {
@@ -23,22 +26,32 @@ const ResetPasswordScreen = () => {
         mode: 'onBlur',
     });
 
-    const password = watch('password');
+    const {getItem } = useStorage();
+
+    const newPassword = watch('newPassword');
 
     const onSubmit = async (formData: any) => {
+        const userId = await getItem('userId');
         setIsSubmitting(true);
+        const passwordDto = {
+            oldPassword: formData.currentPassword,
+            newPassword: formData.newPassword,
+        };
         try {
-            Alert.alert('Sucesso', 'Sua senha foi redefinida com sucesso!', [
+            const response = await resetPassword(userId as string, passwordDto);
+            Alert.alert('Sucesso', 'Sua senha foi alterada com sucesso! Faça login novamente.', [
                 {
                     text: 'OK',
-                    onPress: () => router.replace('/Auth/Login'),
+                    onPress: () => {
+                        router.push('/Auth/Login');
+                    },
                 },
             ]);
         } catch (error: any) {
-            console.error('Error resetting password:', error);
+            console.error('Error changing password:', error);
             Alert.alert(
                 'Erro',
-                error?.message || 'Ocorreu um erro ao redefinir sua senha. Por favor, tente novamente.'
+                error?.message || 'Ocorreu um erro ao alterar sua senha. Por favor, tente novamente.'
             );
         } finally {
             setIsSubmitting(false);
@@ -47,36 +60,44 @@ const ResetPasswordScreen = () => {
 
     return (
         <ProtectedRoute>
-            <Header title="Redefinir Senha" onBackPress={() => router.back()} />
-            <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+            <Header title="Alterar Senha" onBackPress={() => router.back()} />
+            <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.normalBackground, justifyContent: 'center' }}>
                 <ScrollView contentContainerStyle={styles.container}>
                     <Form.Root controlled>
-                        <Text style={styles.title}>Redefina sua senha</Text>
-                        <Text style={{ marginBottom: 24, color: theme.colors.text }}>
-                            Por favor, insira sua nova senha abaixo.
+                        <Text style={styles.title}>Alterar senha</Text>
+                        <Text style={{ marginBottom: 24, color: "#000" }}>
+                            Por favor, insira sua senha atual e a nova senha.
                         </Text>
-
                         {FormHelpers.createFormFields({
                             control,
                             fields: [
                                 {
-                                    name: 'token',
+                                    name: 'currentPassword',
                                     type: 'textfield',
                                     rules: {
-                                        required: 'Código de verificação é obrigatório',
+                                        required: 'Senha atual é obrigatória',
                                     },
-                                    label: 'Código de Verificação',
-                                    placeholder: 'Digite o código recebido...',
-                                    errorMessage: errors.token?.message,
+                                    label: 'Senha Atual',
+                                    placeholder: 'Digite sua senha atual...',
+                                    errorMessage: errors.currentPassword?.message,
                                     componentProps: {
-                                        leftIcon: <MaterialIcons name="vpn-key" size={20} color="#666" />,
+                                        secureTextEntry: !showCurrentPassword,
+                                        leftIcon: <MaterialIcons name="lock" size={20} color="#666" />,
+                                        rightIcon: (
+                                            <MaterialIcons
+                                                name={showCurrentPassword ? 'visibility-off' : 'visibility'}
+                                                size={20}
+                                                color="#666"
+                                                onPress={() => setShowCurrentPassword(!showCurrentPassword)}
+                                            />
+                                        ),
                                     },
                                 },
                                 {
-                                    name: 'password',
+                                    name: 'newPassword',
                                     type: 'textfield',
                                     rules: {
-                                        required: 'Senha é obrigatória',
+                                        required: 'Nova senha é obrigatória',
                                         minLength: {
                                             value: 8,
                                             message: 'A senha deve ter no mínimo 8 caracteres',
@@ -89,30 +110,30 @@ const ResetPasswordScreen = () => {
                                     },
                                     label: 'Nova Senha',
                                     placeholder: 'Digite sua nova senha...',
-                                    errorMessage: errors.password?.message,
+                                    errorMessage: errors.newPassword?.message,
                                     componentProps: {
-                                        secureTextEntry: !showPassword,
+                                        secureTextEntry: !showNewPassword,
                                         leftIcon: <MaterialIcons name="lock" size={20} color="#666" />,
                                         rightIcon: (
                                             <MaterialIcons
-                                                name={showPassword ? 'visibility-off' : 'visibility'}
+                                                name={showNewPassword ? 'visibility-off' : 'visibility'}
                                                 size={20}
                                                 color="#666"
-                                                onPress={() => setShowPassword(!showPassword)}
+                                                onPress={() => setShowNewPassword(!showNewPassword)}
                                             />
                                         ),
                                     },
                                 },
                                 {
-                                    name: 'confirmPassword',
+                                    name: 'confirmNewPassword',
                                     type: 'textfield',
                                     rules: {
                                         required: 'Confirmação de senha é obrigatória',
-                                        validate: (value) => value === password || 'As senhas não coincidem',
+                                        validate: (value) => value === newPassword || 'As senhas não coincidem',
                                     },
                                     label: 'Confirmar Nova Senha',
                                     placeholder: 'Confirme sua nova senha...',
-                                    errorMessage: errors.confirmPassword?.message,
+                                    errorMessage: errors.confirmNewPassword?.message,
                                     componentProps: {
                                         secureTextEntry: !showConfirmPassword,
                                         leftIcon: <MaterialIcons name="lock" size={20} color="#666" />,
@@ -130,7 +151,7 @@ const ResetPasswordScreen = () => {
                         })}
 
                         <Button variant="primary" onPress={handleSubmit(onSubmit)} full disabled={isSubmitting}>
-                            {isSubmitting ? <ActivityIndicator color="#fff" /> : 'Redefinir Senha'}
+                            {isSubmitting ? <ActivityIndicator color="#fff" /> : 'Alterar Senha'}
                         </Button>
                     </Form.Root>
                 </ScrollView>
@@ -139,4 +160,4 @@ const ResetPasswordScreen = () => {
     );
 };
 
-export default ResetPasswordScreen;
+export default ChangePasswordScreen;

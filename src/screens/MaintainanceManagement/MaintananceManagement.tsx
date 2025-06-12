@@ -41,7 +41,6 @@ const MaintainanceManagement: React.FC<MaintainanceProps> = ({
     };
 
     const dateHandler = (date: number[]) => {
-        // date: "dueDate":[2025,6,12]
         if (!date || date.length < 3) return 'Data inválida';
         const [year, month, day] = date;
         const formattedDate = new Date(year, month - 1, day);

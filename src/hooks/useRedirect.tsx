@@ -26,11 +26,9 @@ const useRedirect = () => {
 
     setRedirecting(true);
     const isAuth = await checkAuthentication();
-    if (isAuth) {
-      router.replace('/dashboard');
-    } else {
-      router.replace('/Auth/Login');
-    }
+    if (isAuth) return goToHome();
+    // If not authenticated, redirect to login
+    router.replace('/Auth/Login');
     setRedirecting(false);
   }, [router, redirecting, checkAuthentication]);
 

@@ -18,16 +18,8 @@ export const logout = async () => {
   return true;
 };
 
-export const requestPasswordResetCode = async (email: string) => {
-  const response = await api.post('/users/request-password-reset', { email });
-  return response.data;
-}
-
-export const resetPassword = async (userId: string, code: string, newPassword: string) => {
-  const response = await api.post('/users/reset-password', {
-    userId,
-    code,
-    newPassword,
-  });
+export const resetPassword = async (userId: string, passwordDTO: any) => {
+  console.log('Resetting password for user:', userId, 'with data:', passwordDTO);
+  const response = await api.put(`/users/${userId}/redefinir-senha`, passwordDTO);
   return response.data;
 };
