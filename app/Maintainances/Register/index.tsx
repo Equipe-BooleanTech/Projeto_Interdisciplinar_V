@@ -211,12 +211,7 @@ const MaintenanceCreateScreen = () => {
                                 {
                                     name: 'cost',
                                     type: 'textfield',
-                                    rules: {
-                                        pattern: {
-                                            value: /^\d+(\.\d{1,2})?$/,
-                                            message: 'Formato inválido (ex: 250.50)',
-                                        },
-                                    },
+                                    mask: 'currency',
                                     label: 'Custo (R$)',
                                     placeholder: 'Digite o valor...',
                                     errorMessage: errors.cost?.message,

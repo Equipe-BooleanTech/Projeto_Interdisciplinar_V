@@ -134,7 +134,6 @@ const FuelRefillFormScreen = () => {
         kmAtRefill: parseFloat(String(formData.kmAtRefill).replace(',', '.')),
         isCompleteTank: formData.isCompleteTank,
         fuelType: formData.fuelType,
-        refillDate: refillDate ? refillDate.toISOString() : new Date().toISOString(),
       };
   
       const response = await createFuelRefill(refillData, vehicleId, formData.stationId);
@@ -280,22 +279,6 @@ const FuelRefillFormScreen = () => {
                   componentProps: {
                     trackColor: { false: '#767577', true: theme.colors.primary },
                     thumbColor: '#f4f3f4',
-                  },
-                },
-                {
-                  name: 'refillDate',
-                  type: 'textfield',
-                  mask: 'date',
-                  rules: {
-                    required: 'Data é obrigatória',
-                  },
-                  label: 'Data do Abastecimento',
-                  placeholder: 'DD/MM/AAAA',
-                  errorMessage: errors.refillDate?.message,
-                  componentProps: {
-                    leftIcon: <MaterialIcons name="calendar-today" size={20} color="#666" />,
-                    keyboardType: 'numeric',
-                    mask: 'date',
                   },
                 },
               ],

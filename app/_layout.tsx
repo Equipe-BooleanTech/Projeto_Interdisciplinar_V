@@ -28,6 +28,7 @@ export default function Layout() {
     <PaperProvider theme={theme}>
       <AuthProvider>
         <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
         <ToastManager position="bottom" duration={3000} />

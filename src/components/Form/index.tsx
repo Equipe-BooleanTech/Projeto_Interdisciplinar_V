@@ -153,6 +153,7 @@ type SwitchFieldProps = BaseFieldProps & {
   type: 'switch';
   componentProps?: React.ComponentProps<typeof Switch>;
   label?: string;
+  enabled?: boolean;
   errorMessage?: string;
   rules?: RegisterOptions;
   placeholder?: string;

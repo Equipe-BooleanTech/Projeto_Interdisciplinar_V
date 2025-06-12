@@ -26,7 +26,6 @@ const ReminderManagement = () => {
     const [reminderRecords, setReminderRecords] = useState<ReminderDTO[]>([]);
 
     const handleAddReminder = useCallback(() => {
-        // Navigate to the Add Reminder screen with the vehicleId
         router.push(`/Reminders/Register`);
     }, []);
 
@@ -44,8 +43,9 @@ const ReminderManagement = () => {
                     });
                     return;
                 }
+                const userId = await getItem('userId');
     
-                const response = await getAllReminders(vehicleId);
+                const response = await getAllReminders(vehicleId, userId as string);
 
                 if (!response || !response.content.length) {
                     setModal({

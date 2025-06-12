@@ -19,6 +19,8 @@ import {
 } from './VehicleManagement.style';
 import { Ionicons } from '@expo/vector-icons';
 import { EmptyState } from '../Notification/Notification.styles';
+import { Button } from '@/src/components';
+import { router } from 'expo-router';
 
 const VehicleFueling: React.FC<VehicleFuelingProps> = ({
     fuelingRecords,
@@ -75,14 +77,7 @@ const VehicleFueling: React.FC<VehicleFuelingProps> = ({
             console.error('Error translating date array:', error);
             return 'Erro ao formatar data';
         }
-      };
-    
-    const renderEmptyList = () => (
-        <EmptyState>
-            <Ionicons name="car" size={50} color="#ccc" />
-            <Text style={{ color: '#ccc', fontSize: 16 }}>Nenhum abastecimento encontrado.</Text>
-        </EmptyState>
-    );
+      };   
 
     const renderFuelingItem = ({ item }: { item: FuelRefillDTO }) => (
         <FuelingCard fuelType={item.fuelType}>
@@ -122,7 +117,19 @@ const VehicleFueling: React.FC<VehicleFuelingProps> = ({
                 <LoadingContainer>
                     <ActivityIndicator size="large" color="#454F2C" />
                 </LoadingContainer>
-            ) : (
+            ) : fuelingRecords.refills.length === 0 ?
+                    (
+                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                                <CardTitle>Nenhum dado registrado</CardTitle>
+                                                <CardSubtitle>Você ainda não possui manutenções, lembretes ou abastecimentos registrados.</CardSubtitle>
+                                                <Button
+                                                    onPress={() => router.push('/Fuelings/Register')}
+                                                    style={{ marginTop: 20 }}
+                                                >
+                                                    Adicionar Abastecimento
+                                                </Button>
+                                            </View>
+                    ) : (
                 <>
                     <SummaryContainer>
                         <SummaryItem>

@@ -40,48 +40,25 @@ const MaintainanceManagement: React.FC<MaintainanceProps> = ({
         return (totalCost / records.length).toFixed(2);
     };
 
-    const formatDate = (dateStr: string) => {
-        // Se a data estiver em formato ISO (2025-06-06T00:00:00.000Z)
-        if (dateStr && dateStr.includes('-')) {
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric'
-            });
-        }
-        
-        // Se a data estiver no formato compacto do banco (202566)
-        if (!dateStr || dateStr.length < 6) return dateStr;
-        
-        // Extraindo ano, mês e dia corretamente
-        const year = dateStr.substring(0, 4);
-        const month = dateStr.substring(4, 6);
-        const day = dateStr.length >= 8 ? dateStr.substring(6, 8) : '01';
-        
-        // Criando objeto de data e formatando
-        const date = new Date(`${year}-${month}-${day}`);
-        
-        // Verificando se é uma data válida
-        if (isNaN(date.getTime())) return dateStr;
-        
-        // Formatando para o padrão brasileiro (dia de mês de ano)
-        const monthNames = [
-            'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-        ];
-        
-        return `${day} de ${monthNames[date.getMonth()]} de ${year}`;
-    };
+    const dateHandler = (date: number[]) => {
+        if (!date || date.length < 3) return 'Data inválida';
+        const [year, month, day] = date;
+        const formattedDate = new Date(year, month - 1, day);
+        return formattedDate.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
+    }
 
     const renderFuelingItem = ({ item }: { item: MaintainanceDTO }) => (
         <FuelingCard>
             <CardHeader>
                 <View>
                     <CardTitle>{item.type}</CardTitle>
-                    <CardSubtitle>{formatDate(item.date)}</CardSubtitle>
+                    <CardSubtitle>{dateHandler(item.date)}</CardSubtitle>
                     {item.nextDueDate && (
-                        <CardSubtitle>Próximo vencimento: {item.nextDueDate}</CardSubtitle>
+                        <CardSubtitle>Próximo vencimento: {dateHandler(item.nextDueDate)}</CardSubtitle>
                     )}
                 </View>
                 <DetailValue>R$ {item.cost.toFixed(2)}</DetailValue>

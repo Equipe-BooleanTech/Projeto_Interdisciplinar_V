@@ -38,7 +38,6 @@ export const useDevice = () => {
       return isFirstLaunchState;
     }
 
-    // Fallback if state isn't set yet
     const firstLaunchValue = await getItem('isFirstLaunch');
     return firstLaunchValue === null;
   }, [getItem, isFirstLaunchState]);
@@ -48,7 +47,6 @@ export const useDevice = () => {
       return isFirstLaunchState;
     }
 
-    // Fallback if state isn't set yet
     const firstLaunchValue = localStorage.getItem('isFirstLaunch');
     return firstLaunchValue === null;
   }, [isFirstLaunchState]);

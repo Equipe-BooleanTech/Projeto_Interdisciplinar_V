@@ -3,10 +3,6 @@ import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { NotificationItem, NotificationScreenProps } from './Notification.interface';
 import {
     Container,
-    Header,
-    HeaderTitle,
-    MarkAllButton,
-    MarkAllText,
     NotificationList,
     NotificationItemContainer,
     NotificationContent,
@@ -57,7 +53,7 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({
                 {notifications.length === 0 ? (
                     <EmptyState>
                         <Ionicons name="notifications-off-outline" size={48} color="#cccccc" />
-                        <EmptyStateText>No notifications yet</EmptyStateText>
+                        <EmptyStateText>Ainda não há notificações</EmptyStateText>
                     </EmptyState>
                 ) : (
                     <NotificationList
